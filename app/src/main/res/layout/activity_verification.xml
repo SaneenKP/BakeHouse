@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/verify_layout"
+    android:background="@color/white"
+    tools:context=".PhoneAuth">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="sans-serif"
+        android:text="Verify"
+        style="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textColor="?attr/colorPrimary" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/purple_200"
+        >
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time out"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:id="@+id/timeoutText"
+            android:layout_marginLeft="16dp"
+            />
+
+
+
+        <RelativeLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="8dp"
+            android:background="@drawable/circle_primary">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_forward"
+                android:tint="@color/purple_200"
+                android:layout_centerInParent="true"
+                android:backgroundTint="?attr/colorPrimary"
+                android:id="@+id/forward"
+                android:background="?selectableItemBackgroundBorderless"
+                />
+            <ProgressBar
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminateTint="@color/purple_200"
+                android:layout_centerInParent="true"
+                android:id="@+id/progress_circular"
+                />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signintxtlayout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="40dp"
+        android:layout_below="@id/title"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="16dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/ic_verify_otp"
+            android:backgroundTint="?attr/colorPrimary"
+
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textColor="?attr/colorPrimary"
+            android:text="Please enter the otp"
+            android:id="@+id/signintxt"
+            android:layout_gravity="center_horizontal"
+
+
+            />
+
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/phoneauth_edit_layout"
+        android:layout_marginLeft="16dp"
+        app:boxBackgroundMode="filled"
+
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="0dp"
+        android:backgroundTint="@color/white"
+        android:layout_below="@+id/signintxtlayout"
+
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            >
+            <com.mukesh.OtpView
+                android:id="@+id/verification_edittext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                app:itemHeight="48dp"
+                android:focusedByDefault="true"
+
+                app:itemWidth="48dp"
+                android:hint="******"
+                android:layout_centerHorizontal="true"
+                android:itemBackground="@color/purple_200"
+                app:hideLineWhenFilled="true"
+                app:itemCount="6"
+                app:lineColor="?attr/colorPrimary"
+                app:viewType="line"
+
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RESEND OTP"
+                android:id="@+id/resend_otp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:layout_marginTop="32dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_below="@id/verification_edittext"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</RelativeLayout>
