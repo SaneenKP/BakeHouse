@@ -1,6 +1,7 @@
 package com.example.temp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,14 +9,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class ServicesViewAdapter extends BaseAdapter {
 
     private android.content.Context context;
     private LayoutInflater inflater;
-    private String[] services;
+    private List<String> services;
     private int[] serviceImages;
 
-    public ServicesViewAdapter(Context context, String[] services, int[] serviceImages) {
+    public ServicesViewAdapter(Context context, List<String> services, int[] serviceImages) {
 
         inflater = LayoutInflater.from(context);
         this.context = context;
@@ -25,7 +28,7 @@ public class ServicesViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return services.length;
+        return services.size();
     }
 
     @Override
@@ -34,9 +37,12 @@ public class ServicesViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public long getItemId(int position) {
+        public long getItemId(int position) {
         return 0;
     }
+
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -45,7 +51,10 @@ public class ServicesViewAdapter extends BaseAdapter {
         TextView serviceName = convertView.findViewById(R.id.service_name);
         ImageView serviceImage = convertView.findViewById(R.id.service_image);
 
-        serviceName.setText(services[position]);
+        Log.d("service name" , services.get(position));
+        Log.d("service image",  Integer.toString(serviceImages[position]));
+
+        serviceName.setText(services.get(position));
         serviceImage.setImageResource(serviceImages[position]);
         return convertView;
     }

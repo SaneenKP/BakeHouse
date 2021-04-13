@@ -36,7 +36,7 @@ public class PhoneAuth extends AppCompatActivity {
 
         setContentView(R.layout.activity_phone_auth);
 
-
+        
 
         authEditText =findViewById(R.id.editText_carrierNumber);
         authNextButton=findViewById(R.id.auth_next_button);
