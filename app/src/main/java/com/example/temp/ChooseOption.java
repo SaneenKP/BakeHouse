@@ -33,14 +33,16 @@ import android.widget.Toast;
         food = findViewById(R.id.btn_food);
         services = findViewById(R.id.btn_services);
 
+
+
         toolbar.setTitle(this.getClass().getSimpleName());
 
         food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               Intent openFoodSection = new Intent(ChooseOption.this , Foods.class);
-               startActivity(openFoodSection);
+               Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
+               startActivity(openHotelSection);
 
             }
         });

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_margin="20dp"
+    android:elevation="20dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/hotel_image"
+            android:layout_weight="1"
+
+            />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:layout_weight="1"
+          >
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/hotel_name"
+              android:textSize="32sp"
+              android:text="paragon"
+              android:layout_weight="1"
+              android:textColor="@color/black"
+              android:textAlignment="textStart"
+              android:textAllCaps="true"
+              android:layout_margin="5dp"
+              android:textStyle="bold"
+              />
+
+          <TextView
+              android:layout_width="match_parent"
+              android:id="@+id/hotel_address"
+              android:textStyle="italic"
+              android:layout_height="wrap_content"
+              android:textSize="22sp"
+              android:textColor="#5E5D5D"
+              android:layout_weight="1"
+              android:text="ldjgkdfjgkdfjghkdfjkdhfkd"
+              android:layout_margin="5dp"
+              />
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="24sp"
+              android:id="@+id/hotel_location"
+              android:textColor="@color/black"
+              android:layout_marginTop="10dp"
+              android:text="kozikode"
+              android:layout_weight="1"
+              android:layout_marginStart="5dp"
+              android:layout_marginEnd="5dp"
+              android:layout_marginBottom="5dp"
+              />
+
+
+
+      </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

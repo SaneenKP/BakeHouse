@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Temp">
-        <activity android:name=".Vendors"></activity>
+        <activity android:name=".Hotels"></activity>
+        <activity android:name=".Vendors" />
         <activity android:name=".Services" />
         <activity android:name=".Foods" />
         <activity android:name=".MainActivity" />
