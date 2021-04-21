@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
-import android.widget.ProgressBar;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,42 +18,43 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hotels extends AppCompatActivity {
+public class Dishes extends AppCompatActivity {
 
-    private RecyclerView hotels;
+    private RecyclerView dishes;
     private RecyclerView.LayoutManager layoutManager;
-    private List<HotelDetails> hotelsList;
+    private List<DishDetails> dishList;
     private DatabaseReference databaseReference;
-    private List<String> hotelKeys;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hotels);
+        setContentView(R.layout.activity_dishes);
 
-        hotels = findViewById(R.id.hotels);
+        dishes = findViewById(R.id.dishes);
         layoutManager = new LinearLayoutManager(this);
+        dishList = new ArrayList<>();
 
-        hotelsList = new ArrayList<>();
-        hotelKeys = new ArrayList<>();
+        Bundle b = getIntent().getExtras();
+        String hotelKey = b.getString("hotel_key");
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Date").child("Food");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Date").child("Food").child(hotelKey).child("Dish");
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for (DataSnapshot ds : snapshot.getChildren())
-                {
-                    HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
-                    hotelsList.add(hotelDetails);
-                    hotelKeys.add(ds.getKey());
+                for (DataSnapshot ds : snapshot.getChildren()){
+
+                    DishDetails dishDetails = ds.getValue(DishDetails.class);
+                    dishList.add(dishDetails);
+                    Log.d("DISH DETAILS", dishDetails.getName());
                 }
 
-                HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys);
-                hotels.setLayoutManager(layoutManager);
-                hotels.setAdapter(hotelViewAdapter);
+                DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext() , dishList);
+                dishes.setLayoutManager(layoutManager);
+                dishes.setAdapter(dishesAdapter);
             }
 
             @Override

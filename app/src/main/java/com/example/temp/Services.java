@@ -25,10 +25,9 @@ import java.util.List;
 public class Services extends AppCompatActivity {
 
     private GridView services;
-    private List<String> servicesName;
+    private List<ServiceDetails> servicesName;
     private DatabaseReference firebaseRealtimeDatabase;
     private List<String> serviceKeys;
-    private int[] servicesImage = {R.drawable.plumbing , R.drawable.electrical , R.drawable.housework , R.drawable.gardner , R.drawable.babysitter , R.drawable.driver};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +46,12 @@ public class Services extends AppCompatActivity {
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
-                    Log.d("the entire snapshot" , dataSnapshot.toString());
-                    servicesName.add(dataSnapshot.child("name").getValue(String.class));
+
+                    ServiceDetails sd =  dataSnapshot.getValue(ServiceDetails.class);
+                   servicesName.add(sd);
                     serviceKeys.add(dataSnapshot.getKey());
                 }
-                ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext() , servicesName , servicesImage);
+                ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext() , servicesName);
                 services.setAdapter(servicesViewAdapter);
 
             }

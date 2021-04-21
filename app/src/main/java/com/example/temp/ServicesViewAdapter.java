@@ -9,21 +9,22 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class ServicesViewAdapter extends BaseAdapter {
 
     private android.content.Context context;
     private LayoutInflater inflater;
-    private List<String> services;
-    private int[] serviceImages;
+    private List<ServiceDetails> services;
 
-    public ServicesViewAdapter(Context context, List<String> services, int[] serviceImages) {
+    public ServicesViewAdapter(Context context, List<ServiceDetails> services) {
 
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.services = services;
-        this.serviceImages = serviceImages;
+
     }
 
     @Override
@@ -51,11 +52,11 @@ public class ServicesViewAdapter extends BaseAdapter {
         TextView serviceName = convertView.findViewById(R.id.service_name);
         ImageView serviceImage = convertView.findViewById(R.id.service_image);
 
-        Log.d("service name" , services.get(position));
-        Log.d("service image",  Integer.toString(serviceImages[position]));
+        Log.d("Images" , services.get(position).getCover_pic());
 
-        serviceName.setText(services.get(position));
-        serviceImage.setImageResource(serviceImages[position]);
+
+        serviceName.setText(services.get(position).getName());
+        Glide.with(context).load(services.get(position).getCover_pic()).into(serviceImage);
         return convertView;
     }
 }
