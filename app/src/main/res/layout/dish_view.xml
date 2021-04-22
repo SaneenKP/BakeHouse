@@ -29,6 +29,22 @@
         android:textAlignment="textStart"
         />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/price"
+        android:textSize="22sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textColor="@color/black"
+        android:text="55 \u20B9"
+        android:textStyle="italic"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:textAlignment="textStart"
+
+        />
+
     <include
         layout="@layout/increment_button"
         android:layout_width="wrap_content"

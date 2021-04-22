@@ -3,6 +3,15 @@ package com.example.temp;
 public class DishDetails {
     private String name;
     private String pic;
+    private int price;
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     public String getName() {
         return name;

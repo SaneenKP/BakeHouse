@@ -17,7 +17,7 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
 
     private Context context;
     private List<VendorDetails> list;
-     private vendorsCallListenerInterface clickListener;
+    private vendorsCallListenerInterface clickListener;
 
     public VendorsListAdapter(Context context, List<VendorDetails> list , vendorsCallListenerInterface clickListener) {
         this.context = context;

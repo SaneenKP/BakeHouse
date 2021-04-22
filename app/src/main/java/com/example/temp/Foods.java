@@ -22,7 +22,6 @@ import java.util.ArrayList;
 public class Foods extends AppCompatActivity {
 
     private GridView foods;
-    private int[] foodImages = {R.drawable.bread , R.drawable.rice , R.drawable.dessert , R.drawable.drinks , R.drawable.type6 , R.drawable.type7};
     private DatabaseReference firebaseRealtimeDatabase;
 
 
