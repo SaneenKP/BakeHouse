@@ -1,11 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".PlaceOrder">
-    
 
-</LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_margin="10dp"
+                android:id="@+id/PAD"
+                android:text="Pay and Order"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:id="@+id/COD"
+                android:text="Cash On Delivery"
+                android:layout_margin="10dp"
+                android:layout_below="@+id/PAD"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:layout_below="@+id/COD"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="true"
+                android:text="500444"
+                android:id="@+id/payAmount"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/payAmount"
+                android:id="@+id/locTv"
+                android:text="Location : "
+                android:textSize="32sp"
+                android:textColor="@color/black"
+                android:textStyle="italic"
+                android:layout_margin="10dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/location"
+                android:layout_below="@+id/locTv"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                android:text="this is the location of the curretn user"
+                android:textSize="22sp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/location"
+                android:id="@+id/location_layuot"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/AddTv"
+                    android:text="Address : "
+                    android:textSize="32sp"
+                    android:textColor="@color/black"
+                    android:textStyle="italic"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="10dp"
+                    />
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:hint="House No"
+                    android:id="@+id/Add_houseNo"
+                    android:layout_below="@id/AddTv"/>
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:hint="Locality"
+                    android:id="@+id/Add_locality"
+                    android:layout_below="@id/Add_houseNo"/>
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:hint="Landmark"
+                    android:id="@+id/Add_landmark"
+                    android:layout_below="@id/Add_locality"/>
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:hint="District"
+                    android:id="@+id/Add_district"
+                    android:layout_below="@id/Add_landmark"/>
+
+
+            </RelativeLayout>
+
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+
+</RelativeLayout>
