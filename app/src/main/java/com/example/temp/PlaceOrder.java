@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +31,7 @@ public class PlaceOrder extends AppCompatActivity {
 
     private TextView payableAmount;
     private TextView longitude , lattitude;
-    private TextView Add_houseNo , Add_locality , Add_landmark , Add_district;
+    private EditText Add_houseNo , Add_locality , Add_landmark , Add_district;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button pay_and_order , cash_on_delivery;
     private int PERMISSION_ID = 1001;
