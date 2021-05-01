@@ -15,18 +15,22 @@
     <string name="logout">Logout</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
-    
+
     <!-- shared preference file name-->
-    
+
     <string name="user_address">com.example.temp_user_address_preferences</string>
 
     <!-- Strings used for shared preferences -->
 
-    <string name="houseNo">House No.</string>
+    <string name="Add_name">Name</string>
+    <string name="houseNo">House No</string>
     <string name="locality">Locality</string>
     <string name="landmark">Landmark</string>
     <string name="district">District</string>
 
-    
-    
+    <!-- Razor pay key id-->
+
+    <string name="keyId"></string>
+
+
 </resources>

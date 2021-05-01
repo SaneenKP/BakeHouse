@@ -20,10 +20,24 @@ public class SharedPreferenceConfig {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString(context.getResources().getString(R.string.houseNo) , address.get(context.getResources().getString(R.string.houseNo)));
+        editor.putString(context.getResources().getString(R.string.Add_name) , address.get(context.getResources().getString(R.string.Add_name)));
         editor.putString(context.getResources().getString(R.string.locality) , address.get(context.getResources().getString(R.string.locality)));
         editor.putString(context.getResources().getString(R.string.landmark) , address.get(context.getResources().getString(R.string.landmark)));
         editor.putString(context.getResources().getString(R.string.district) , address.get(context.getResources().getString(R.string.district)));
         editor.commit();
+
+    }
+
+    public void setDefault(){
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(context.getResources().getString(R.string.Add_name) , "Saneen k p");
+        editor.putString(context.getResources().getString(R.string.houseNo) , "pudupally");
+        editor.putString(context.getResources().getString(R.string.locality) , "chambravatoom");
+        editor.putString(context.getResources().getString(R.string.landmark) , "Green Land Autditorium");
+        editor.putString(context.getResources().getString(R.string.district) , "Malappuram");
+        editor.commit();
+
 
     }
 

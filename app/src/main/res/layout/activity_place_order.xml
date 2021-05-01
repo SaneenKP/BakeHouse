@@ -105,20 +105,28 @@
                     android:layout_marginLeft="10dp"
                     />
 
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="House No"
-                    android:id="@+id/Add_houseNo"
+                    android:hint="@string/houseNo"
+                    android:id="@+id/Add_name"
                     android:layout_below="@id/AddTv"/>
 
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="Locality"
+                    android:hint="@string/houseNo"
+                    android:id="@+id/Add_houseNo"
+                    android:layout_below="@id/Add_name"/>
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:hint="@string/locality"
                     android:id="@+id/Add_locality"
                     android:layout_below="@id/Add_houseNo"/>
 
@@ -126,7 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="Landmark"
+                    android:hint="@string/landmark"
                     android:id="@+id/Add_landmark"
                     android:layout_below="@id/Add_locality"/>
 
@@ -134,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="District"
+                    android:hint="@string/district"
                     android:id="@+id/Add_district"
                     android:layout_below="@id/Add_landmark"/>
 

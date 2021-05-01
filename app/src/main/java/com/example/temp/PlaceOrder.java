@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,14 +28,18 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.HashMap;
+
 public class PlaceOrder extends AppCompatActivity {
 
     private TextView payableAmount;
     private TextView longitude , lattitude;
-    private EditText Add_houseNo , Add_locality , Add_landmark , Add_district;
+    private EditText Add_name , Add_houseNo , Add_locality , Add_landmark , Add_district;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button pay_and_order , cash_on_delivery;
     private int PERMISSION_ID = 1001;
+    private HashMap<String , String> address;
+    private SharedPreferenceConfig sharedPreferenceConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +55,42 @@ public class PlaceOrder extends AppCompatActivity {
         payableAmount = findViewById(R.id.payAmount);
         longitude = findViewById(R.id.longitude);
         lattitude = findViewById(R.id.lattitude);
+
+        Add_name = findViewById(R.id.Add_name);
         Add_houseNo = findViewById(R.id.Add_houseNo);
         Add_locality = findViewById(R.id.Add_locality);
         Add_landmark = findViewById(R.id.Add_landmark);
         Add_district = findViewById(R.id.Add_district);
+
+        address = new HashMap<>();
+
+        sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+        sharedPreferenceConfig.setDefault();
+        if (sharedPreferenceConfig!=null)
+        {
+            address = sharedPreferenceConfig.readUserAddress();
+            Add_name.setText(address.get(getApplicationContext().getResources().getString(R.string.Add_name)));
+            Add_houseNo.setText(address.get(getApplicationContext().getResources().getString(R.string.houseNo)));
+            Add_locality.setText(address.get(getApplicationContext().getResources().getString(R.string.locality)));
+            Add_landmark.setText(address.get(getApplicationContext().getResources().getString(R.string.landmark)));
+            Add_district.setText(address.get(getApplicationContext().getResources().getString(R.string.district)));
+        }
+
 
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         payableAmount.setText(Integer.toString(totalAmount) + " \u20B9");
 
         getLastLocation();
+
+        pay_and_order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startRazorPay = new Intent(PlaceOrder.this , RazorpayPayment.class);
+                startRazorPay.putExtra("payableAmount" ,Integer.toString(totalAmount) );
+                startActivity(startRazorPay);
+            }
+        });
 
     }
 
