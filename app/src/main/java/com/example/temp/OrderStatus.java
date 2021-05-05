@@ -19,7 +19,6 @@ public class OrderStatus extends AppCompatActivity {
 
     private TextView orderPlaced , orderCompleted , orderPicked ,orderDelivered;
     private DatabaseReference databaseReference;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private String orderKey;
 
 
@@ -32,22 +31,13 @@ public class OrderStatus extends AppCompatActivity {
         orderCompleted = findViewById(R.id.orderCompleted);
         orderDelivered = findViewById(R.id.orderDelivered);
         orderPicked = findViewById(R.id.orderPicked);
-
-        swipeRefreshLayout = findViewById(R.id.refreshLayout);
-
+        
         Intent razorpaydata = this.getIntent();
         orderKey = razorpaydata.getStringExtra("orderKey");
 
         getOrderStatus();
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getOrderStatus();
 
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
 
     }
 
