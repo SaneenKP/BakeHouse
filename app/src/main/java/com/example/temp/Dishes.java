@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,39 +57,39 @@ public class Dishes extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Date").child("Food").child(hotelKey).child("Dish");
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+       databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot snapshot) {
+               for (DataSnapshot ds : snapshot.getChildren()){
 
-                for (DataSnapshot ds : snapshot.getChildren()){
+                   DishDetails dishDetails = ds.getValue(DishDetails.class);
+                   dishKeyList.add(ds.getKey());
+                   dishList.add(dishDetails);
+               }
 
-                    DishDetails dishDetails = ds.getValue(DishDetails.class);
-                    dishKeyList.add(ds.getKey());
-                    dishList.add(dishDetails);
-                }
+               DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
+                   @Override
+                   public void getCounterValue(int[] value, String[] keys , JSONObject dishValues) {
 
-                DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
-                    @Override
-                    public void getCounterValue(int[] value, String[] keys , JSONObject dishValues) {
+                       dishValuesJSON = dishValues;
+                       TOTAL_AMOUNT = 0;
 
-                        dishValuesJSON = dishValues;
-                        TOTAL_AMOUNT = 0;
+                       for (int x : value)
+                           TOTAL_AMOUNT += x;
+                       totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+                   }
+               });
 
-                        for (int x : value)
-                            TOTAL_AMOUNT += x;
-                        totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
-                    }
-                });
+               dishes.setLayoutManager(layoutManager);
+               dishes.setAdapter(dishesAdapter);
+           }
 
-                dishes.setLayoutManager(layoutManager);
-                dishes.setAdapter(dishesAdapter);
-            }
+           @Override
+           public void onCancelled(@NonNull DatabaseError error) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+           }
+       });
 
-            }
-        });
 
         totalButton.setOnClickListener(new View.OnClickListener() {
             @Override

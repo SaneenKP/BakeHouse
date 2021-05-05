@@ -39,7 +39,7 @@ public class Hotels extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Date").child("Food");
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -53,6 +53,7 @@ public class Hotels extends AppCompatActivity {
                 HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys);
                 hotels.setLayoutManager(layoutManager);
                 hotels.setAdapter(hotelViewAdapter);
+
             }
 
             @Override

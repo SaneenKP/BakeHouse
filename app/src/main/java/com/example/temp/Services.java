@@ -40,7 +40,7 @@ public class Services extends AppCompatActivity {
 
         firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child("Date").child("Services");
 
-        firebaseRealtimeDatabase.addValueEventListener(new ValueEventListener() {
+        firebaseRealtimeDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -48,7 +48,7 @@ public class Services extends AppCompatActivity {
                 {
 
                     ServiceDetails sd =  dataSnapshot.getValue(ServiceDetails.class);
-                   servicesName.add(sd);
+                    servicesName.add(sd);
                     serviceKeys.add(dataSnapshot.getKey());
                 }
                 ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext() , servicesName);
@@ -61,6 +61,7 @@ public class Services extends AppCompatActivity {
 
             }
         });
+        
 
 
         services.setOnItemClickListener(new AdapterView.OnItemClickListener() {

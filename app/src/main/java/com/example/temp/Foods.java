@@ -46,8 +46,6 @@ public class Foods extends AppCompatActivity {
                             String desc = ds.child("description").getValue(String.class);
                             String number = ds.child("number").getValue(Long.class).toString();
                             String profilepic = ds.child("profile pic").getValue(String.class);
-
-
                         }
                     }
             }

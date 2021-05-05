@@ -31,7 +31,7 @@ public class OrderStatus extends AppCompatActivity {
         orderCompleted = findViewById(R.id.orderCompleted);
         orderDelivered = findViewById(R.id.orderDelivered);
         orderPicked = findViewById(R.id.orderPicked);
-        
+
         Intent razorpaydata = this.getIntent();
         orderKey = razorpaydata.getStringExtra("orderKey");
 
