@@ -109,7 +109,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="@string/houseNo"
+                    android:hint="@string/Add_name"
                     android:id="@+id/Add_name"
                     android:layout_below="@id/AddTv"/>
 
@@ -126,8 +126,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="@string/locality"
-                    android:id="@+id/Add_locality"
+                    android:hint="@string/houseName"
+                    android:id="@+id/Add_houseName"
                     android:layout_below="@id/Add_houseNo"/>
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -136,14 +136,14 @@
                     android:layout_margin="20dp"
                     android:hint="@string/landmark"
                     android:id="@+id/Add_landmark"
-                    android:layout_below="@id/Add_locality"/>
+                    android:layout_below="@id/Add_houseName"/>
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="@string/district"
-                    android:id="@+id/Add_district"
+                    android:hint="@string/street"
+                    android:id="@+id/Add_street"
                     android:layout_below="@id/Add_landmark"/>
 
 

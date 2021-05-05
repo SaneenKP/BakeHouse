@@ -24,13 +24,22 @@
 
     <string name="Add_name">Name</string>
     <string name="houseNo">House No</string>
-    <string name="locality">Locality</string>
+    <string name="houseName">House Name</string>
     <string name="landmark">Landmark</string>
-    <string name="district">District</string>
+    <string name="street">Street</string>
 
     <!-- Razor pay key id-->
 
     <string name="keyId"></string>
+
+     <!-- Order status activity text -->
+
+    <string name="headText">For Enquiry Call 7096469416</string>
+    <string name="placed">Order Placed</string>
+    <string name="completed">Order Completed</string>
+    <string name="pickUp">Order Pickup</string>
+    <string name="delivered">Order Delivered</string>
+
 
 
 </resources>

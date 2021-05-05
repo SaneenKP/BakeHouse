@@ -1,4 +1,4 @@
-package com.example.temp;
+ package com.example.temp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,19 +28,31 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
-public class PlaceOrder extends AppCompatActivity {
+ public class PlaceOrder extends AppCompatActivity {
 
     private TextView payableAmount;
-    private TextView longitude , lattitude;
-    private EditText Add_name , Add_houseNo , Add_locality , Add_landmark , Add_district;
+    private TextView lngt, latt;
+    private String latitude , longitude;
+    private EditText Add_name , Add_houseNo , Add_housename, Add_landmark , Add_street;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button pay_and_order , cash_on_delivery;
-    private int PERMISSION_ID = 1001;
+    private int PERMISSION_ID = 1001 , totalAmount;
     private HashMap<String , String> address;
     private SharedPreferenceConfig sharedPreferenceConfig;
+    private OrderDetails orderDetails;
+    private String dishDetails , hotelKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +60,25 @@ public class PlaceOrder extends AppCompatActivity {
         setContentView(R.layout.activity_place_order);
 
         Bundle b = getIntent().getExtras();
-        int totalAmount = b.getInt("totalAmount");
+        totalAmount = b.getInt("totalAmount");
+        dishDetails = b.getString("dishDetails");
+        hotelKey = b.getString("hotelKey");
+
+
+        orderDetails = new OrderDetails();
 
         pay_and_order = findViewById(R.id.PAD);
         cash_on_delivery = findViewById(R.id.COD);
 
         payableAmount = findViewById(R.id.payAmount);
-        longitude = findViewById(R.id.longitude);
-        lattitude = findViewById(R.id.lattitude);
+        lngt = findViewById(R.id.longitude);
+        latt = findViewById(R.id.lattitude);
 
         Add_name = findViewById(R.id.Add_name);
         Add_houseNo = findViewById(R.id.Add_houseNo);
-        Add_locality = findViewById(R.id.Add_locality);
+        Add_housename = findViewById(R.id.Add_houseName);
         Add_landmark = findViewById(R.id.Add_landmark);
-        Add_district = findViewById(R.id.Add_district);
+        Add_street = findViewById(R.id.Add_street);
 
         address = new HashMap<>();
 
@@ -71,11 +89,10 @@ public class PlaceOrder extends AppCompatActivity {
             address = sharedPreferenceConfig.readUserAddress();
             Add_name.setText(address.get(getApplicationContext().getResources().getString(R.string.Add_name)));
             Add_houseNo.setText(address.get(getApplicationContext().getResources().getString(R.string.houseNo)));
-            Add_locality.setText(address.get(getApplicationContext().getResources().getString(R.string.locality)));
+            Add_housename.setText(address.get(getApplicationContext().getResources().getString(R.string.houseName)));
             Add_landmark.setText(address.get(getApplicationContext().getResources().getString(R.string.landmark)));
-            Add_district.setText(address.get(getApplicationContext().getResources().getString(R.string.district)));
+            Add_street.setText(address.get(getApplicationContext().getResources().getString(R.string.street)));
         }
-
 
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -86,13 +103,85 @@ public class PlaceOrder extends AppCompatActivity {
         pay_and_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setPod();
+                setOrderDetails();
                 Intent startRazorPay = new Intent(PlaceOrder.this , RazorpayPayment.class);
-                startRazorPay.putExtra("payableAmount" ,Integer.toString(totalAmount) );
+               startRazorPay.putExtra("orderDetails" , orderDetails);
+               startRazorPay.putExtra("dishDetails" , dishDetails);
                 startActivity(startRazorPay);
             }
         });
 
+        cash_on_delivery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setCod();
+                setOrderDetails();
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Orders");
+                String key = databaseReference.push().getKey();
+                databaseReference.child(key).setValue(orderDetails);
+                setDishes(key , databaseReference);
+
+            }
+        });
+
     }
+
+    private void setDishes(String key , DatabaseReference databaseReference)
+    {
+        try {
+            JSONObject orderDishes = new JSONObject(dishDetails);
+            for (int i = 0 ; i < orderDishes.names().length() ; i++)
+            {
+                String Quantity = orderDishes.getString(orderDishes.names().getString(i));
+                String dishID = orderDishes.names().getString(i);
+
+            databaseReference.child(key).child("Dishes").child(dishID).child("Quantity").setValue(Quantity);
+                Log.v("THE DISHES", "key = " + dishID + " value = " + Quantity);
+
+            }
+
+        }catch (Exception e){}
+
+    }
+
+    private void setOrderDetails()
+    {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        String date = dateFormat.format(Calendar.getInstance().getTime());
+        String time = timeFormat.format(Calendar.getInstance().getTime());
+
+        orderDetails.setHotelId(hotelKey);
+        orderDetails.setTotal(Integer.toString(totalAmount));
+        orderDetails.setDate(date);
+        orderDetails.setTime(time);
+        orderDetails.setLatitude(latitude);
+        orderDetails.setLongitude(longitude);
+        orderDetails.setName(Add_name.getText().toString());
+        orderDetails.setHouseNo(Add_houseNo.getText().toString());
+        orderDetails.setHouseName(Add_housename.getText().toString());
+        orderDetails.setLandmark(Add_landmark.getText().toString());
+        orderDetails.setStreet(Add_street.getText().toString());
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        orderDetails.setUserId(user.getUid());
+
+    }
+
+    private void setCod()
+    {
+        orderDetails.setCOD("yes");
+        orderDetails.setPOD(("no"));
+    }
+    private void setPod()
+    {
+        orderDetails.setPOD("yes");
+        orderDetails.setCOD("no");
+
+    }
+
 
     @SuppressLint("MissingPermission")
     private void getLastLocation()
@@ -112,8 +201,10 @@ public class PlaceOrder extends AppCompatActivity {
                         }
                         else
                         {
-                            lattitude.setText(location.getLatitude()+" ");
-                            longitude.setText(location.getLongitude()+" ");
+                            latitude = location.getLatitude()+"";
+                            longitude = location.getLongitude()+"";
+                            latt.setText(latitude);
+                            lngt.setText(longitude);
 
                         }
                     }
@@ -150,8 +241,8 @@ public class PlaceOrder extends AppCompatActivity {
         @Override
         public void onLocationResult(LocationResult locationResult) {
            Location location = locationResult.getLastLocation();
-           lattitude.setText("Latitude = " + location.getLatitude() + " ");
-           longitude.setText("Longitutde" + location.getLongitude()+ " ");
+           latt.setText("Latitude = " + location.getLatitude() + " ");
+           lngt.setText("Longitutde" + location.getLongitude()+ " ");
         }
     };
 

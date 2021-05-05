@@ -18,10 +18,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class Dishes extends AppCompatActivity {
 
@@ -30,7 +30,11 @@ public class Dishes extends AppCompatActivity {
     private List<DishDetails> dishList;
     private DatabaseReference databaseReference;
     private Button totalButton;
+    private List<String> dishKeyList;
     private int TOTAL_AMOUNT = 0;
+    private String hotelKey;
+    private JSONObject dishValuesJSON , finalSelectedDishes;
+
 
 
 
@@ -42,9 +46,10 @@ public class Dishes extends AppCompatActivity {
         dishes = findViewById(R.id.dishes);
         layoutManager = new LinearLayoutManager(this);
         dishList = new ArrayList<>();
+        dishKeyList = new ArrayList<>();
 
         Bundle b = getIntent().getExtras();
-        String hotelKey = b.getString("hotel_key");
+        hotelKey = b.getString("hotel_key");
 
         totalButton = findViewById(R.id.total_button);
 
@@ -57,22 +62,23 @@ public class Dishes extends AppCompatActivity {
                 for (DataSnapshot ds : snapshot.getChildren()){
 
                     DishDetails dishDetails = ds.getValue(DishDetails.class);
+                    dishKeyList.add(ds.getKey());
                     dishList.add(dishDetails);
-                    Log.d("DISH DETAILS", dishDetails.getName());
                 }
 
-                DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, new totalCounterValueInterface() {
+                DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
                     @Override
-                    public void getCounterValue(int[] value) {
+                    public void getCounterValue(int[] value, String[] keys , JSONObject dishValues) {
 
+                        dishValuesJSON = dishValues;
                         TOTAL_AMOUNT = 0;
+
                         for (int x : value)
                             TOTAL_AMOUNT += x;
                         totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
-
-
                     }
                 });
+
                 dishes.setLayoutManager(layoutManager);
                 dishes.setAdapter(dishesAdapter);
             }
@@ -93,7 +99,22 @@ public class Dishes extends AppCompatActivity {
                 }
                 else
                 {
+                    finalSelectedDishes = new JSONObject();
+                    for (String x : dishKeyList)
+                    {
+                        try {
+                            String quantity = dishValuesJSON.getString(x);
+                            if (!quantity.equals("0"))
+                            {
+                                finalSelectedDishes.put(x , quantity);
+                            }
+                        }catch (Exception e){}
+
+                    }
+
                     Intent openPlaceOrderSection = new Intent(Dishes.this, PlaceOrder.class);
+                    openPlaceOrderSection.putExtra("dishDetails" , finalSelectedDishes.toString());
+                    openPlaceOrderSection.putExtra("hotelKey" , hotelKey);
                     openPlaceOrderSection.putExtra("totalAmount" , TOTAL_AMOUNT);
                     startActivity(openPlaceOrderSection);
 

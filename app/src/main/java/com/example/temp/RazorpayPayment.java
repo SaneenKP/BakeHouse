@@ -1,23 +1,36 @@
 package com.example.temp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.razorpay.Checkout;
 import com.razorpay.PaymentResultListener;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class RazorpayPayment extends AppCompatActivity implements PaymentResultListener {
 
     private Button pay;
     private TextView paymentId;
+    private OrderDetails orderDetails;
+    private String dishDetails;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,17 +38,34 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
         setContentView(R.layout.activity_razorpay_payment);
         Checkout.preload(getApplicationContext());
 
-        pay = findViewById(R.id.pay);
-        paymentId = findViewById(R.id.paymentId);
 
-        Bundle b = getIntent().getExtras();
-        String payableAmount = b.getString("payableAmount");
+        Intent getOrderDetails = getIntent();
+         orderDetails = getOrderDetails.getParcelableExtra("orderDetails");
+        dishDetails = getOrderDetails.getStringExtra("dishDetails");
 
-       startPayment(payableAmount);
+        startPayment(orderDetails.getTotal() , orderDetails.getName());
 
     }
 
-    public void startPayment(String payableAmount) {
+    private void setDishes(String key , DatabaseReference databaseReference)
+    {
+        try {
+            JSONObject orderDishes = new JSONObject(dishDetails);
+            for (int i = 0 ; i < orderDishes.names().length() ; i++)
+            {
+                String Quantity = orderDishes.getString(orderDishes.names().getString(i));
+                String dishID = orderDishes.names().getString(i);
+
+                databaseReference.child(key).child("Dishes").child(dishID).child("Quantity").setValue(Quantity);
+                Log.v("THE DISHES", "key = " + dishID + " value = " + Quantity);
+
+            }
+
+        }catch (Exception e){}
+
+    }
+
+    public void startPayment(String payableAmount , String name) {
 
         payableAmount = Integer.toString(Integer.parseInt(payableAmount)*100);
         Checkout checkout = new Checkout();
@@ -48,7 +78,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
         try {
 
             JSONObject options = new JSONObject();
-            options.put("name", "food app");
+            options.put("name", name);
             options.put("description", "Reference No. #123456");
             options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
            // options.put("order_id", "order_DBJOWzybf0sJbb");//from response of step 3.
@@ -56,7 +86,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
             options.put("currency", "INR");
             options.put("amount", payableAmount);//pass amount in currency subunits
             options.put("prefill.email", "gaurav.kumar@example.com");
-            options.put("prefill.contact","7096469416");
+            options.put("prefill.contact", FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber() );
             JSONObject retryObj = new JSONObject();
             retryObj.put("enabled", true);
             retryObj.put("max_count", 4);
@@ -72,9 +102,16 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
     @Override
     public void onPaymentSuccess(String s) {
 
-        paymentId.setText("Succesfully completed = " + s);
+        orderDetails.setTransactionId(s);
+        DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Orders");
+        String orderKey = firebaseDatabase.push().getKey();
+        firebaseDatabase.child(orderKey).setValue(orderDetails);
+        setDishes(orderKey , firebaseDatabase);
 
-
+        Intent orderStatusActivity = new Intent(RazorpayPayment.this , OrderStatus.class);
+        orderStatusActivity.putExtra("orderKey" , orderKey);
+        startActivity(orderStatusActivity);
+        paymentId.setText("Successfully completed = " + s);
     }
 
     @Override

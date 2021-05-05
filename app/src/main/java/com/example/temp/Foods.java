@@ -47,10 +47,7 @@ public class Foods extends AppCompatActivity {
                             String number = ds.child("number").getValue(Long.class).toString();
                             String profilepic = ds.child("profile pic").getValue(String.class);
 
-                            Log.d("number" , number);
-                            Log.d("address" ,  address);
-                            Log.d("desc" ,desc);
-                            Log.d("profile" , profilepic);
+
                         }
                     }
             }

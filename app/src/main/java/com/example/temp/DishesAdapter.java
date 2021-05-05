@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,22 +15,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHolder> {
 
     private Context context;
     private List<DishDetails> list;
-    private totalCounterValueInterface totalCounterValueInterface;
+    private List<String> dishKeyList;
+    private dishValuesInterface dishValuesInterface;
     private int TOTAL_COUNT = 0;
     private int[] priceArray;
+    private String[] keyList;
+    private JSONObject dishValues;
 
 
-    public DishesAdapter(Context context, List<DishDetails> list , totalCounterValueInterface totalCounterValueInterface) {
+    public DishesAdapter(Context context, List<DishDetails> list, List<String> dishKeyList, dishValuesInterface dishValuesInterface) {
         this.context = context;
         this.list = list;
         this.priceArray = new int[list.size()];
-        this.totalCounterValueInterface = totalCounterValueInterface;
+        this.keyList = new String[dishKeyList.size()];
+        this.dishKeyList = dishKeyList;
+        this.dishValuesInterface = dishValuesInterface;
+        dishValues = new JSONObject();
     }
 
 
@@ -55,20 +62,31 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
         holder.dec.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 int count = Integer.parseInt(holder.counter.getText().toString());
                 if (count != 0)
                     count--;
 
-                holder.counter.setText(Integer.toString(count));
+                holder.counter.setText(count+"");
 
                 TOTAL_COUNT = count*list.get(holder.getAdapterPosition()).getPrice();
                 priceArray[holder.getAdapterPosition()] = TOTAL_COUNT;
 
-                Log.d("Total count", Integer.toString(TOTAL_COUNT));
-                Log.d("price array" , Integer.toString(priceArray[holder.getAdapterPosition()]));
 
-                totalCounterValueInterface.getCounterValue(priceArray);
+                try {
+                    dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
+                }catch (Exception e)
+                {}
+
+
+               /* if (holder.counter.getText() == Integer.toString(0))
+                    keyList[holder.getAdapterPosition()] = "";
+                else
+                    keyList[holder.getAdapterPosition()] = dishKeyList.get(holder.getAdapterPosition());*/
+
+                dishValuesInterface.getCounterValue(priceArray , keyList,dishValues);
+
 
             }
         });
@@ -88,7 +106,17 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
                 Log.d("Total count", Integer.toString(TOTAL_COUNT));
                 Log.d("price array" , Integer.toString(priceArray[holder.getAdapterPosition()]));
 
-                totalCounterValueInterface.getCounterValue(priceArray);
+                try {
+                    dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
+                }catch (Exception e)
+                {}
+
+               /* if (holder.counter.getText() == Integer.toString(0))
+                    keyList[holder.getAdapterPosition()] = "";
+                else
+                    keyList[holder.getAdapterPosition()] = dishKeyList.get(holder.getAdapterPosition());*/
+
+                dishValuesInterface.getCounterValue(priceArray , keyList, dishValues);
 
             }
         });
