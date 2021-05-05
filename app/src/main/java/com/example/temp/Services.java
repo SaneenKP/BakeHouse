@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,11 +41,11 @@ public class Services extends AppCompatActivity {
         serviceKeys = new ArrayList<>();
 
         firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child("Date").child("Services");
-
-        firebaseRealtimeDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        
+        firebaseRealtimeDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                DataSnapshot snapshot = task.getResult();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
 
@@ -55,15 +57,9 @@ public class Services extends AppCompatActivity {
                 services.setAdapter(servicesViewAdapter);
 
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
         });
+
         
-
-
         services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
