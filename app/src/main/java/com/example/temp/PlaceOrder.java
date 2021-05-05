@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -30,7 +32,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -38,16 +39,19 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
  public class PlaceOrder extends AppCompatActivity {
 
     private TextView payableAmount;
-    private TextView lngt, latt;
-    private String latitude , longitude;
+    private TextView LocationAddress;
+    private Double latitude, longitude;
     private EditText Add_name , Add_houseNo , Add_housename, Add_landmark , Add_street;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button pay_and_order , cash_on_delivery;
@@ -67,6 +71,7 @@ import java.util.HashMap;
         dishDetails = b.getString("dishDetails");
         hotelKey = b.getString("hotelKey");
 
+        LocationAddress = findViewById(R.id.address);
 
         orderDetails = new OrderDetails();
 
@@ -74,8 +79,6 @@ import java.util.HashMap;
         cash_on_delivery = findViewById(R.id.COD);
 
         payableAmount = findViewById(R.id.payAmount);
-        lngt = findViewById(R.id.longitude);
-        latt = findViewById(R.id.lattitude);
 
         Add_name = findViewById(R.id.Add_name);
         Add_houseNo = findViewById(R.id.Add_houseNo);
@@ -191,8 +194,8 @@ import java.util.HashMap;
         orderDetails.setTotal(Integer.toString(totalAmount));
         orderDetails.setDate(date);
         orderDetails.setTime(time);
-        orderDetails.setLatitude(latitude);
-        orderDetails.setLongitude(longitude);
+        orderDetails.setLatitude(latitude+"");
+        orderDetails.setLongitude(longitude+"");
         orderDetails.setName(Add_name.getText().toString());
         orderDetails.setHouseNo(Add_houseNo.getText().toString());
         orderDetails.setHouseName(Add_housename.getText().toString());
@@ -216,8 +219,29 @@ import java.util.HashMap;
 
     }
 
+     private String getAddress(Context context , double lattitude , double longitude){
 
-    @SuppressLint("MissingPermission")
+        String address=  null;
+        try {
+
+            Geocoder geocoder = new Geocoder(context , Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(lattitude , longitude , 1);
+            if (addresses.size() >0)
+            {
+                Address address1 = addresses.get(0);
+                address = address1.getAddressLine(0);
+            }
+
+        }catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return address;
+
+     }
+
+     @SuppressLint("MissingPermission")
     private void getLastLocation()
     {
         if (checkPermissions())
@@ -235,11 +259,10 @@ import java.util.HashMap;
                         }
                         else
                         {
-                            latitude = location.getLatitude()+"";
-                            longitude = location.getLongitude()+"";
-                            latt.setText(latitude);
-                            lngt.setText(longitude);
-
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            String address = getAddress(getApplicationContext() , latitude, longitude);
+                            LocationAddress.setText(address);
                         }
                     }
                 });
@@ -275,8 +298,6 @@ import java.util.HashMap;
         @Override
         public void onLocationResult(LocationResult locationResult) {
            Location location = locationResult.getLastLocation();
-           latt.setText("Latitude = " + location.getLatitude() + " ");
-           lngt.setText("Longitutde" + location.getLongitude()+ " ");
         }
     };
 

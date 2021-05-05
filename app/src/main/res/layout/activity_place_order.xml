@@ -66,7 +66,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/longitude"
+                android:id="@+id/address"
                 android:layout_below="@+id/locTv"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="10dp"
@@ -74,21 +74,11 @@
                 android:textSize="22sp"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lattitude"
-                android:layout_below="@+id/longitude"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:text="this is the location of the curretn user"
-                android:textSize="22sp"
-                />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/lattitude"
+                android:layout_below="@id/address"
                 android:id="@+id/location_layuot"
                 >
 
