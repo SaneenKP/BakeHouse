@@ -26,8 +26,6 @@ import java.util.Map;
 
 public class RazorpayPayment extends AppCompatActivity implements PaymentResultListener {
 
-    private Button pay;
-    private TextView paymentId;
     private OrderDetails orderDetails;
     private String dishDetails;
 
@@ -111,13 +109,13 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
         Intent orderStatusActivity = new Intent(RazorpayPayment.this , OrderStatus.class);
         orderStatusActivity.putExtra("orderKey" , orderKey);
         startActivity(orderStatusActivity);
-        paymentId.setText("Successfully completed = " + s);
     }
 
     @Override
     public void onPaymentError(int i, String s) {
 
-        paymentId.setText("Failed  = " + s);
+            Toast.makeText(getApplicationContext() , "Payment Failed .. " + s , Toast.LENGTH_LONG).show();
+
 
     }
 }

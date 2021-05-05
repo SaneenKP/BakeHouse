@@ -1,12 +1,14 @@
  package com.example.temp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -28,6 +30,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -109,6 +112,7 @@ import java.util.HashMap;
                startRazorPay.putExtra("orderDetails" , orderDetails);
                startRazorPay.putExtra("dishDetails" , dishDetails);
                 startActivity(startRazorPay);
+                finish();
             }
         });
 
@@ -117,15 +121,46 @@ import java.util.HashMap;
             public void onClick(View v) {
                 setCod();
                 setOrderDetails();
+                dialogBox();
+
+            }
+        });
+
+    }
+
+    private void dialogBox()
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are You Sure to place Order using Cash On Delivery ? ");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Orders");
                 String key = databaseReference.push().getKey();
                 databaseReference.child(key).setValue(orderDetails);
                 setDishes(key , databaseReference);
 
+                Intent orderStatus = new Intent(PlaceOrder.this , OrderStatus.class);
+                orderStatus.putExtra("orderKey" , key);
+                startActivity(orderStatus);
+                finish();
+
             }
         });
 
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void setDishes(String key , DatabaseReference databaseReference)
@@ -138,7 +173,6 @@ import java.util.HashMap;
                 String dishID = orderDishes.names().getString(i);
 
             databaseReference.child(key).child("Dishes").child(dishID).child("Quantity").setValue(Quantity);
-                Log.v("THE DISHES", "key = " + dishID + " value = " + Quantity);
 
             }
 

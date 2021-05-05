@@ -18,15 +18,16 @@ public class OrderDetails implements Parcelable {
     private String houseName;
     private String landmark;
     private String street;
-    private String placedIndex;
-    private String confirmedIndex;
-    private String pickupIndex;
-    private String deliveryIndex;
+    private String placedIndex = "no";
+    private String confirmedIndex = "no";
+    private String pickupIndex = "no";
+    private String deliveryIndex = "no";
     private String userId;
     private String COD;
     private String POD;
     private String transactionId;
     private String hotelId;
+
 
     public String getHotelId() {
         return hotelId;

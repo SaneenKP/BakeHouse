@@ -1,10 +1,11 @@
-package com.example.temp;
+ package com.example.temp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -23,11 +24,11 @@ public class OrderStatus extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_status);
 
+        orderPlaced = findViewById(R.id.orderPlaced);
         orderCompleted = findViewById(R.id.orderCompleted);
         orderDelivered = findViewById(R.id.orderDelivered);
         orderPicked = findViewById(R.id.orderPicked);
-        orderDelivered = findViewById(R.id.orderDelivered);
-        
+
         Intent razorpaydata = this.getIntent();
         String orderKey = razorpaydata.getStringExtra("orderKey");
 
@@ -37,7 +38,12 @@ public class OrderStatus extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                String 
+                    String placedIndex = snapshot.child("placedIndex").getValue(String.class);
+                    String confirmedIndex = snapshot.child("confirmedIndex").getValue(String.class);
+                    String pickupIndex = snapshot.child("pickupIndex").getValue(String.class);
+                    String deliveryIndex = snapshot.child("deliveryIndex").getValue(String.class);
+
+                    setStatus(placedIndex , confirmedIndex , pickupIndex , deliveryIndex);
 
 
             }
@@ -48,13 +54,15 @@ public class OrderStatus extends AppCompatActivity {
             }
         });
 
-
-        orderCompleted.setCompoundDrawablesWithIntrinsicBounds(R.drawable.cancelled, 0, 0, 0);
-
     }
 
-    private void setStatus(String key)
+    private void setStatus(String placedIndex , String confirmedIndex , String pickupIndex ,String deliveryIndex)
     {
+        orderPlaced.setCompoundDrawablesWithIntrinsicBounds(placedIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
+        orderCompleted.setCompoundDrawablesWithIntrinsicBounds(confirmedIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
+        orderPicked.setCompoundDrawablesWithIntrinsicBounds(pickupIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
+        orderDelivered.setCompoundDrawablesWithIntrinsicBounds(deliveryIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
 
     }
+
 }
