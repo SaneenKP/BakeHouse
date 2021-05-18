@@ -201,6 +201,7 @@ import java.util.Locale;
         orderDetails.setHouseName(Add_housename.getText().toString());
         orderDetails.setLandmark(Add_landmark.getText().toString());
         orderDetails.setStreet(Add_street.getText().toString());
+        orderDetails.setPhoneNumber(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         orderDetails.setUserId(user.getUid());

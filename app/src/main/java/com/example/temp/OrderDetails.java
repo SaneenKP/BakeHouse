@@ -27,7 +27,15 @@ public class OrderDetails implements Parcelable {
     private String POD;
     private String transactionId;
     private String hotelId;
+    private String phoneNumber;
 
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
     public String getHotelId() {
         return hotelId;
@@ -225,6 +233,7 @@ public class OrderDetails implements Parcelable {
         dest.writeString(POD);
         dest.writeString(transactionId);
         dest.writeString(hotelId);
+        dest.writeString(phoneNumber);
     }
 
     //constructor used for parcel
@@ -249,6 +258,7 @@ public class OrderDetails implements Parcelable {
         POD = parcel.readString();
         transactionId = parcel.readString();
         hotelId = parcel.readString();
+        phoneNumber = parcel.readString();
     }
 
 
