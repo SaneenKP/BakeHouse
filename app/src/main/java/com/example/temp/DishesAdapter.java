@@ -55,6 +55,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     @Override
     public void onBindViewHolder(@NonNull DishesAdapter.dishesHolder holder, int position) {
 
+        Log.d("ADAPTER SET", "ADPTER SETTTTt");
         Glide.with(context).load(list.get(position).getPic()).into(holder.dishImage);
         holder.dishName.setText(list.get(position).getName());
         holder.price.setText(Integer.toString(list.get(position).getPrice())+" \u20B9");
@@ -78,12 +79,6 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
                     dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
                 }catch (Exception e)
                 {}
-
-
-               /* if (holder.counter.getText() == Integer.toString(0))
-                    keyList[holder.getAdapterPosition()] = "";
-                else
-                    keyList[holder.getAdapterPosition()] = dishKeyList.get(holder.getAdapterPosition());*/
 
                 dishValuesInterface.getCounterValue(priceArray , keyList,dishValues);
 
@@ -111,10 +106,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
                 }catch (Exception e)
                 {}
 
-               /* if (holder.counter.getText() == Integer.toString(0))
-                    keyList[holder.getAdapterPosition()] = "";
-                else
-                    keyList[holder.getAdapterPosition()] = dishKeyList.get(holder.getAdapterPosition());*/
+
 
                 dishValuesInterface.getCounterValue(priceArray , keyList, dishValues);
 

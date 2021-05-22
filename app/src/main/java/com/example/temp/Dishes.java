@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,7 +31,7 @@ public class Dishes extends AppCompatActivity {
     private RecyclerView dishes;
     private RecyclerView.LayoutManager layoutManager;
     private List<DishDetails> dishList;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference , getDishDetailsReference;
     private Button totalButton;
     private List<String> dishKeyList;
     private int TOTAL_AMOUNT = 0;
@@ -55,40 +56,58 @@ public class Dishes extends AppCompatActivity {
 
         totalButton = findViewById(R.id.total_button);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Date").child("Food").child(hotelKey).child("Dish");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode)).child(hotelKey).child(getApplicationContext().getResources().getString(R.string.DishNode));
 
-       databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-           @Override
-           public void onDataChange(@NonNull DataSnapshot snapshot) {
-               for (DataSnapshot ds : snapshot.getChildren()){
+        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-                   DishDetails dishDetails = ds.getValue(DishDetails.class);
-                   dishKeyList.add(ds.getKey());
-                   dishList.add(dishDetails);
-               }
+                if (task.isSuccessful()){
 
-               DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
-                   @Override
-                   public void getCounterValue(int[] value, String[] keys , JSONObject dishValues) {
+                    for (DataSnapshot dishkeys : task.getResult().getChildren()){
 
-                       dishValuesJSON = dishValues;
-                       TOTAL_AMOUNT = 0;
+                        String key = dishkeys.getValue(String.class);
+                        getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
 
-                       for (int x : value)
-                           TOTAL_AMOUNT += x;
-                       totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
-                   }
-               });
+                        getDishDetailsReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                           @Override
+                           public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-               dishes.setLayoutManager(layoutManager);
-               dishes.setAdapter(dishesAdapter);
-           }
+                               if (task.isSuccessful()){
 
-           @Override
-           public void onCancelled(@NonNull DatabaseError error) {
+                                       DishDetails dishDetails = task.getResult().getValue(DishDetails.class);
+                                       dishKeyList.add(task.getResult().getKey());
+                                       dishList.add(dishDetails);
 
-           }
-       });
+                                   DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
+                                       @Override
+                                       public void getCounterValue(int[] value, String[] keys , JSONObject dishValues) {
+
+                                           dishValuesJSON = dishValues;
+                                           TOTAL_AMOUNT = 0;
+
+                                           for (int x : value)
+                                               TOTAL_AMOUNT += x;
+                                           totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+                                       }
+                                   });
+
+                                   dishes.setLayoutManager(layoutManager);
+                                   dishes.setAdapter(dishesAdapter);
+
+                               } else{
+                                   Toast.makeText(getApplicationContext() , "Sorry .. Data Couldnt be retrieved Check Internet Connection",Toast.LENGTH_LONG).show();
+                               }
+
+                           }
+                       }) ;
+                    }
+
+                }
+
+            }
+        });
+
 
 
         totalButton.setOnClickListener(new View.OnClickListener() {

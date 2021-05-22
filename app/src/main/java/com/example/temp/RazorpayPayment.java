@@ -59,7 +59,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
 
             }
 
-        }catch (Exception e){}
+        }catch (Exception e){Toast.makeText(getApplicationContext() , "got and Exception" + e.toString() , Toast.LENGTH_LONG).show();   }
 
     }
 

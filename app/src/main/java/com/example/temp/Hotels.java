@@ -37,7 +37,7 @@ public class Hotels extends AppCompatActivity {
         hotelsList = new ArrayList<>();
         hotelKeys = new ArrayList<>();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Date").child("Food");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode));
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
