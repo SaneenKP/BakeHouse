@@ -32,7 +32,7 @@
 
     <string name="keyId"></string>
 
-     <!-- Order status activity text -->
+    <!-- Order status activity text -->
 
     <string name="headText">For Enquiry Call 7096469416</string>
     <string name="placed">Order Placed</string>
@@ -45,7 +45,7 @@
     <string name="DishNode">Dishes</string>
     <string name="OrderNode">Order</string>
     <string name="HotelNode">Hotels</string>
-
+    <string name="title_activity_main2">MainActivity</string>
 
 
 </resources>

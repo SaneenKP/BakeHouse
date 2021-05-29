@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +33,7 @@ public class Hotels extends AppCompatActivity {
         setContentView(R.layout.activity_hotels);
 
         hotels = findViewById(R.id.hotels);
-        layoutManager = new LinearLayoutManager(this);
+        layoutManager =  new LinearLayoutManager(this);
 
         hotelsList = new ArrayList<>();
         hotelKeys = new ArrayList<>();
