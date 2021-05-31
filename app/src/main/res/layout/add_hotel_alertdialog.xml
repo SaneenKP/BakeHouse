@@ -34,6 +34,14 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Add Image"
+        android:id="@+id/addNewHotelImage"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Add"
         android:id="@+id/addNewHotel"
         android:layout_marginTop="20dp"
