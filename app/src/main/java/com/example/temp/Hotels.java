@@ -77,7 +77,7 @@ public class Hotels extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAlertDialog(R.layout.add_hotel_alertdialog);
+                showAlertDialog(null);
             }
         });
 
@@ -95,7 +95,14 @@ public class Hotels extends AppCompatActivity {
                     hotelKeys.add(ds.getKey());
                 }
 
-                HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys);
+                HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys , new editHotelinterface() {
+                    @Override
+                    public void openDialogBox(HotelDetails hotelDetails) {
+
+                        showAlertDialog(hotelDetails);
+
+                    }
+                });
                 hotels.setLayoutManager(layoutManager);
                 hotels.setAdapter(hotelViewAdapter);
 
@@ -189,10 +196,10 @@ public class Hotels extends AppCompatActivity {
 
     }
 
-    private void showAlertDialog(int layout){
+    private void showAlertDialog(HotelDetails hotelDetails){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View v = getLayoutInflater().inflate(layout , null);
+        View v = getLayoutInflater().inflate(R.layout.add_hotel_alertdialog , null);
         builder.setView(v);
         builder.setMessage("Add New Hotel ");
 
@@ -201,6 +208,12 @@ public class Hotels extends AppCompatActivity {
         EditText hotelLocation = v.findViewById(R.id.newHotelLocation);
         Button addHotel = v.findViewById(R.id.addNewHotel);
         Button addImage = v.findViewById(R.id.addNewHotelImage);
+
+        if (hotelDetails!=null){
+            hotelName.setText(hotelDetails.getHotel_name());
+            hotelAddress.setText(hotelDetails.getAddress());
+            hotelLocation.setText(hotelDetails.getLocation());
+        }
 
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,11 +238,11 @@ public class Hotels extends AppCompatActivity {
                 }else if(TextUtils.isEmpty(hotelLocation.getText())){
                     hotelLocation.setError("Please give the location");
                 }else{
-                    HotelDetails hotelDetails = new HotelDetails();
-                    hotelDetails.setHotel_name(hotelName.getText().toString());
-                    hotelDetails.setAddress(hotelAddress.getText().toString());
-                    hotelDetails.setLocation(hotelLocation.getText().toString());
-                    addNewHotel(hotelDetails);
+                    HotelDetails newHotelDetails = new HotelDetails();
+                    newHotelDetails.setHotel_name(hotelName.getText().toString());
+                    newHotelDetails.setAddress(hotelAddress.getText().toString());
+                    newHotelDetails.setLocation(hotelLocation.getText().toString());
+                    addNewHotel(newHotelDetails);
                 }
 
             }
