@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -116,6 +117,10 @@ public class Hotels extends AppCompatActivity {
         else{
 
             StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name());
+            dialog.dismiss();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            circularProgressIndicator.setVisibility(View.VISIBLE);
+            circularProgressIndicator.setProgress(0);
             hotelImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -133,10 +138,10 @@ public class Hotels extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
 
-                                                circularProgressIndicator.setProgress(0);
-                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
                                                 resultUri = null;
-                                                dialog.dismiss();
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                Toast.makeText(getApplicationContext(),"Hotel Uplaoded" , Toast.LENGTH_LONG).show();
 
                                             }else{
                                                 Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
