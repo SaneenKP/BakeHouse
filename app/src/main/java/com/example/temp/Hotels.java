@@ -11,9 +11,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +31,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -44,6 +49,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -125,7 +131,7 @@ public class Hotels extends AppCompatActivity {
             databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
             databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
 
-            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name()+key);
+            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name());
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             circularProgressIndicator.setVisibility(View.VISIBLE);
@@ -220,7 +226,7 @@ public class Hotels extends AppCompatActivity {
         }
         else{
 
-            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name()+key);
+            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name());
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             circularProgressIndicator.setVisibility(View.VISIBLE);
@@ -296,6 +302,28 @@ public class Hotels extends AppCompatActivity {
 
     }
 
+    private void deleteHotel(String name , String key){
+
+        StorageReference deleteHotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+name);
+
+        deleteHotelImage.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+                Toast.makeText(getApplicationContext() , "Successfully Deleted" , Toast.LENGTH_LONG).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext() , "Failed ..." + e.toString(),Toast.LENGTH_LONG).show();
+            }
+        });
+
+       databaseReference.child(key).removeValue();
+
+    }
+
 
     private void showAlertDialog(HotelDetails hotelDetails , String key , boolean updateStatus){
 
@@ -310,12 +338,26 @@ public class Hotels extends AppCompatActivity {
         EditText hotelLocation = v.findViewById(R.id.newHotelLocation);
         Button addHotel = v.findViewById(R.id.addNewHotel);
         Button addImage = v.findViewById(R.id.addNewHotelImage);
+        Button delete = v.findViewById(R.id.deleteHotel);
+        delete.setVisibility(View.INVISIBLE);
+
 
         if (updateStatus){
+            delete.setVisibility(View.VISIBLE);
             hotelName.setText(hotelDetails.getHotel_name());
             hotelAddress.setText(hotelDetails.getAddress());
             hotelLocation.setText(hotelDetails.getLocation());
+
         }
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                deleteHotel(hotelDetails.getHotel_name() , key);
+
+            }
+        });
 
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -349,7 +391,6 @@ public class Hotels extends AppCompatActivity {
                         updateHotel(newHotelDetails , key);
                     else
                         addNewHotel(newHotelDetails,key);
-
                 }
 
             }
@@ -359,6 +400,29 @@ public class Hotels extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
+    }
+
+    private String getBase64(String code){
+
+        byte[] data;
+        String result="";
+        try {
+            data = code.getBytes("UTF-8");
+            result = Base64.encodeToString(data, Base64.DEFAULT);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean isInternet(){
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+                return true;
+            } else {
+                return false;
+            }
     }
 
     @Override
