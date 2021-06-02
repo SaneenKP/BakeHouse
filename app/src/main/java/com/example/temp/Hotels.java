@@ -79,7 +79,7 @@ public class Hotels extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAlertDialog(null , null);
+                showAlertDialog(null , null , false);
             }
         });
 
@@ -101,7 +101,7 @@ public class Hotels extends AppCompatActivity {
                     @Override
                     public void openDialogBox(HotelDetails hotelDetails , String key) {
 
-                        showAlertDialog(hotelDetails , key);
+                        showAlertDialog(hotelDetails , key , true);
 
                     }
                 });
@@ -117,22 +117,20 @@ public class Hotels extends AppCompatActivity {
 
     }
 
-    private void updateHotel(HotelDetails hotelDetails){
+    private void updateHotel(HotelDetails hotelDetails , String key){
 
-    }
+        if (resultUri!=null){
 
-    private void addNewHotel(HotelDetails hotelDetails , String key){
+            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelName)).setValue(hotelDetails.getHotel_name());
+            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
+            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
 
-        if (resultUri == null && key == null){
-            Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();
-        }
-        else{
-
-            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name());
+            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name()+key);
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             circularProgressIndicator.setVisibility(View.VISIBLE);
             circularProgressIndicator.setProgress(0);
+
 
             hotelImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -147,19 +145,13 @@ public class Hotels extends AppCompatActivity {
 
                                     hotelDetails.setImage(task.getResult().toString());
 
-                                    if (key!=null){
-                                        databaseReference = databaseReference.child(key);
-                                    }
-                                    else{
-                                        databaseReference = databaseReference.push();
-                                    }
-
-                                    databaseReference.setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelImage)).setValue(hotelDetails.getImage()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
 
                                                 resultUri = null;
+
                                                 circularProgressIndicator.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                 Toast.makeText(getApplicationContext(),"Hotel Uploaded" , Toast.LENGTH_LONG).show();
@@ -205,15 +197,107 @@ public class Hotels extends AppCompatActivity {
                     circularProgressIndicator.setVisibility(View.INVISIBLE);
                 }
             });
+
+        }else{
+
+            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelName)).setValue(hotelDetails.getHotel_name());
+            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
+            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
+
+
+            Toast.makeText(getApplicationContext() , "Hotel Value Updated" , Toast.LENGTH_LONG).show();
+
+            dialog.dismiss();
         }
 
     }
 
 
+    private void addNewHotel(HotelDetails hotelDetails , String key){
+
+        if (resultUri == null && key == null){
+            Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();
+        }
+        else{
+
+            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name()+key);
+            dialog.dismiss();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            circularProgressIndicator.setVisibility(View.VISIBLE);
+            circularProgressIndicator.setProgress(0);
+
+            hotelImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if (task.isSuccessful()){
+
+                        hotelImage.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()){
+
+                                    hotelDetails.setImage(task.getResult().toString());
+
+                                    databaseReference.push().setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+
+                                                resultUri = null;
+
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                Toast.makeText(getApplicationContext(),"Hotel Uploaded" , Toast.LENGTH_LONG).show();
+
+                                            }else{
+                                                Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                            }
+                                        }
+                                    });
+
+                                }else
+                                {
+                                    Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                    circularProgressIndicator.setProgress(0);
+                                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        });
+
+                    }else{
+                        Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                        circularProgressIndicator.setProgress(0);
+                        circularProgressIndicator.setVisibility(View.INVISIBLE);
+
+                    }
+
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                    circularProgressIndicator.setVisibility(View.VISIBLE);
+                    double progress = (100*snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
+                    circularProgressIndicator.setProgressCompat((int)progress,true);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(getApplicationContext() , ""+e.getMessage() , Toast.LENGTH_LONG).show();
+                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                }
+            });
+
+        }
+
+    }
 
 
-
-    private void showAlertDialog(HotelDetails hotelDetails , String key){
+    private void showAlertDialog(HotelDetails hotelDetails , String key , boolean updateStatus){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View v = getLayoutInflater().inflate(R.layout.add_hotel_alertdialog , null);
@@ -227,7 +311,7 @@ public class Hotels extends AppCompatActivity {
         Button addHotel = v.findViewById(R.id.addNewHotel);
         Button addImage = v.findViewById(R.id.addNewHotelImage);
 
-        if (hotelDetails!=null && key !=null){
+        if (updateStatus){
             hotelName.setText(hotelDetails.getHotel_name());
             hotelAddress.setText(hotelDetails.getAddress());
             hotelLocation.setText(hotelDetails.getLocation());
@@ -261,7 +345,10 @@ public class Hotels extends AppCompatActivity {
                     newHotelDetails.setAddress(hotelAddress.getText().toString());
                     newHotelDetails.setLocation(hotelLocation.getText().toString());
 
-                    addNewHotel(newHotelDetails , key);
+                    if(updateStatus)
+                        updateHotel(newHotelDetails , key);
+                    else
+                        addNewHotel(newHotelDetails,key);
 
                 }
 

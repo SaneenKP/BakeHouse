@@ -48,4 +48,12 @@
     <string name="title_activity_main2">MainActivity</string>
 
 
+    <!-- Hotels node child for updating -->
+
+    <string name="hotelName">hotel_name</string>
+    <string name="hotelLocation">location</string>
+    <string name="hotelAddress">address</string>
+    <string name="hotelImage">image</string>
+
+
 </resources>
