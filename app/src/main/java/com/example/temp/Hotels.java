@@ -16,9 +16,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -77,7 +79,7 @@ public class Hotels extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAlertDialog(null);
+                showAlertDialog(null , null);
             }
         });
 
@@ -97,15 +99,14 @@ public class Hotels extends AppCompatActivity {
 
                 HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys , new editHotelinterface() {
                     @Override
-                    public void openDialogBox(HotelDetails hotelDetails) {
+                    public void openDialogBox(HotelDetails hotelDetails , String key) {
 
-                        showAlertDialog(hotelDetails);
+                        showAlertDialog(hotelDetails , key);
 
                     }
                 });
                 hotels.setLayoutManager(layoutManager);
                 hotels.setAdapter(hotelViewAdapter);
-
             }
 
             @Override
@@ -116,9 +117,13 @@ public class Hotels extends AppCompatActivity {
 
     }
 
-    private void addNewHotel(HotelDetails hotelDetails){
+    private void updateHotel(HotelDetails hotelDetails){
 
-        if (resultUri == null){
+    }
+
+    private void addNewHotel(HotelDetails hotelDetails , String key){
+
+        if (resultUri == null && key == null){
             Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();
         }
         else{
@@ -128,6 +133,7 @@ public class Hotels extends AppCompatActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             circularProgressIndicator.setVisibility(View.VISIBLE);
             circularProgressIndicator.setProgress(0);
+
             hotelImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -140,7 +146,15 @@ public class Hotels extends AppCompatActivity {
                                 if (task.isSuccessful()){
 
                                     hotelDetails.setImage(task.getResult().toString());
-                                    databaseReference.push().setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                                    if (key!=null){
+                                        databaseReference = databaseReference.child(key);
+                                    }
+                                    else{
+                                        databaseReference = databaseReference.push();
+                                    }
+
+                                    databaseReference.setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
@@ -148,7 +162,7 @@ public class Hotels extends AppCompatActivity {
                                                 resultUri = null;
                                                 circularProgressIndicator.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                Toast.makeText(getApplicationContext(),"Hotel Uplaoded" , Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(),"Hotel Uploaded" , Toast.LENGTH_LONG).show();
 
                                             }else{
                                                 Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
@@ -165,7 +179,6 @@ public class Hotels extends AppCompatActivity {
                                 }
                             }
                         });
-
 
                     }else{
                         Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
@@ -196,12 +209,17 @@ public class Hotels extends AppCompatActivity {
 
     }
 
-    private void showAlertDialog(HotelDetails hotelDetails){
+
+
+
+
+    private void showAlertDialog(HotelDetails hotelDetails , String key){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View v = getLayoutInflater().inflate(R.layout.add_hotel_alertdialog , null);
+
         builder.setView(v);
-        builder.setMessage("Add New Hotel ");
+        builder.setMessage(" Add New Hotel ");
 
         EditText hotelName = v.findViewById(R.id.newHotelName);
         EditText hotelAddress = v.findViewById(R.id.newHotelAddress);
@@ -209,7 +227,7 @@ public class Hotels extends AppCompatActivity {
         Button addHotel = v.findViewById(R.id.addNewHotel);
         Button addImage = v.findViewById(R.id.addNewHotelImage);
 
-        if (hotelDetails!=null){
+        if (hotelDetails!=null && key !=null){
             hotelName.setText(hotelDetails.getHotel_name());
             hotelAddress.setText(hotelDetails.getAddress());
             hotelLocation.setText(hotelDetails.getLocation());
@@ -242,7 +260,9 @@ public class Hotels extends AppCompatActivity {
                     newHotelDetails.setHotel_name(hotelName.getText().toString());
                     newHotelDetails.setAddress(hotelAddress.getText().toString());
                     newHotelDetails.setLocation(hotelLocation.getText().toString());
-                    addNewHotel(newHotelDetails);
+
+                    addNewHotel(newHotelDetails , key);
+
                 }
 
             }

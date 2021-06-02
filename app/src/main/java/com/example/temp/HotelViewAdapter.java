@@ -76,7 +76,7 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
             @Override
             public boolean onLongClick(View v) {
 
-                editHotelinterface.openDialogBox(list.get(holder.getAdapterPosition()));
+                editHotelinterface.openDialogBox(list.get(holder.getAdapterPosition()) , hotelKeys.get(holder.getAdapterPosition()));
 
                 return true;
             }

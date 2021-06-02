@@ -1,0 +1,166 @@
+[1mdiff --git a/app/src/main/java/com/example/temp/HotelViewAdapter.java b/app/src/main/java/com/example/temp/HotelViewAdapter.java[m
+[1mindex b673b6a..72f8317 100644[m
+[1m--- a/app/src/main/java/com/example/temp/HotelViewAdapter.java[m
+[1m+++ b/app/src/main/java/com/example/temp/HotelViewAdapter.java[m
+[36m@@ -76,7 +76,7 @@[m [mpublic class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote[m
+             @Override[m
+             public boolean onLongClick(View v) {[m
+ [m
+[31m-                editHotelinterface.openDialogBox(list.get(holder.getAdapterPosition()));[m
+[32m+[m[32m                editHotelinterface.openDialogBox(list.get(holder.getAdapterPosition()) , hotelKeys.get(holder.getAdapterPosition()));[m
+ [m
+                 return true;[m
+             }[m
+[1mdiff --git a/app/src/main/java/com/example/temp/Hotels.java b/app/src/main/java/com/example/temp/Hotels.java[m
+[1mindex a0838c0..16faa86 100644[m
+[1m--- a/app/src/main/java/com/example/temp/Hotels.java[m
+[1m+++ b/app/src/main/java/com/example/temp/Hotels.java[m
+[36m@@ -16,9 +16,11 @@[m [mimport android.os.Bundle;[m
+ import android.text.TextUtils;[m
+ import android.view.LayoutInflater;[m
+ import android.view.View;[m
+[32m+[m[32mimport android.view.ViewGroup;[m
+ import android.view.WindowManager;[m
+ import android.widget.Button;[m
+ import android.widget.EditText;[m
+[32m+[m[32mimport android.widget.LinearLayout;[m
+ import android.widget.ProgressBar;[m
+ import android.widget.RelativeLayout;[m
+ import android.widget.Toast;[m
+[36m@@ -77,7 +79,7 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+         fab.setOnClickListener(new View.OnClickListener() {[m
+             @Override[m
+             public void onClick(View v) {[m
+[31m-                showAlertDialog(null);[m
+[32m+[m[32m                showAlertDialog(null , null);[m
+             }[m
+         });[m
+ [m
+[36m@@ -97,15 +99,14 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+ [m
+                 HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys , new editHotelinterface() {[m
+                     @Override[m
+[31m-                    public void openDialogBox(HotelDetails hotelDetails) {[m
+[32m+[m[32m                    public void openDialogBox(HotelDetails hotelDetails , String key) {[m
+ [m
+[31m-                        showAlertDialog(hotelDetails);[m
+[32m+[m[32m                        showAlertDialog(hotelDetails , key);[m
+ [m
+                     }[m
+                 });[m
+                 hotels.setLayoutManager(layoutManager);[m
+                 hotels.setAdapter(hotelViewAdapter);[m
+[31m-[m
+             }[m
+ [m
+             @Override[m
+[36m@@ -116,9 +117,13 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+ [m
+     }[m
+ [m
+[31m-    private void addNewHotel(HotelDetails hotelDetails){[m
+[32m+[m[32m    private void updateHotel(HotelDetails hotelDetails){[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    private void addNewHotel(HotelDetails hotelDetails , String key){[m
+ [m
+[31m-        if (resultUri == null){[m
+[32m+[m[32m        if (resultUri == null && key == null){[m
+             Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();[m
+         }[m
+         else{[m
+[36m@@ -128,6 +133,7 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);[m
+             circularProgressIndicator.setVisibility(View.VISIBLE);[m
+             circularProgressIndicator.setProgress(0);[m
+[32m+[m
+             hotelImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {[m
+                 @Override[m
+                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {[m
+[36m@@ -140,7 +146,15 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+                                 if (task.isSuccessful()){[m
+ [m
+                                     hotelDetails.setImage(task.getResult().toString());[m
+[31m-                                    databaseReference.push().setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {[m
+[32m+[m
+[32m+[m[32m                                    if (key!=null){[m
+[32m+[m[32m                                        databaseReference = databaseReference.child(key);[m
+[32m+[m[32m                                    }[m
+[32m+[m[32m                                    else{[m
+[32m+[m[32m                                        databaseReference = databaseReference.push();[m
+[32m+[m[32m                                    }[m
+[32m+[m
+[32m+[m[32m                                    databaseReference.setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {[m
+                                         @Override[m
+                                         public void onComplete(@NonNull Task<Void> task) {[m
+                                             if (task.isSuccessful()){[m
+[36m@@ -148,7 +162,7 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+                                                 resultUri = null;[m
+                                                 circularProgressIndicator.setVisibility(View.INVISIBLE);[m
+                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);[m
+[31m-                                                Toast.makeText(getApplicationContext(),"Hotel Uplaoded" , Toast.LENGTH_LONG).show();[m
+[32m+[m[32m                                                Toast.makeText(getApplicationContext(),"Hotel Uploaded" , Toast.LENGTH_LONG).show();[m
+ [m
+                                             }else{[m
+                                                 Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();[m
+[36m@@ -166,7 +180,6 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+                             }[m
+                         });[m
+ [m
+[31m-[m
+                     }else{[m
+                         Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();[m
+                         circularProgressIndicator.setProgress(0);[m
+[36m@@ -196,12 +209,17 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+ [m
+     }[m
+ [m
+[31m-    private void showAlertDialog(HotelDetails hotelDetails){[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    private void showAlertDialog(HotelDetails hotelDetails , String key){[m
+ [m
+         AlertDialog.Builder builder = new AlertDialog.Builder(this);[m
+         View v = getLayoutInflater().inflate(R.layout.add_hotel_alertdialog , null);[m
+[32m+[m
+         builder.setView(v);[m
+[31m-        builder.setMessage("Add New Hotel ");[m
+[32m+[m[32m        builder.setMessage(" Add New Hotel ");[m
+ [m
+         EditText hotelName = v.findViewById(R.id.newHotelName);[m
+         EditText hotelAddress = v.findViewById(R.id.newHotelAddress);[m
+[36m@@ -209,7 +227,7 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+         Button addHotel = v.findViewById(R.id.addNewHotel);[m
+         Button addImage = v.findViewById(R.id.addNewHotelImage);[m
+ [m
+[31m-        if (hotelDetails!=null){[m
+[32m+[m[32m        if (hotelDetails!=null && key !=null){[m
+             hotelName.setText(hotelDetails.getHotel_name());[m
+             hotelAddress.setText(hotelDetails.getAddress());[m
+             hotelLocation.setText(hotelDetails.getLocation());[m
+[36m@@ -242,7 +260,9 @@[m [mpublic class Hotels extends AppCompatActivity {[m
+                     newHotelDetails.setHotel_name(hotelName.getText().toString());[m
+                     newHotelDetails.setAddress(hotelAddress.getText().toString());[m
+                     newHotelDetails.setLocation(hotelLocation.getText().toString());[m
+[31m-                    addNewHotel(newHotelDetails);[m
+[32m+[m
+[32m+[m[32m                    addNewHotel(newHotelDetails , key);[m
+[32m+[m
+                 }[m
+ [m
+             }[m
+[1mdiff --git a/app/src/main/java/com/example/temp/editHotelinterface.java b/app/src/main/java/com/example/temp/editHotelinterface.java[m
+[1mindex 2c5bd67..ed78019 100644[m
+[1m--- a/app/src/main/java/com/example/temp/editHotelinterface.java[m
+[1m+++ b/app/src/main/java/com/example/temp/editHotelinterface.java[m
+[36m@@ -2,6 +2,6 @@[m [mpackage com.example.temp;[m
+ [m
+ public interface editHotelinterface {[m
+ [m
+[31m-    void openDialogBox(HotelDetails hotelDetails);[m
+[32m+[m[32m    void openDialogBox(HotelDetails hotelDetails , String key);[m
+ [m
+ }[m
