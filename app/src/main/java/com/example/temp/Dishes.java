@@ -18,12 +18,9 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -98,7 +95,7 @@ public class Dishes extends AppCompatActivity {
 
                                    DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
                                        @Override
-                                       public void getCounterValue(int[] value, String[] keys , JSONObject dishValues) {
+                                       public void getCounterValue(int[] value, String[] keys, JSONObject dishValues) {
 
                                            dishValuesJSON = dishValues;
                                            TOTAL_AMOUNT = 0;
@@ -106,6 +103,11 @@ public class Dishes extends AppCompatActivity {
                                            for (int x : value)
                                                TOTAL_AMOUNT += x;
                                            totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+                                       }
+                                   }, new EditDishInterface() {
+                                       @Override
+                                       public void editDish(DishDetails dishDetails, String key) {
+                                           showAlertDialog(dishDetails , key , true);
                                        }
                                    });
 
@@ -180,9 +182,13 @@ public class Dishes extends AppCompatActivity {
 
 
         if (updateStatus){
+
+            Log.d("dish details" , dishDetails.getName()) ;
+            Log.d("dish details" , dishDetails.getPrice()+"") ;
+
             delete.setVisibility(View.VISIBLE);
             dishName.setText(dishDetails.getName());
-            dishPrice.setText(dishDetails.getPrice());
+            dishPrice.setText(Integer.toString(dishDetails.getPrice()));
         }
 
         delete.setOnClickListener(new View.OnClickListener() {

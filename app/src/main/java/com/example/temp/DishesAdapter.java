@@ -29,15 +29,17 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     private int[] priceArray;
     private String[] keyList;
     private JSONObject dishValues;
+    private EditDishInterface editDishInterface;
 
 
-    public DishesAdapter(Context context, List<DishDetails> list, List<String> dishKeyList, dishValuesInterface dishValuesInterface) {
+    public DishesAdapter(Context context, List<DishDetails> list, List<String> dishKeyList, dishValuesInterface dishValuesInterface, EditDishInterface editDishInterface) {
         this.context = context;
         this.list = list;
         this.priceArray = new int[list.size()];
         this.keyList = new String[dishKeyList.size()];
         this.dishKeyList = dishKeyList;
         this.dishValuesInterface = dishValuesInterface;
+        this.editDishInterface = editDishInterface;
         dishValues = new JSONObject();
     }
 
@@ -55,10 +57,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     @Override
     public void onBindViewHolder(@NonNull DishesAdapter.dishesHolder holder, int position) {
 
-        Log.d("ADAPTER SET", "ADPTER SETTTTt");
+
         Glide.with(context).load(list.get(position).getPic()).into(holder.dishImage);
         holder.dishName.setText(list.get(position).getName());
-        holder.price.setText(Integer.toString(list.get(position).getPrice())+" \u20B9");
+        holder.price.setText(list.get(position).getPrice()+" \u20B9");
 
 
         holder.dec.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +112,15 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
                 dishValuesInterface.getCounterValue(priceArray , keyList, dishValues);
 
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                editDishInterface.editDish(list.get(holder.getAdapterPosition()) , dishKeyList.get(holder.getAdapterPosition()));
+                return true;
             }
         });
 
