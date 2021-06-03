@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.service.autofill.Dataset;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -36,6 +38,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +50,7 @@ public class Dishes extends AppCompatActivity {
     private DatabaseReference hotelDishReference, getDishDetailsReference;
     private Button totalButton;
     private List<String> dishKeyList;
+    private HashMap<String , String> hotelDishKey;
     private int TOTAL_AMOUNT = 0;
     private String hotelKey;
     private JSONObject dishValuesJSON , finalSelectedDishes;
@@ -54,7 +58,6 @@ public class Dishes extends AppCompatActivity {
     private AlertDialog dialog;
     private Uri resultUri;
     private CircularProgressIndicator circularProgressIndicator;
-
 
 
 
@@ -70,6 +73,7 @@ public class Dishes extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         dishList = new ArrayList<>();
         dishKeyList = new ArrayList<>();
+        hotelDishKey = new HashMap<>();
 
         Bundle b = getIntent().getExtras();
         hotelKey = b.getString("hotel_key");
@@ -96,6 +100,7 @@ public class Dishes extends AppCompatActivity {
                     for (DataSnapshot dishkeys : task.getResult().getChildren()){
 
                         String key = dishkeys.getValue(String.class);
+                        hotelDishKey.put(key , dishkeys.getKey());
                         getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
 
                         getDishDetailsReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -367,6 +372,39 @@ public class Dishes extends AppCompatActivity {
 
     }
 
+    private void deleteDish(String url , String key){
+
+
+        StorageReference deleteDishImage = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+
+        deleteDishImage.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+                DatabaseReference dishReference = FirebaseDatabase.getInstance().getReference().child(getApplication().getString(R.string.DishNode));
+                dishReference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        hotelDishReference.child(hotelDishKey.get(key)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(getApplicationContext() , "Dish Successfully Deleted" , Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext() , "Failed ..." + e.toString(),Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+    }
+
 
 
     private void showAlertDialog(DishDetails dishDetails , String key , boolean updateStatus){
@@ -396,6 +434,7 @@ public class Dishes extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                deleteDish(dishDetails.getPic() , key);
 
             }
         });
@@ -411,7 +450,6 @@ public class Dishes extends AppCompatActivity {
             }
         });
 
-
         addDish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -424,7 +462,6 @@ public class Dishes extends AppCompatActivity {
                     DishDetails newDishDetails = new DishDetails();
                     newDishDetails.setName(dishName.getText().toString());
                     newDishDetails.setPrice(Integer.parseInt(dishPrice.getText().toString()));
-
 
                       if(updateStatus){
                           newDishDetails.setPic(dishDetails.getPic());
