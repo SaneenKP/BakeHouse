@@ -1,25 +1,31 @@
 package com.example.temp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.json.JSONObject;
 
@@ -37,6 +43,8 @@ public class Dishes extends AppCompatActivity {
     private int TOTAL_AMOUNT = 0;
     private String hotelKey;
     private JSONObject dishValuesJSON , finalSelectedDishes;
+    private FloatingActionButton fab;
+    private AlertDialog dialog;
 
 
 
@@ -55,6 +63,15 @@ public class Dishes extends AppCompatActivity {
         hotelKey = b.getString("hotel_key");
 
         totalButton = findViewById(R.id.total_button);
+        fab = findViewById(R.id.addNewDish);
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    showAlertDialog(null , null , false);
+            }
+        });
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode)).child(hotelKey).child(getApplicationContext().getResources().getString(R.string.DishNode));
 
@@ -145,4 +162,75 @@ public class Dishes extends AppCompatActivity {
         });
 
     }
+
+    private void showAlertDialog(DishDetails dishDetails , String key , boolean updateStatus){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View v = getLayoutInflater().inflate(R.layout.add_dish_alertdialog , null);
+
+        builder.setView(v);
+        builder.setMessage(" Add New Dish ");
+
+        EditText dishName = v.findViewById(R.id.newDishName);
+        EditText dishPrice = v.findViewById(R.id.newDishPrice);
+        Button addDish = v.findViewById(R.id.addNewDish);
+        Button addImage = v.findViewById(R.id.addNewDishImage);
+        Button delete = v.findViewById(R.id.deleteDish);
+        delete.setVisibility(View.INVISIBLE);
+
+
+        if (updateStatus){
+            delete.setVisibility(View.VISIBLE);
+            dishName.setText(dishDetails.getName());
+            dishPrice.setText(dishDetails.getPrice());
+        }
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
+
+        addImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                CropImage.activity().setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1, 1)
+                        .start(Dishes.this);
+
+            }
+        });
+
+
+        addDish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (TextUtils.isEmpty(dishName.getText())){
+                    dishName.setError("Please set Dish Name");
+                }else if (TextUtils.isEmpty(dishPrice.getText())){
+                    dishPrice.setError("Please set Price");
+                }else{
+                    DishDetails newDishDetails = new DishDetails();
+                    newDishDetails.setName(dishName.getText().toString());
+                    newDishDetails.setPrice(Integer.parseInt(dishPrice.getText().toString()));
+
+                  /*  if(updateStatus)
+                        updateHotel(newHotelDetails , key);
+                    else
+                        addNewHotel(newHotelDetails,key);*/
+                }
+
+            }
+        });
+
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+
+    }
+
 }

@@ -1,4 +1,4 @@
- package com.example.temp;
+   package com.example.temp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -400,19 +400,6 @@ public class Hotels extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
-    }
-
-    private String getBase64(String code){
-
-        byte[] data;
-        String result="";
-        try {
-            data = code.getBytes("UTF-8");
-            result = Base64.encodeToString(data, Base64.DEFAULT);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 
     private boolean isInternet(){
