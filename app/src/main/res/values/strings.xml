@@ -45,7 +45,8 @@
     <string name="DishNode">Dishes</string>
     <string name="OrderNode">Order</string>
     <string name="HotelNode">Hotels</string>
-    <string name="title_activity_main2">MainActivity</string>
+    <string name="ServicesNode">Services</string>
+    <string name="VendorNode">Vendor</string>
 
 
     <!-- Hotels node child for updating -->
