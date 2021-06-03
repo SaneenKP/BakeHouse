@@ -119,7 +119,7 @@ public class Hotels extends AppCompatActivity {
             databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
             databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
 
-            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name());
+            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name()+System.currentTimeMillis());
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             circularProgressIndicator.setVisibility(View.VISIBLE);
@@ -214,7 +214,7 @@ public class Hotels extends AppCompatActivity {
         }
         else{
 
-            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name());
+            StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name()+System.currentTimeMillis());
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             circularProgressIndicator.setVisibility(View.VISIBLE);
@@ -290,15 +290,20 @@ public class Hotels extends AppCompatActivity {
 
     }
 
-    private void deleteHotel(String name , String key){
+    private void deleteHotel(String url , String key){
 
-        StorageReference deleteHotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+name);
+        StorageReference deleteHotelImage = FirebaseStorage.getInstance().getReferenceFromUrl(url);
 
         deleteHotelImage.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
 
-                Toast.makeText(getApplicationContext() , "Successfully Deleted" , Toast.LENGTH_LONG).show();
+                databaseReference.child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext() , "Successfully Deleted" , Toast.LENGTH_LONG).show();
+                    }
+                });
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -307,8 +312,6 @@ public class Hotels extends AppCompatActivity {
                 Toast.makeText(getApplicationContext() , "Failed ..." + e.toString(),Toast.LENGTH_LONG).show();
             }
         });
-
-       databaseReference.child(key).removeValue();
 
     }
 
@@ -342,7 +345,7 @@ public class Hotels extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                deleteHotel(hotelDetails.getHotel_name() , key);
+                deleteHotel(hotelDetails.getImage() , key);
 
             }
         });

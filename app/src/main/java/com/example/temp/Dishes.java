@@ -147,8 +147,6 @@ public class Dishes extends AppCompatActivity {
             }
         });
 
-
-
         totalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,7 +190,7 @@ public class Dishes extends AppCompatActivity {
         }
         else{
 
-            StorageReference dishImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)+"/"+dishDetails.getName());
+            StorageReference dishImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)+"/"+dishDetails.getName()+System.currentTimeMillis());
             DatabaseReference dishReference = FirebaseDatabase.getInstance().getReference().child(getApplication().getString(R.string.DishNode));
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -278,7 +276,7 @@ public class Dishes extends AppCompatActivity {
 
         if (resultUri!=null){
 
-            StorageReference dishImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)+"/"+dishDetails.getName());
+            StorageReference dishImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)+"/"+dishDetails.getName()+System.currentTimeMillis());
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             circularProgressIndicator.setVisibility(View.VISIBLE);
