@@ -1,26 +1,35 @@
 package com.example.temp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -28,13 +37,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Dishes extends AppCompatActivity {
 
     private RecyclerView dishes;
     private RecyclerView.LayoutManager layoutManager;
     private List<DishDetails> dishList;
-    private DatabaseReference databaseReference , getDishDetailsReference;
+    private DatabaseReference hotelDishReference, getDishDetailsReference;
     private Button totalButton;
     private List<String> dishKeyList;
     private int TOTAL_AMOUNT = 0;
@@ -42,6 +52,9 @@ public class Dishes extends AppCompatActivity {
     private JSONObject dishValuesJSON , finalSelectedDishes;
     private FloatingActionButton fab;
     private AlertDialog dialog;
+    private Uri resultUri;
+    private CircularProgressIndicator circularProgressIndicator;
+
 
 
 
@@ -50,6 +63,8 @@ public class Dishes extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dishes);
+
+        circularProgressIndicator = findViewById(R.id.circularProgress);
 
         dishes = findViewById(R.id.dishes);
         layoutManager = new LinearLayoutManager(this);
@@ -70,9 +85,9 @@ public class Dishes extends AppCompatActivity {
             }
         });
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode)).child(hotelKey).child(getApplicationContext().getResources().getString(R.string.DishNode));
+        hotelDishReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode)).child(hotelKey).child(getApplicationContext().getResources().getString(R.string.DishNode));
 
-        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        hotelDishReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
 
@@ -164,6 +179,94 @@ public class Dishes extends AppCompatActivity {
         });
 
     }
+    
+    private void addNewDish(DishDetails dishDetails , String key){
+
+        if (resultUri == null && key == null){
+            Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();
+        }
+        else{
+
+            StorageReference dishImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)+"/"+dishDetails.getName());
+            DatabaseReference dishReference = FirebaseDatabase.getInstance().getReference().child(getApplication().getString(R.string.DishNode));
+            dialog.dismiss();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            circularProgressIndicator.setVisibility(View.VISIBLE);
+            circularProgressIndicator.setProgress(0);
+
+            dishImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if (task.isSuccessful()){
+
+                        dishImage.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()){
+
+                                    dishDetails.setPic(task.getResult().toString());
+                                    String dishPushKey = dishReference.push().getKey();
+
+                                    dishReference.child(dishPushKey).setValue(dishDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+
+                                                  String hotelDishKey = hotelDishReference.push().getKey();
+                                                  hotelDishReference.child(hotelDishKey).setValue(dishPushKey);
+                                                  resultUri = null;
+
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                Toast.makeText(getApplicationContext(),"Dish Uploaded" , Toast.LENGTH_LONG).show();
+
+                                            }else{
+                                                Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                            }
+                                        }
+                                    });
+
+                                }else
+                                {
+                                    Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                    circularProgressIndicator.setProgress(0);
+                                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        });
+
+                    }else{
+                        Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                        circularProgressIndicator.setProgress(0);
+                        circularProgressIndicator.setVisibility(View.INVISIBLE);
+
+                    }
+
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                    circularProgressIndicator.setVisibility(View.VISIBLE);
+                    double progress = (100*snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
+                    circularProgressIndicator.setProgressCompat((int)progress,true);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(getApplicationContext() , ""+e.getMessage() , Toast.LENGTH_LONG).show();
+                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                }
+            });
+
+        }
+
+    }
+
 
     private void showAlertDialog(DishDetails dishDetails , String key , boolean updateStatus){
 
@@ -182,9 +285,6 @@ public class Dishes extends AppCompatActivity {
 
 
         if (updateStatus){
-
-            Log.d("dish details" , dishDetails.getName()) ;
-            Log.d("dish details" , dishDetails.getPrice()+"") ;
 
             delete.setVisibility(View.VISIBLE);
             dishName.setText(dishDetails.getName());
@@ -224,6 +324,7 @@ public class Dishes extends AppCompatActivity {
                     newDishDetails.setName(dishName.getText().toString());
                     newDishDetails.setPrice(Integer.parseInt(dishPrice.getText().toString()));
 
+                    addNewDish(newDishDetails , key);
                   /*  if(updateStatus)
                         updateHotel(newHotelDetails , key);
                     else
@@ -237,6 +338,16 @@ public class Dishes extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+        if (resultCode == RESULT_OK){
+            resultUri = Objects.requireNonNull(result).getUri();
+        }
     }
 
 }
