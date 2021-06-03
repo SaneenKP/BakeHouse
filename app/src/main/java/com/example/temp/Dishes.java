@@ -179,7 +179,7 @@ public class Dishes extends AppCompatActivity {
         });
 
     }
-    
+
     private void addNewDish(DishDetails dishDetails , String key){
 
         if (resultUri == null && key == null){
@@ -267,6 +267,107 @@ public class Dishes extends AppCompatActivity {
 
     }
 
+    private void updateDish(DishDetails dishDetails , String key){
+
+        DatabaseReference dishReference = FirebaseDatabase.getInstance().getReference().child(getApplication().getString(R.string.DishNode)).child(key);
+
+        if (resultUri!=null){
+
+            StorageReference dishImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)+"/"+dishDetails.getName());
+            dialog.dismiss();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            circularProgressIndicator.setVisibility(View.VISIBLE);
+            circularProgressIndicator.setProgress(0);
+
+
+            dishImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if (task.isSuccessful()){
+
+                        dishImage.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()){
+
+                                    dishDetails.setPic(task.getResult().toString());
+
+                                    dishReference.setValue(dishDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+
+                                                resultUri = null;
+
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                Toast.makeText(getApplicationContext(),"Hotel Uploaded" , Toast.LENGTH_LONG).show();
+
+                                            }else{
+                                                Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                            }
+                                        }
+                                    });
+
+                                }else
+                                {
+                                    Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                    circularProgressIndicator.setProgress(0);
+                                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        });
+
+                    }else{
+                        Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                        circularProgressIndicator.setProgress(0);
+                        circularProgressIndicator.setVisibility(View.INVISIBLE);
+
+                    }
+
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                    circularProgressIndicator.setVisibility(View.VISIBLE);
+                    double progress = (100*snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
+                    circularProgressIndicator.setProgressCompat((int)progress,true);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(getApplicationContext() , ""+e.getMessage() , Toast.LENGTH_LONG).show();
+                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                }
+            });
+
+        }else{
+
+            dishReference.setValue(dishDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        Toast.makeText(getApplicationContext() , "Hotel Value Updated" , Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext() , "Updation Failed "+task.getException() , Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            });
+
+
+            dialog.dismiss();
+        }
+
+    }
+
+
 
     private void showAlertDialog(DishDetails dishDetails , String key , boolean updateStatus){
 
@@ -324,11 +425,14 @@ public class Dishes extends AppCompatActivity {
                     newDishDetails.setName(dishName.getText().toString());
                     newDishDetails.setPrice(Integer.parseInt(dishPrice.getText().toString()));
 
-                    addNewDish(newDishDetails , key);
-                  /*  if(updateStatus)
-                        updateHotel(newHotelDetails , key);
-                    else
-                        addNewHotel(newHotelDetails,key);*/
+
+                      if(updateStatus){
+                          newDishDetails.setPic(dishDetails.getPic());
+                          updateDish(newDishDetails , key);
+                      }else{
+                          addNewDish(newDishDetails,key);
+                      }
+
                 }
 
             }
