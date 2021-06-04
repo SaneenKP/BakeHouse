@@ -10,18 +10,25 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -84,15 +91,98 @@ public class Services extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showAlertDialog(null , null , false);
             }
         });
+    }
+
+    private void addNewDish(ServiceDetails serviceDetails , String key){
+
+        if (resultUri == null && key == null){
+            Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();
+        }
+        else{
+
+            StorageReference serviceImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.ServicesNode)+"/"+serviceDetails.getName()+System.currentTimeMillis());
+            DatabaseReference serviceReference = FirebaseDatabase.getInstance().getReference().child(getApplication().getString(R.string.ServicesNode));
+            dialog.dismiss();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            circularProgressIndicator.setVisibility(View.VISIBLE);
+            circularProgressIndicator.setProgress(0);
+
+            serviceImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if (task.isSuccessful()){
+
+                        serviceImage.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()){
+
+                                    serviceDetails.setCover_pic(task.getResult().toString());
+
+                                    serviceReference.push().setValue(serviceDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+
+                                                resultUri = null;
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                Toast.makeText(getApplicationContext(),"Dish Uploaded" , Toast.LENGTH_LONG).show();
+
+                                            }else{
+                                                Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                                circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                            }
+                                        }
+                                    });
+
+                                }else
+                                {
+                                    Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                                    circularProgressIndicator.setProgress(0);
+                                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        });
+
+                    }else{
+                        Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                        circularProgressIndicator.setProgress(0);
+                        circularProgressIndicator.setVisibility(View.INVISIBLE);
+
+                    }
+
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                    circularProgressIndicator.setVisibility(View.VISIBLE);
+                    double progress = (100*snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
+                    circularProgressIndicator.setProgressCompat((int)progress,true);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(getApplicationContext() , ""+e.getMessage() , Toast.LENGTH_LONG).show();
+                    circularProgressIndicator.setVisibility(View.INVISIBLE);
+                }
+            });
+
+        }
+
     }
 
     private void showAlertDialog(ServiceDetails serviceDetails , String key , boolean updateStatus){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View v = getLayoutInflater().inflate(R.layout.add_dish_alertdialog , null);
+        View v = getLayoutInflater().inflate(R.layout.add_service_alertdialog , null);
 
         builder.setView(v);
         builder.setMessage(" Add New Service ");
@@ -114,7 +204,7 @@ public class Services extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                deleteDish(dishDetails.getPic() , key);
+                //deleteDish(dishDetails.getPic() , key);
 
             }
         });
@@ -144,7 +234,7 @@ public class Services extends AppCompatActivity {
                         newServiceDetails.setCover_pic(serviceDetails.getCover_pic());
                         //updateDish(newDishDetails , key);
                     }else{
-                        //addNewDish(newDishDetails,key);
+                        addNewDish(newServiceDetails,key);
                     }
 
                 }
