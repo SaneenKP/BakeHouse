@@ -56,5 +56,10 @@
     <string name="hotelAddress">address</string>
     <string name="hotelImage">image</string>
 
+    <!-- service node child for updating -->
+
+    <string name="serviceName">name</string>
+    <string name="serviceImage">cover_pic</string>
+
 
 </resources>

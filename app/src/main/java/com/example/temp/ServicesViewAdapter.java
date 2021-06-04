@@ -1,7 +1,6 @@
 package com.example.temp;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +17,16 @@ public class ServicesViewAdapter extends BaseAdapter {
     private android.content.Context context;
     private LayoutInflater inflater;
     private List<ServiceDetails> services;
+    private List<String> serviceKeys;
+    private EditServiceInterface serviceInterface;
 
-    public ServicesViewAdapter(Context context, List<ServiceDetails> services) {
+    public ServicesViewAdapter(Context context, List<ServiceDetails> services, List<String> serviceKeys, EditServiceInterface serviceInterface) {
 
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.services = services;
-
+        this.serviceKeys = serviceKeys;
+        this.serviceInterface = serviceInterface;
     }
 
     @Override
@@ -52,11 +54,18 @@ public class ServicesViewAdapter extends BaseAdapter {
         TextView serviceName = convertView.findViewById(R.id.service_name);
         ImageView serviceImage = convertView.findViewById(R.id.service_image);
 
-        Log.d("Images" , services.get(position).getCover_pic());
-
 
         serviceName.setText(services.get(position).getName());
         Glide.with(context).load(services.get(position).getCover_pic()).into(serviceImage);
+
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                serviceInterface.editService(services.get(position) , serviceKeys.get(position));
+                return true;
+            }
+        });
         return convertView;
     }
 }
