@@ -66,6 +66,15 @@ public class ServicesViewAdapter extends BaseAdapter {
                 return true;
             }
         });
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                serviceInterface.openVendor(position);
+            }
+        });
+
+
         return convertView;
     }
 }

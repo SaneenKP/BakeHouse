@@ -75,27 +75,21 @@ public class Services extends AppCompatActivity {
                 ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext(), servicesName, serviceKeys, new EditServiceInterface() {
                     @Override
                     public void editService(ServiceDetails serviceDetails, String key) {
-
                         showAlertDialog(serviceDetails , key , true);
 
+                    }
+
+                    @Override
+                    public void openVendor(int position) {
+                        Intent getVendor = new Intent(Services.this , Vendors.class);
+                        getVendor.putExtra("service-key" , serviceKeys.get(position));
+                        startActivity(getVendor);
                     }
                 });
                 services.setAdapter(servicesViewAdapter);
 
             }
         });
-
-        
-        services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent getVendor = new Intent(Services.this , Vendors.class);
-                getVendor.putExtra("service-key" , serviceKeys.get(position));
-                startActivity(getVendor);
-            }
-        });
-
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
