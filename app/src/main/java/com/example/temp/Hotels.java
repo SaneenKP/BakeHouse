@@ -86,7 +86,8 @@ public class Hotels extends AppCompatActivity {
 
         loadingDialog = customAlertDialog.getDialog();
         loadingDialog.show();
-     
+
+        getHotels(databaseReference);
 
     }
 
