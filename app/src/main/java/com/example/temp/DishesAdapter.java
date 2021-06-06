@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 
 import com.bumptech.glide.Glide;
@@ -58,7 +59,12 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     public void onBindViewHolder(@NonNull DishesAdapter.dishesHolder holder, int position) {
 
 
-        Glide.with(context).load(list.get(position).getPic()).into(holder.dishImage);
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
+        Glide.with(context).load(list.get(position).getPic()).placeholder(circularProgressDrawable).into(holder.dishImage);
         holder.dishName.setText(list.get(position).getName());
         holder.price.setText(list.get(position).getPrice()+" \u20B9");
 

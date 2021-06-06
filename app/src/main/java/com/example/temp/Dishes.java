@@ -55,9 +55,10 @@ public class Dishes extends AppCompatActivity {
     private String hotelKey;
     private JSONObject dishValuesJSON , finalSelectedDishes;
     private FloatingActionButton fab;
-    private AlertDialog dialog;
+    private AlertDialog dialog , loadingDialog;
     private Uri resultUri;
     private CircularProgressIndicator circularProgressIndicator;
+    private CustomAlertDialog customAlertDialog;
 
 
 
@@ -75,6 +76,9 @@ public class Dishes extends AppCompatActivity {
         dishKeyList = new ArrayList<>();
         hotelDishKey = new HashMap<>();
 
+        customAlertDialog = new CustomAlertDialog(Dishes.this);
+        loadingDialog = customAlertDialog.getDialog();
+
         Bundle b = getIntent().getExtras();
         hotelKey = b.getString("hotel_key");
 
@@ -91,55 +95,64 @@ public class Dishes extends AppCompatActivity {
 
         hotelDishReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode)).child(hotelKey).child(getApplicationContext().getResources().getString(R.string.DishNode));
 
+        loadingDialog.show();
         hotelDishReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
 
                 if (task.isSuccessful()){
 
-                    for (DataSnapshot dishkeys : task.getResult().getChildren()){
+                    if (task.getResult().getValue() == null)
+                    {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext() , "There Are No Available data .. " , Toast.LENGTH_LONG).show();
+                    }else{
 
-                        String key = dishkeys.getValue(String.class);
-                        hotelDishKey.put(key , dishkeys.getKey());
-                        getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
+                        for (DataSnapshot dishkeys : task.getResult().getChildren()){
 
-                        getDishDetailsReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                           @Override
-                           public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            String key = dishkeys.getValue(String.class);
+                            hotelDishKey.put(key , dishkeys.getKey());
+                            getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
 
-                               if (task.isSuccessful()){
+                            getDishDetailsReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-                                       DishDetails dishDetails = task.getResult().getValue(DishDetails.class);
-                                       dishKeyList.add(task.getResult().getKey());
-                                       dishList.add(dishDetails);
+                                    if (task.isSuccessful()){
 
-                                   DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
-                                       @Override
-                                       public void getCounterValue(int[] value, String[] keys, JSONObject dishValues) {
+                                        DishDetails dishDetails = task.getResult().getValue(DishDetails.class);
+                                        dishKeyList.add(task.getResult().getKey());
+                                        dishList.add(dishDetails);
 
-                                           dishValuesJSON = dishValues;
-                                           TOTAL_AMOUNT = 0;
+                                        DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
+                                            @Override
+                                            public void getCounterValue(int[] value, String[] keys, JSONObject dishValues) {
 
-                                           for (int x : value)
-                                               TOTAL_AMOUNT += x;
-                                           totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
-                                       }
-                                   }, new EditDishInterface() {
-                                       @Override
-                                       public void editDish(DishDetails dishDetails, String key) {
-                                           showAlertDialog(dishDetails , key , true);
-                                       }
-                                   });
+                                                dishValuesJSON = dishValues;
+                                                TOTAL_AMOUNT = 0;
 
-                                   dishes.setLayoutManager(layoutManager);
-                                   dishes.setAdapter(dishesAdapter);
+                                                for (int x : value)
+                                                    TOTAL_AMOUNT += x;
+                                                totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+                                            }
+                                        }, new EditDishInterface() {
+                                            @Override
+                                            public void editDish(DishDetails dishDetails, String key) {
+                                                showAlertDialog(dishDetails , key , true);
+                                            }
+                                        });
 
-                               } else{
-                                   Toast.makeText(getApplicationContext() , "Sorry .. Data Couldnt be retrieved Check Internet Connection",Toast.LENGTH_LONG).show();
-                               }
+                                        dishes.setLayoutManager(layoutManager);
+                                        dishes.setAdapter(dishesAdapter);
+                                        loadingDialog.dismiss();
+                                    } else{
+                                        loadingDialog.dismiss();
+                                        Toast.makeText(getApplicationContext() , "Sorry .. Data Couldnt be retrieved Check Internet Connection",Toast.LENGTH_LONG).show();
+                                    }
 
-                           }
-                       }) ;
+                                }
+                            }) ;
+                        }
                     }
 
                 }
@@ -386,6 +399,7 @@ public class Dishes extends AppCompatActivity {
                         hotelDishReference.child(hotelDishKey.get(key)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
+                                dialog.dismiss();
                                 Toast.makeText(getApplicationContext() , "Dish Successfully Deleted" , Toast.LENGTH_LONG).show();
                             }
                         });
@@ -396,6 +410,7 @@ public class Dishes extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext() , "Failed ..." + e.toString(),Toast.LENGTH_LONG).show();
             }
         });
@@ -479,6 +494,10 @@ public class Dishes extends AppCompatActivity {
 
     }
 
+    private void loadingProgressDialog(){
+
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

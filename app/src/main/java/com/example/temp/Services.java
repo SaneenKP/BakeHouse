@@ -86,8 +86,8 @@ public class Services extends AppCompatActivity {
 
                     if(task.getResult().getValue() == null){
 
-                        loadingDialog.dismiss();
-                        Toast.makeText(getApplicationContext() , "There Are No Available data .. " , Toast.LENGTH_LONG).show();
+                            loadingDialog.dismiss();
+                            Toast.makeText(getApplicationContext() , "There Are No Available data .. " , Toast.LENGTH_LONG).show();
 
                     }
                     else{
