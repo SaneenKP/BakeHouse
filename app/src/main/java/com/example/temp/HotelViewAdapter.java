@@ -9,7 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 
@@ -44,7 +46,13 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
     @Override
     public void onBindViewHolder(@NonNull HotelViewHolder holder, int position) {
 
-        Glide.with(context).load(list.get(position).getImage()).into(holder.image);
+
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
+        Glide.with(context).load(list.get(position).getImage()).placeholder(circularProgressDrawable).into(holder.image);
 
         holder.name.setText(list.get(position).getHotel_name());
         holder.location.setText(list.get(position).getLocation());

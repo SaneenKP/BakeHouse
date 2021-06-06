@@ -52,8 +52,9 @@ public class Hotels extends AppCompatActivity {
     private FloatingActionButton fab;
     private Boolean imageFlag = false;
     private  Uri resultUri;
-    private AlertDialog dialog;
+    private AlertDialog dialog , loadingDialog;
     private CircularProgressIndicator circularProgressIndicator;
+    private CustomAlertDialog customAlertDialog;
 
 
     @Override
@@ -64,6 +65,8 @@ public class Hotels extends AppCompatActivity {
         hotels = findViewById(R.id.hotels);
         layoutManager =  new LinearLayoutManager(this);
         circularProgressIndicator = findViewById(R.id.circularProgress);
+
+        customAlertDialog = new CustomAlertDialog(Hotels.this);
 
         hotelsList = new ArrayList<>();
         hotelKeys = new ArrayList<>();
@@ -78,33 +81,59 @@ public class Hotels extends AppCompatActivity {
         });
 
 
+
         databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode));
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        loadingDialog = customAlertDialog.getDialog();
+        loadingDialog.show();
+     
 
-                for (DataSnapshot ds : snapshot.getChildren())
-                {
-                    HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
-                    hotelsList.add(hotelDetails);
-                    hotelKeys.add(ds.getKey());
+    }
+
+    private void getHotels(DatabaseReference getHotelReference){
+
+        getHotelReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                if(task.isSuccessful()){
+
+                    if (task.getResult().getValue() == null){
+
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext() , "There Are No Available data .. " , Toast.LENGTH_LONG).show();
+                    }
+                    else{
+
+                        for (DataSnapshot ds : task.getResult().getChildren())
+                        {
+                            HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
+                            hotelsList.add(hotelDetails);
+                            hotelKeys.add(ds.getKey());
+                        }
+
+                        HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys , new EditHotelInterface() {
+                            @Override
+                            public void editHotel(HotelDetails hotelDetails , String key) {
+
+                                showAlertDialog(hotelDetails , key , true);
+
+                            }
+                        });
+                        hotels.setLayoutManager(layoutManager);
+                        hotels.setAdapter(hotelViewAdapter);
+                        loadingDialog.dismiss();
+                    }
+
                 }
 
-                HotelViewAdapter hotelViewAdapter = new HotelViewAdapter(getApplicationContext() , hotelsList, hotelKeys , new EditHotelInterface() {
-                    @Override
-                    public void editHotel(HotelDetails hotelDetails , String key) {
-
-                        showAlertDialog(hotelDetails , key , true);
-
-                    }
-                });
-                hotels.setLayoutManager(layoutManager);
-                hotels.setAdapter(hotelViewAdapter);
             }
-
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onFailure(@NonNull Exception e) {
+
+                loadingDialog.dismiss();
+                Toast.makeText(getApplicationContext() , "Failedd .. :"+e.toString() , Toast.LENGTH_LONG).show();
 
             }
         });
@@ -114,6 +143,8 @@ public class Hotels extends AppCompatActivity {
     private void updateHotel(HotelDetails hotelDetails , String key){
 
         if (resultUri!=null){
+
+            //Setting values individually as pushing an object would overwrite the Dishes node inside the Hotels Node.
 
             databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelName)).setValue(hotelDetails.getHotel_name());
             databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
@@ -301,6 +332,7 @@ public class Hotels extends AppCompatActivity {
                 databaseReference.child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        dialog.dismiss();
                         Toast.makeText(getApplicationContext() , "Successfully Deleted" , Toast.LENGTH_LONG).show();
                     }
                 });
@@ -309,6 +341,7 @@ public class Hotels extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext() , "Failed ..." + e.toString(),Toast.LENGTH_LONG).show();
             }
         });
