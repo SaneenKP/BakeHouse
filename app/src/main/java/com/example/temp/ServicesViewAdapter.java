@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -56,7 +58,13 @@ public class ServicesViewAdapter extends BaseAdapter {
 
 
         serviceName.setText(services.get(position).getName());
-        Glide.with(context).load(services.get(position).getCover_pic()).into(serviceImage);
+
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+
+        Glide.with(context).load(services.get(position).getCover_pic()).placeholder(circularProgressDrawable).into(serviceImage);
 
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

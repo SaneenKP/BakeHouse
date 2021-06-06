@@ -45,8 +45,9 @@ public class Services extends AppCompatActivity {
     private List<String> serviceKeys;
     private FloatingActionButton fab;
     private CircularProgressIndicator circularProgressIndicator;
-    private AlertDialog dialog;
+    private AlertDialog dialog , loadingDialog;
     private Uri resultUri;
+    private CustomAlertDialog customAlertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,41 +56,17 @@ public class Services extends AppCompatActivity {
 
         fab = findViewById(R.id.addNewService);
         circularProgressIndicator = findViewById(R.id.circularProgress);
+        customAlertDialog = new CustomAlertDialog(Services.this);
+        loadingDialog = customAlertDialog.getDialog();
 
         services = findViewById(R.id.services);
         servicesName = new ArrayList<>();
         serviceKeys = new ArrayList<>();
 
         getServicesReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getString(R.string.ServicesNode));
-        
-        getServicesReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                DataSnapshot snapshot = task.getResult();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren())
-                {
-                    ServiceDetails sd =  dataSnapshot.getValue(ServiceDetails.class);
-                    servicesName.add(sd);
-                    serviceKeys.add(dataSnapshot.getKey());
-                }
-                ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext(), servicesName, serviceKeys, new EditServiceInterface() {
-                    @Override
-                    public void editService(ServiceDetails serviceDetails, String key) {
-                        showAlertDialog(serviceDetails , key , true);
 
-                    }
-
-                    @Override
-                    public void openVendor(int position) {
-                        Intent getVendor = new Intent(Services.this , Vendors.class);
-                        getVendor.putExtra("service-key" , serviceKeys.get(position));
-                        startActivity(getVendor);
-                    }
-                });
-                services.setAdapter(servicesViewAdapter);
-
-            }
-        });
+        loadingDialog.show();
+        getServiceData(getServicesReference);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +74,66 @@ public class Services extends AppCompatActivity {
                 showAlertDialog(null , null , false);
             }
         });
+    }
+
+    private void getServiceData(DatabaseReference getServicesReference){
+
+        getServicesReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                if (task.isSuccessful()){
+
+                    if(task.getResult().getValue() == null){
+
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext() , "There Are No Available data .. " , Toast.LENGTH_LONG).show();
+
+                    }
+                    else{
+                        DataSnapshot snapshot = task.getResult();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
+                            ServiceDetails sd =  dataSnapshot.getValue(ServiceDetails.class);
+                            servicesName.add(sd);
+                            serviceKeys.add(dataSnapshot.getKey());
+                        }
+                        ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext(), servicesName, serviceKeys, new EditServiceInterface() {
+                            @Override
+                            public void editService(ServiceDetails serviceDetails, String key) {
+                                showAlertDialog(serviceDetails , key , true);
+
+                            }
+
+                            @Override
+                            public void openVendor(int position) {
+                                Intent getVendor = new Intent(Services.this , Vendors.class);
+                                getVendor.putExtra("service-key" , serviceKeys.get(position));
+                                startActivity(getVendor);
+                            }
+                        });
+                        services.setAdapter(servicesViewAdapter);
+                        loadingDialog.dismiss();
+
+                    }
+
+                }else{
+                    loadingDialog.dismiss();
+                    Toast.makeText(getApplicationContext() , "Failed..",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                loadingDialog.dismiss();
+                Toast.makeText(getApplicationContext() , "Sorry Could not Load : "+e.toString(),Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
     }
 
     private void addNewService(ServiceDetails serviceDetails , String key){
