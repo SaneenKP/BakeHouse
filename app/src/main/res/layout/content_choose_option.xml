@@ -6,27 +6,45 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:orientation="vertical"
         >
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_food"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="food" />
+            android:text="@string/food"
+            android:padding="24dp"
+            android:layout_weight="1"
+            app:elevation="8dp"
+            app:cornerRadius="8dp"
+            android:drawableLeft="@mipmap/ic_food_icon"
+            android:textAllCaps="false"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="@color/app_blue"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_services"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-           android:layout_below="@+id/btn_food"
-            android:layout_marginTop="100dp"
-            android:text="services" />
+            android:text="@string/services"
+            android:padding="24dp"
+            android:layout_weight="1"
+            android:layout_marginTop="32dp"
+            android:textAllCaps="false"
+            android:drawableLeft="@mipmap/ic_service_icon"
+            app:elevation="8dp"
+            app:cornerRadius="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="@color/app_blue"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

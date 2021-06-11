@@ -1,9 +1,7 @@
-package com.example.temp;
+package com.example.temp.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class OrderDetails implements Parcelable {

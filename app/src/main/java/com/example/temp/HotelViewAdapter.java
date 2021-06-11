@@ -5,13 +5,15 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.temp.Activities.Dishes;
+import com.example.temp.Models.HotelDetails;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
 
@@ -32,17 +34,20 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
     @NonNull
     @Override
     public HotelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View v = LayoutInflater.from(context).inflate(R.layout.hotel_view , parent , false);
-        HotelViewHolder hotelViewHolder = new HotelViewHolder(v);
-
-        return hotelViewHolder;
+        View v = LayoutInflater.from(context)
+                .inflate(R.layout.hotel_view ,
+                        parent ,
+                        false);
+        return new HotelViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HotelViewHolder holder, int position) {
 
-        Glide.with(context).load(list.get(position).getImage()).into(holder.image);
+        Glide.with(context)
+                .load(list.get(position).getImage())
+                .centerCrop()
+                .into(holder.image);
 
         holder.name.setText(list.get(position).getHotel_name());
         holder.location.setText(list.get(position).getLocation());
@@ -72,8 +77,8 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
 
     public static class HotelViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView name , address , location;
-        private ImageView image;
+        private MaterialTextView name , address , location;
+        private AppCompatImageView image;
 
 
         public HotelViewHolder(@NonNull View itemView) {

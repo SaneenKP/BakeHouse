@@ -1,23 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.appcompat.widget.LinearLayoutCompat
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Hotels">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Activities.Hotels"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="@color/white"
+            app:title="@string/app_name"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/hotelLoadProgress"
+        android:visibility="invisible"
+        android:indeterminate="true"
+        app:indicatorColor="@color/app_blue_dark"
+
+       >
+    </com.google.android.material.progressindicator.LinearProgressIndicator>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/hotels"
         android:outlineProvider="bounds"
-        android:background="@null"
-        android:elevation="2dp"
         >
 
     </androidx.recyclerview.widget.RecyclerView>
 
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,4 +1,4 @@
-package com.example.temp;
+package com.example.temp.Models;
 
 public class DishDetails {
     private String name;

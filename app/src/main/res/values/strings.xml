@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">temp</string>
+    <string name="app_name">KEPLER</string>
     <string name="title_activity_choose_option">ChooseOption</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -23,7 +23,7 @@
     <!-- Strings used for shared preferences -->
 
     <string name="Add_name">Name</string>
-    <string name="houseNo">House No</string>
+    <string name="houseNo">House No./Flat No.</string>
     <string name="houseName">House Name</string>
     <string name="landmark">Landmark</string>
     <string name="street">Street</string>
@@ -34,7 +34,7 @@
 
      <!-- Order status activity text -->
 
-    <string name="headText">For Enquiry Call 7096469416</string>
+    <string name="headText">7096469416</string>
     <string name="placed">Order Placed</string>
     <string name="completed">Order Completed</string>
     <string name="pickUp">Order Pickup</string>
@@ -45,7 +45,34 @@
     <string name="DishNode">Dishes</string>
     <string name="OrderNode">Order</string>
     <string name="HotelNode">Hotels</string>
+    <string name="ServicesNode">Services</string>
+    <string name="VendorNode">Vendor</string>
 
+    <!-- Generated -->
+    <string name="food">Foods</string>
+    <string name="services">Services</string>
+    <string name="hotelname">Loading...</string>
+    <string name="dish_name">dish</string>
+    <string name="rupees">55 ₹</string>
+    <string name="add_text">+</string>
+    <string name="subtract">-</string>
+    <string name="zero">0</string>
+    <string name="sign_in">Sign in</string>
+    <string name="captiontext">Your best delivery Partner</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="hash">##########</string>
+    <string name="verify">Verify</string>
+    <string name="time_out">Time out</string>
+    <string name="please_enter_the_otp">Please enter the otp</string>
+    <string name="hint_verify">******</string>
+    <string name="resend_otp">RESEND OTP</string>
+    <string name="pay_and_order">Pay and Order</string>
+    <string name="cash_on_delivery">Cash On Delivery</string>
+    <string name="_0">0</string>
+    <string name="location">Location</string>
+    <string name="loading_your_current_location">Loading your current location...</string>
+    <string name="address">Address</string>
+    <string name="name">Name</string>
 
 
 </resources>

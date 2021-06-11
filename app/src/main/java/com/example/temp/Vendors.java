@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
+import com.example.temp.Models.VendorDetails;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +43,10 @@ public class Vendors extends AppCompatActivity {
 
         serviceKey = b.getString("service-key");
 
-        firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child("Date").child("Services").child(serviceKey).child("Vendor");
+        firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference()
+                .child(getApplicationContext().getString(R.string.ServicesNode)).
+                child(serviceKey)
+                .child(getApplicationContext().getString(R.string.VendorNode));
 
         firebaseRealtimeDatabase.addValueEventListener(new ValueEventListener() {
             @Override

@@ -1,13 +1,9 @@
-package com.example.temp;
+package com.example.temp.Activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -15,10 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.temp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -35,14 +31,12 @@ import com.mukesh.OtpView;
 import java.util.concurrent.TimeUnit;
 
 public class VerificationActivity extends AppCompatActivity {
-
     private OtpView otpView;
     private Button resendOTP;
     private String phoneNumber="";
     private String countryCode="";
     private TextView verifyCounter;
     private CountDownTimer countDownTimer;
-    private RelativeLayout verifyLayout;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks Callbacks;
     private String verificationID;
     private ProgressBar progressBar;
@@ -56,7 +50,6 @@ public class VerificationActivity extends AppCompatActivity {
 
         otpView=findViewById(R.id.verification_edittext);
         verifyCounter=findViewById(R.id.timeoutText);
-        verifyLayout=findViewById(R.id.verify_layout);
         progressBar=findViewById(R.id.progress_circular);
         forwardButton=findViewById(R.id.forward);
         countryCode=getIntent().getStringExtra("Country");
@@ -70,11 +63,10 @@ public class VerificationActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         Callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             @Override
-            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
 
                 verified=true;
                 otpView.setText(phoneAuthCredential.getSmsCode());

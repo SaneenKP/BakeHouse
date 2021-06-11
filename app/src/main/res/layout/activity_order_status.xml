@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-    <RelativeLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -9,83 +8,99 @@
         android:layout_height="match_parent"
         android:id="@+id/refreshLayout"
         tools:context=".OrderStatus">
-
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="32sp"
+        android:id="@+id/appbar"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="@color/white"
+            app:title="@string/app_name"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:text="@string/headText"
         android:id="@+id/head"
+        android:layout_below="@id/appbar"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:drawableLeft="@drawable/ic_baseline_perm_phone_msg_24"
+        android:drawableTint="@color/app_blue"
+        android:layout_margin="16dp"
+        android:layout_alignParentRight="true"
+        android:textAlignment="textStart"
+        android:drawablePadding="16dp"
+        android:alpha="0.6"
         />
 
      <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/head"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_margin="16dp"
         android:orientation="vertical">
 
 
 
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
                 android:drawableLeft="@drawable/check"
-                android:textColor="@color/black"
                 android:layout_weight="1"
                 android:text="@string/placed"
-                android:textStyle="italic"
-                android:gravity="center"
-                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:drawablePadding="24dp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:textStyle="bold"
                 android:id="@+id/orderPlaced"
-                android:drawablePadding="50dp"
+
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
                 android:layout_weight="1"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:gravity="center"
                 android:drawableLeft="@drawable/check"
                 android:text="@string/completed"
-                android:drawablePadding="50dp"
+                android:gravity="center_vertical"
+                android:drawablePadding="24dp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:id="@+id/orderCompleted"
+                android:textStyle="bold"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
-                android:textColor="@color/black"
                 android:text="@string/pickUp"
-                android:gravity="center"
                 android:drawableLeft="@drawable/check"
                 android:layout_weight="1"
-                android:textAlignment="center"
-                android:drawablePadding="50dp"
+                android:gravity="center_vertical"
+                android:drawablePadding="24dp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:id="@+id/orderPicked"
+                android:textStyle="bold"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
-                android:textColor="@color/black"
                 android:text="@string/delivered"
-                android:gravity="center"
                 android:drawableLeft="@drawable/check"
                 android:layout_weight="1"
-                android:textAlignment="center"
-                android:drawablePadding="50dp"
+                android:gravity="center_vertical"
+                android:drawablePadding="24dp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:id="@+id/orderDelivered"
+                android:textStyle="bold"
                 />
 
         </LinearLayout>

@@ -1,77 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".PlaceOrder">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         >
+
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <Button
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/appbar"
+                >
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:titleTextColor="@color/white"
+                    app:title="@string/app_name"
+                    />
+
+            </com.google.android.material.appbar.AppBarLayout>
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:id="@+id/PAD"
-                android:text="Pay and Order"
+                android:layout_below="@id/appbar"
+                android:text="@string/pay_and_order"
+                android:padding="12dp"
                 />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/COD"
-                android:text="Cash On Delivery"
-                android:layout_margin="10dp"
+                android:text="@string/cash_on_delivery"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:layout_below="@+id/PAD"
+                android:padding="12dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="25sp"
                 android:layout_below="@+id/COD"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_alignParentRight="true"
-                android:text="500444"
+                android:layout_alignParentEnd="true"
+                android:text="@string/_0"
                 android:id="@+id/payAmount"
-                android:textStyle="bold"
-                android:textColor="@color/black"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:alpha="0.6"
                 />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_below="@id/payAmount"
                 android:id="@+id/locTv"
-                android:text="Location : "
-                android:textSize="32sp"
-                android:textColor="@color/black"
-                android:textStyle="italic"
-                android:layout_margin="10dp"
+                android:text="@string/location"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:alpha="0.6"
                 />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/address"
                 android:layout_below="@+id/locTv"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:text="this is the location of the curretn user"
-                android:textSize="22sp"
+                android:text="@string/loading_your_current_location"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 />
 
 
@@ -82,60 +107,114 @@
                 android:id="@+id/location_layuot"
                 >
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:id="@+id/AddTv"
-                    android:text="Address : "
-                    android:textSize="32sp"
+                    android:text="@string/address"
                     android:textColor="@color/black"
-                    android:textStyle="italic"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textStyle="bold"
+                    android:alpha="0.6"
                     />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/AddTv"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/addNameLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="@string/name"
+                    >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:hint="@string/Add_name"
                     android:id="@+id/Add_name"
-                    android:layout_below="@id/AddTv"/>
+                    />
+                </com.google.android.material.textfield.TextInputLayout>
 
-
-                <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_below="@id/addNameLayout"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/HousenoLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="@string/houseNo"
-                    android:id="@+id/Add_houseNo"
-                    android:layout_below="@id/Add_name"/>
-
+                    >
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:id="@+id/Add_houseNo" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/HousenoLayout"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/HousenameLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="@string/houseName"
-                    android:id="@+id/Add_houseName"
-                    android:layout_below="@id/Add_houseNo"/>
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Add_houseName" />
 
-                <com.google.android.material.textfield.TextInputEditText
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_below="@id/HousenameLayout"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/AddLandMarkLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="@string/landmark"
-                    android:id="@+id/Add_landmark"
-                    android:layout_below="@id/Add_houseName"/>
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Add_landmark" />
 
-                <com.google.android.material.textfield.TextInputEditText
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_below="@id/AddLandMarkLayout"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/AddStreetLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="@string/street"
-                    android:id="@+id/Add_street"
-                    android:layout_below="@id/Add_landmark"/>
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Add_street" />
 
+                </com.google.android.material.textfield.TextInputLayout>
 
             </RelativeLayout>
 

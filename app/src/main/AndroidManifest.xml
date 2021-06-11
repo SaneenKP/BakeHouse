@@ -17,18 +17,20 @@
         <activity android:name=".OrderStatus"></activity>
         <activity android:name=".RazorpayPayment" />
         <activity android:name=".PlaceOrder" />
-        <activity android:name=".Dishes" />
-        <activity android:name=".Hotels" />
+        <activity android:name=".Activities.Dishes" />
+        <activity android:name=".Activities.Hotels" />
         <activity android:name=".Vendors" />
         <activity android:name=".Services" />
         <activity android:name=".Foods" />
         <activity android:name=".MainActivity" />
         <activity
-            android:name=".ChooseOption"
+            android:name=".Activities.ChooseOption"
             android:label="@string/title_activity_choose_option"
-            android:theme="@style/Theme.Temp.NoActionBar" />
-        <activity android:name=".VerificationActivity" />
-        <activity android:name=".PhoneAuth">
+            />
+        <activity android:name=".Activities.VerificationActivity"
+                    />
+        <activity android:name=".Activities.PhoneAuth"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

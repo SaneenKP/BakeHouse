@@ -5,15 +5,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
-
-
 import com.bumptech.glide.Glide;
+import com.example.temp.Models.DishDetails;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textview.MaterialTextView;
 
 import org.json.JSONObject;
 
@@ -21,14 +19,14 @@ import java.util.List;
 
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHolder> {
 
-    private Context context;
-    private List<DishDetails> list;
-    private List<String> dishKeyList;
-    private dishValuesInterface dishValuesInterface;
+    private final Context context;
+    private final List<DishDetails> list;
+    private final List<String> dishKeyList;
+    private final dishValuesInterface dishValuesInterface;
     private int TOTAL_COUNT = 0;
-    private int[] priceArray;
-    private String[] keyList;
-    private JSONObject dishValues;
+    private final int[] priceArray;
+    private final String[] keyList;
+    private final JSONObject dishValues;
 
 
     public DishesAdapter(Context context, List<DishDetails> list, List<String> dishKeyList, dishValuesInterface dishValuesInterface) {
@@ -56,7 +54,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     public void onBindViewHolder(@NonNull DishesAdapter.dishesHolder holder, int position) {
 
         Log.d("ADAPTER SET", "ADPTER SETTTTt");
-        Glide.with(context).load(list.get(position).getPic()).into(holder.dishImage);
+        Glide.with(context)
+                .load(list.get(position).getPic())
+                .centerCrop()
+                .into(holder.dishImage);
         holder.dishName.setText(list.get(position).getName());
         holder.price.setText(Integer.toString(list.get(position).getPrice())+" \u20B9");
 
@@ -122,9 +123,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
     public static class dishesHolder extends RecyclerView.ViewHolder {
 
-        ImageView dishImage;
-        TextView dishName , counter ,  price;
-        Button inc , dec;
+        AppCompatImageView dishImage;
+        MaterialTextView dishName , counter ,  price;
+        MaterialButton inc , dec;
 
 
         public dishesHolder(@NonNull View itemView) {

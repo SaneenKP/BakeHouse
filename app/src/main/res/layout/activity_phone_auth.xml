@@ -6,54 +6,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/phoneAuth"
-    android:background="#ffffff"
-    tools:context=".PhoneAuth">
+    tools:context=".Activities.PhoneAuth">
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?attr/colorPrimary"
         style="@style/TextAppearance.MaterialComponents.Headline4"
-        android:text="Sign in"
-        android:layout_marginLeft="16dp"
+        android:text="@string/sign_in"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:fontFamily="sans-serif"
         android:id="@+id/title" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-
         >
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Collaborate Shared Cloud-Albums \nwith your loved ones."
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:id="@+id/featureText"
-            android:layout_marginLeft="16dp"
-            android:textAllCaps="false"
-            android:visibility="invisible"
-            />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/featureText"
-            android:background="@color/purple_200"
-            />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:id="@+id/auth_next_button"
             app:iconSize="24dp"
             app:iconPadding="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             app:icon="@drawable/ic_arrow_forward"
-            app:iconTint="#000000"
             app:backgroundTint="?attr/colorPrimary"/>
     </RelativeLayout>
 
@@ -72,7 +51,7 @@
             android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Headline6"
             android:textColor="?attr/colorPrimary"
-            android:text="Phone Number"
+            android:text="@string/phone_number"
             android:id="@+id/signintxt"
 
 
@@ -80,9 +59,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:background="?attr/colorPrimary"
-            android:layout_alignParentBottom="true"
-            />
+            android:background="?attr/colorPrimary" />
     </LinearLayout>
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -90,7 +67,6 @@
         android:id="@+id/phoneauth_edit_layout"
         android:layout_marginLeft="16dp"
         app:boxBackgroundMode="filled"
-
         android:layout_marginRight="16dp"
         android:layout_marginBottom="0dp"
         android:backgroundTint="@color/black"
@@ -113,15 +89,14 @@
                 app:ccp_showFullName="true"
                 />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editText_carrierNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="##########"
+                android:hint="@string/hash"
                 android:maxLength="10"
+
                 android:letterSpacing="0.5"
-                android:background="@color/purple_200"
-                android:textColor="@color/black"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:inputType="phone"
                 android:drawableStart="@drawable/ic_phone"
@@ -129,7 +104,9 @@
                 android:drawablePadding="16dp"
                 android:padding="16dp"
                 android:singleLine="true"
-                android:drawableLeft="@drawable/ic_phone" />
+                android:drawableLeft="@drawable/ic_phone"
+                android:background="@color/app_elevated_grey"
+                />
         </RelativeLayout>
 
     </com.google.android.material.textfield.TextInputLayout>

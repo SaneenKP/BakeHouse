@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.temp.Models.VendorDetails;
+
 import java.util.List;
 
 public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.VendorHolder>{

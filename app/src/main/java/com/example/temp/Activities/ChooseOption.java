@@ -1,27 +1,21 @@
-    package com.example.temp;
-
+package com.example.temp.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.temp.R;
+import com.example.temp.Services;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
-    public class ChooseOption extends AppCompatActivity {
+public class ChooseOption extends AppCompatActivity {
 
-    private MaterialButton food , services;
+    private MaterialButton food,services;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,30 +23,20 @@ import android.widget.Toast;
         setContentView(R.layout.activity_choose_option);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         food = findViewById(R.id.btn_food);
         services = findViewById(R.id.btn_services);
+    }
 
-
-
-        toolbar.setTitle(this.getClass().getSimpleName());
-
-        food.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-               Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
-               startActivity(openHotelSection);
-
-            }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        food.setOnClickListener(v -> {
+            Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
+            startActivity(openHotelSection);
         });
-
-        services.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
-                startActivity(openServicesSection);
-            }
+        services.setOnClickListener(v -> {
+            Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
+            startActivity(openServicesSection);
         });
     }
 
