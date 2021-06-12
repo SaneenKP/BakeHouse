@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="text_color">#FF000000</color>
-    <color name="app_blue">#004ba0</color>
+    <color name="app_blue">#1565c0</color>
     <color name="app_blue_dark">#004ba0</color>
      <color name="app_red">#ef5350</color>
     <color name="app_elevated_grey">#eeeeee</color>

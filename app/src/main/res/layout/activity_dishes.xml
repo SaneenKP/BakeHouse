@@ -42,13 +42,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/total_button"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        android:padding="12dp"
+        android:padding="16dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:drawableLeft="@drawable/ic_baseline_shopping_cart_24"
+        android:drawableTint="@color/app_blue"
+        android:textStyle="bold"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         >
 
     </com.google.android.material.button.MaterialButton>

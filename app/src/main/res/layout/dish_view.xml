@@ -17,12 +17,12 @@
     >
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="104dp"
-        android:layout_height="128dp"
+        android:layout_width="96dp"
+        android:layout_height="80dp"
         android:id="@+id/dish_image"
         android:layout_centerVertical="true"
         android:background="@drawable/imageviewshape"
@@ -45,13 +45,12 @@
         />
 
     <com.google.android.material.textview.MaterialTextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/price"
         android:text="@string/rupees"
         android:layout_margin="4dp"
-        android:layout_below="@id/dish_name"
-        android:layout_toEndOf="@id/dish_image"
+        android:layout_toEndOf="@id/dish_name"
         style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textColor="@color/text_color"
         android:textAlignment="textEnd"
@@ -68,8 +67,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_toEndOf="@id/dish_image"
-    />
+
+      />
 
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

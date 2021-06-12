@@ -95,6 +95,8 @@ public class Dishes extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        totalButton.setText(R.string.no_item_txt);
+        TOTAL_AMOUNT=0;
         linearProgressIndicator.setVisibility(View.VISIBLE);
         databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override

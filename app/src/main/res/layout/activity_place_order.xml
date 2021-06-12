@@ -97,6 +97,9 @@
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
+                android:drawableLeft="@drawable/ic_baseline_my_location_24"
+                android:drawableTint="@color/app_red"
+                android:drawablePadding="16dp"
                 />
 
 
@@ -139,6 +142,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/Add_name"
+                    android:drawableLeft="@drawable/ic_baseline_person_pin_circle_24"
+                    android:drawablePadding="16dp"
+                    android:drawableTint="@color/app_blue"
+
                     />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -157,7 +164,12 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/Add_houseNo" />
+                    android:id="@+id/Add_houseNo"
+                    android:drawableLeft="@drawable/ic_baseline_dashboard_24"
+                    android:drawablePadding="16dp"
+                    android:drawableTint="@color/app_blue"
+
+                    />
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -175,7 +187,11 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/Add_houseName" />
+                        android:id="@+id/Add_houseName"
+                        android:drawableLeft="@drawable/ic_baseline_house_24"
+                        android:drawablePadding="16dp"
+                        android:drawableTint="@color/app_blue"
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -194,7 +210,12 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/Add_landmark" />
+                        android:id="@+id/Add_landmark"
+                        android:drawableLeft="@drawable/ic_baseline_landscape_24"
+                        android:drawablePadding="16dp"
+                        android:drawableTint="@color/app_blue"
+
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -212,7 +233,12 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/Add_street" />
+                        android:id="@+id/Add_street"
+                        android:drawableLeft="@drawable/ic_baseline_streetview_24"
+                        android:drawablePadding="16dp"
+                        android:drawableTint="@color/app_blue"
+
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

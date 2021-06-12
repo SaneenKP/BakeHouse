@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -125,7 +126,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
         AppCompatImageView dishImage;
         MaterialTextView dishName , counter ,  price;
-        MaterialButton inc , dec;
+        AppCompatImageButton inc , dec;
 
 
         public dishesHolder(@NonNull View itemView) {
