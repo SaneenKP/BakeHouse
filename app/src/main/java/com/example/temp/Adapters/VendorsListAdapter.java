@@ -1,4 +1,4 @@
-package com.example.temp;
+package com.example.temp.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,7 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.temp.Interfaces.vendorsCallListenerInterface;
 import com.example.temp.Models.VendorDetails;
+import com.example.temp.R;
 
 import java.util.List;
 

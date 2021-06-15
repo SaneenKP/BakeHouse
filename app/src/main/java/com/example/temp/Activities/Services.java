@@ -1,4 +1,4 @@
-package com.example.temp;
+package com.example.temp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.temp.Adapters.ServicesViewAdapter;
 import com.example.temp.Models.ServiceDetails;
+import com.example.temp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;

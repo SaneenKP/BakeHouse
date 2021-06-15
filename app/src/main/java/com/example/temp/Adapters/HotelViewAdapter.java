@@ -1,4 +1,4 @@
-package com.example.temp;
+package com.example.temp.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.temp.Activities.Dishes;
 import com.example.temp.Models.HotelDetails;
+import com.example.temp.R;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;

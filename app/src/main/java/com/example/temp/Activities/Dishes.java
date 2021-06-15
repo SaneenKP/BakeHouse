@@ -11,11 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.temp.DishesAdapter;
+import com.example.temp.Adapters.DishesAdapter;
 import com.example.temp.Models.DishDetails;
 import com.example.temp.PlaceOrder;
 import com.example.temp.R;
-import com.example.temp.dishValuesInterface;
+import com.example.temp.Interfaces.dishValuesInterface;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;

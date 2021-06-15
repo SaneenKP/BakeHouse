@@ -1,4 +1,4 @@
-package com.example.temp;
+package com.example.temp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.temp.Adapters.VendorsListAdapter;
+import com.example.temp.Interfaces.vendorsCallListenerInterface;
 import com.example.temp.Models.VendorDetails;
+import com.example.temp.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

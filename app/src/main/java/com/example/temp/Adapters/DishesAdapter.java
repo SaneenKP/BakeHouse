@@ -1,4 +1,4 @@
- package com.example.temp;
+ package com.example.temp.Adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,8 +10,9 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.example.temp.Interfaces.dishValuesInterface;
 import com.example.temp.Models.DishDetails;
-import com.google.android.material.button.MaterialButton;
+import com.example.temp.R;
 import com.google.android.material.textview.MaterialTextView;
 
 import org.json.JSONObject;
@@ -23,7 +24,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     private final Context context;
     private final List<DishDetails> list;
     private final List<String> dishKeyList;
-    private final dishValuesInterface dishValuesInterface;
+    private final com.example.temp.Interfaces.dishValuesInterface dishValuesInterface;
     private int TOTAL_COUNT = 0;
     private final int[] priceArray;
     private final String[] keyList;

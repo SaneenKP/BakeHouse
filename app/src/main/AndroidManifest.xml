@@ -14,13 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Temp">
-        <activity android:name=".OrderStatus"></activity>
-        <activity android:name=".RazorpayPayment" />
+        <activity android:name=".Activities.OrderStatus"></activity>
+        <activity android:name=".Activities.RazorpayPayment" />
         <activity android:name=".PlaceOrder" />
         <activity android:name=".Activities.Dishes" />
         <activity android:name=".Activities.Hotels" />
-        <activity android:name=".Vendors" />
-        <activity android:name=".Services" />
+        <activity android:name=".Activities.Vendors" />
+        <activity android:name=".Activities.Services" />
         <activity android:name=".Foods" />
         <activity android:name=".MainActivity" />
         <activity
