@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.temp.Adapters.VendorsListAdapter;
@@ -49,7 +50,6 @@ public class Vendors extends AppCompatActivity {
         vendorDetailsList = new ArrayList<>();
 
         serviceKey = b.getString("service-key");
-
 
         firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference()
                 .child(getApplicationContext().getString(R.string.ServicesNode)).
