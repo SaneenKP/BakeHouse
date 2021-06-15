@@ -8,8 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.temp.Models.OrderDetails;
 import com.example.temp.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +49,8 @@ public class OrderStatus extends AppCompatActivity {
 
     private void getOrderStatus()
     {
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Orders").child(orderKey);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(orderKey);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -54,14 +60,14 @@ public class OrderStatus extends AppCompatActivity {
                 String confirmedIndex = snapshot.child("confirmedIndex").getValue(String.class);
                 String pickupIndex = snapshot.child("pickupIndex").getValue(String.class);
                 String deliveryIndex = snapshot.child("deliveryIndex").getValue(String.class);
-
                 setStatus(placedIndex , confirmedIndex , pickupIndex , deliveryIndex);
-
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
+                Toast.makeText(getApplicationContext() , "Failed : "+error , Toast.LENGTH_LONG).show();
 
             }
         });

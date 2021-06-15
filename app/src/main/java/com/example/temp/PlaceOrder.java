@@ -143,15 +143,20 @@ import java.util.Locale;
              @Override
              public void onClick(DialogInterface dialog, int which) {
 
-                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Orders");
+                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode));
                  String key = databaseReference.push().getKey();
-                 databaseReference.child(key).setValue(orderDetails);
-                 setDishes(key, databaseReference);
+                 databaseReference.child(key).setValue(orderDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                     @Override
+                     public void onComplete(@NonNull Task<Void> task) {
 
-                 Intent orderStatus = new Intent(PlaceOrder.this, OrderStatus.class);
-                 orderStatus.putExtra("orderKey", key);
-                 startActivity(orderStatus);
-                 finish();
+                         setDishes(key, databaseReference);
+                         Intent orderStatus = new Intent(PlaceOrder.this, OrderStatus.class);
+                         orderStatus.putExtra("orderKey", key);
+                         startActivity(orderStatus);
+                         finish();
+
+                     }
+                 });
 
              }
          });
@@ -199,7 +204,7 @@ import java.util.Locale;
                  String Quantity = orderDishes.getString(orderDishes.names().getString(i));
                  String dishID = orderDishes.names().getString(i);
 
-                 databaseReference.child(key).child("Dishes").child(dishID).child("Quantity").setValue(Quantity);
+                 databaseReference.child(key).child(getApplicationContext().getResources().getString(R.string.DishNode)).child(dishID).child("Quantity").setValue(Quantity);
 
              }
 

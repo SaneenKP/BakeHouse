@@ -8,11 +8,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.temp.Adapters.VendorsListAdapter;
 import com.example.temp.Interfaces.vendorsCallListenerInterface;
 import com.example.temp.Models.VendorDetails;
 import com.example.temp.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,21 +50,21 @@ public class Vendors extends AppCompatActivity {
 
         serviceKey = b.getString("service-key");
 
+
         firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference()
                 .child(getApplicationContext().getString(R.string.ServicesNode)).
                 child(serviceKey)
                 .child(getApplicationContext().getString(R.string.VendorNode));
 
-        firebaseRealtimeDatabase.addValueEventListener(new ValueEventListener() {
+        firebaseRealtimeDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-                for (DataSnapshot vendors : snapshot.getChildren())
+                for (DataSnapshot vendors : task.getResult().getChildren())
                 {
                     VendorDetails vd = vendors.getValue(VendorDetails.class);
                     vendorDetailsList.add(vd);
                 }
-
                 vendorsListAdapter = new VendorsListAdapter(getApplicationContext(), vendorDetailsList, new vendorsCallListenerInterface() {
                     @Override
                     public void getVendorNumber(String number) {
@@ -74,13 +78,14 @@ public class Vendors extends AppCompatActivity {
                 vendors.setAdapter(vendorsListAdapter);
 
             }
-
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext() , "Failed : "+e , Toast.LENGTH_LONG).show();
             }
         });
-        
+
+
 
     }
 }

@@ -80,7 +80,7 @@ public class Hotels extends AppCompatActivity {
 
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext() , "Failed : "+e , Toast.LENGTH_LONG).show();
-                
+
             }
         });
 

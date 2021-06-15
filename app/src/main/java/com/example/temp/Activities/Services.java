@@ -37,8 +37,9 @@ public class Services extends AppCompatActivity {
         servicesName = new ArrayList<>();
         serviceKeys = new ArrayList<>();
 
-        firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child("Services");
-        
+        firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.ServicesNode));
+
+
         firebaseRealtimeDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {

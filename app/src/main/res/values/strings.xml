@@ -43,7 +43,7 @@
     <!-- database nodes -->
     <string name="foodNode">Food</string>
     <string name="DishNode">Dishes</string>
-    <string name="OrderNode">Order</string>
+    <string name="OrderNode">Orders</string>
     <string name="HotelNode">Hotels</string>
     <string name="ServicesNode">Services</string>
     <string name="VendorNode">Vendor</string>

@@ -1,5 +1,6 @@
 package com.example.temp.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.temp.Models.OrderDetails;
 import com.example.temp.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,7 +34,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
 
 
         Intent getOrderDetails = getIntent();
-         orderDetails = getOrderDetails.getParcelableExtra("orderDetails");
+        orderDetails = getOrderDetails.getParcelableExtra("orderDetails");
         dishDetails = getOrderDetails.getStringExtra("dishDetails");
 
         startPayment(orderDetails.getTotal() , orderDetails.getName());
@@ -48,8 +50,12 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
                 String Quantity = orderDishes.getString(orderDishes.names().getString(i));
                 String dishID = orderDishes.names().getString(i);
 
-                databaseReference.child(key).child("Dishes").child(dishID).child("Quantity").setValue(Quantity);
-                Log.v("THE DISHES", "key = " + dishID + " value = " + Quantity);
+                databaseReference.child(key).child(getApplicationContext().getResources().getString(R.string.DishNode)).child(dishID).child("Quantity").setValue(Quantity).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext() , "Failed to set order : "+e , Toast.LENGTH_LONG).show();
+                    }
+                });
 
             }
 
@@ -109,7 +115,5 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
     public void onPaymentError(int i, String s) {
 
             Toast.makeText(getApplicationContext() , "Payment Failed .. " + s , Toast.LENGTH_LONG).show();
-
-
     }
 }
