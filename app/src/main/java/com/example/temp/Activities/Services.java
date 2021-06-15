@@ -58,6 +58,11 @@ public class Services extends AppCompatActivity {
                 services.setAdapter(servicesViewAdapter);
 
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(),"Failed : " + e , Toast.LENGTH_LONG).show();
+            }
         });
 
         

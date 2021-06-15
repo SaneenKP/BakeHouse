@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
 import com.example.temp.Interfaces.vendorsCallListenerInterface;
 import com.example.temp.Models.VendorDetails;
 import com.example.temp.R;
@@ -45,10 +47,13 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
         holder.address.setText(list.get(position).getAddress());
         holder.description.setText(list.get(position).getDescription());
         holder.number.setText(list.get(position).getNumber());
-        int image_id = R.drawable.avatar;
-        holder.coverpic.setImageResource(image_id);
 
+        CircularProgressDrawable circularProgressDrawable =
+                new CircularProgressDrawable(context);
+        circularProgressDrawable.start();
+        Glide.with(context).load(list.get(position).getProfile_pic()).placeholder(circularProgressDrawable).into(holder.coverpic);
 
+        
 
         holder.call.setOnClickListener(new View.OnClickListener() {
             @Override
