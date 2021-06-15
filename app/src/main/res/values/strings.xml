@@ -18,7 +18,7 @@
 
     <!-- shared preference file name-->
 
-    <string name="user_address">com.example.temp_user_address_preferences</string>
+    <string name="user_address">com.example.temp_user_address_preferences1</string>
 
     <!-- Strings used for shared preferences -->
 

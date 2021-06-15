@@ -18,6 +18,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,16 +93,13 @@ import java.util.Locale;
          address = new HashMap<>();
 
          sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
-         sharedPreferenceConfig.setDefault();
-         if (sharedPreferenceConfig != null) {
-             address = sharedPreferenceConfig.readUserAddress();
-             Add_name.setText(address.get(getApplicationContext().getResources().getString(R.string.Add_name)));
-             Add_houseNo.setText(address.get(getApplicationContext().getResources().getString(R.string.houseNo)));
-             Add_housename.setText(address.get(getApplicationContext().getResources().getString(R.string.houseName)));
-             Add_landmark.setText(address.get(getApplicationContext().getResources().getString(R.string.landmark)));
-             Add_street.setText(address.get(getApplicationContext().getResources().getString(R.string.street)));
-         }
 
+         address = sharedPreferenceConfig.readUserAddress();
+         Add_name.setText(address.get(getApplicationContext().getResources().getString(R.string.Add_name)));
+         Add_houseNo.setText(address.get(getApplicationContext().getResources().getString(R.string.houseNo)));
+         Add_housename.setText(address.get(getApplicationContext().getResources().getString(R.string.houseName)));
+         Add_landmark.setText(address.get(getApplicationContext().getResources().getString(R.string.landmark)));
+         Add_street.setText(address.get(getApplicationContext().getResources().getString(R.string.street)));
 
          fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
          payableAmount.setText(Integer.toString(totalAmount) + " \u20B9");
@@ -111,26 +109,77 @@ import java.util.Locale;
          pay_and_order.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 setPod();
-                 setOrderDetails();
-                 Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
-                 startRazorPay.putExtra("orderDetails", orderDetails);
-                 startRazorPay.putExtra("dishDetails", dishDetails);
-                 startActivity(startRazorPay);
-                 finish();
+
+                if (checkFields()){
+
+                    setSharedPreference();
+                    setPod();
+                    setOrderDetails();
+                    Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
+                    startRazorPay.putExtra("orderDetails", orderDetails);
+                    startRazorPay.putExtra("dishDetails", dishDetails);
+                    startActivity(startRazorPay);
+                    finish();
+
+                }
+
              }
          });
 
          cash_on_delivery.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 setCod();
-                 setOrderDetails();
-                 dialogBox();
+
+                 if(checkFields()){
+
+                     setSharedPreference();
+                     setCod();
+                     setOrderDetails();
+                     dialogBox();
+
+                 }
 
              }
          });
 
+     }
+
+     private void setSharedPreference(){
+
+         HashMap<String ,String> newUserAddress = new HashMap<>();
+         newUserAddress.put(getApplicationContext().getResources().getString(R.string.Add_name) , Add_name.getText().toString());
+         newUserAddress.put(getApplicationContext().getResources().getString(R.string.houseNo) , Add_houseNo.getText().toString());
+         newUserAddress.put(getApplicationContext().getResources().getString(R.string.houseName) ,Add_housename.getText().toString());
+         newUserAddress.put(getApplicationContext().getResources().getString(R.string.landmark) , Add_landmark.getText().toString());
+         newUserAddress.put(getApplicationContext().getResources().getString(R.string.street) , Add_street.getText().toString());
+         sharedPreferenceConfig.writeUserAddress(newUserAddress);
+
+     }
+
+     private boolean checkFields() {
+
+         boolean status = false;
+
+         if (TextUtils.isEmpty(Add_name.getText())) {
+             Add_name.setError("Name field cannot be empty");
+             status = false;
+         } else if (TextUtils.isEmpty(Add_houseNo.getText())) {
+             Add_houseNo.setError("House No field cannot be empty");
+             status = false;
+         } else if (TextUtils.isEmpty(Add_housename.getText())) {
+             Add_housename.setError("House Name field cannot be empty");
+             status = false;
+         } else if (TextUtils.isEmpty(Add_landmark.getText())) {
+             Add_landmark.setError("Landmark is crucial and cannot be empty");
+             status = false;
+         } else if (TextUtils.isEmpty(Add_street.getText())) {
+             Add_street.setError("Street field cannot be empty");
+             status = false;
+         } else {
+             status = true;
+         }
+
+         return status;
      }
 
      private void dialogBox() {

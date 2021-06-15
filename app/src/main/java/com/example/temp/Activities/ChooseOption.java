@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.temp.R;
+import com.example.temp.SharedPreferenceConfig;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import androidx.annotation.NonNull;
@@ -52,6 +53,10 @@ public class ChooseOption extends AppCompatActivity {
             switch (item.getItemId())
             {
                 case R.id.logout_menu:
+
+                    SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+                    sharedPreferenceConfig.clearPreferences();
+
                     FirebaseAuth.getInstance().signOut();
                     Intent backToLogin = new Intent(ChooseOption.this , PhoneAuth.class);
                     startActivity(backToLogin);

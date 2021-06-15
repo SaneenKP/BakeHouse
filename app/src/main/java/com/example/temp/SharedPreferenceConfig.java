@@ -8,16 +8,16 @@ import java.util.HashMap;
 public class SharedPreferenceConfig {
 
     private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     private Context context;
 
     public SharedPreferenceConfig(Context context) {
         this.context = context;
         this.sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.user_address),Context.MODE_PRIVATE);
+        this.editor = sharedPreferences.edit();
     }
 
     public void writeUserAddress(HashMap<String ,  String> address){
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString(context.getResources().getString(R.string.Add_name) , address.get(context.getResources().getString(R.string.Add_name)));
         editor.putString(context.getResources().getString(R.string.houseNo) , address.get(context.getResources().getString(R.string.houseNo)));
@@ -25,19 +25,6 @@ public class SharedPreferenceConfig {
         editor.putString(context.getResources().getString(R.string.landmark) , address.get(context.getResources().getString(R.string.landmark)));
         editor.putString(context.getResources().getString(R.string.street) , address.get(context.getResources().getString(R.string.street)));
         editor.commit();
-
-    }
-
-    public void setDefault(){
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(context.getResources().getString(R.string.Add_name) , "Saneen k p");
-        editor.putString(context.getResources().getString(R.string.houseNo) , "pudupally");
-        editor.putString(context.getResources().getString(R.string.houseName) , "namet");
-        editor.putString(context.getResources().getString(R.string.landmark) , "Green Land Autditorium");
-        editor.putString(context.getResources().getString(R.string.street) , "Malappuram");
-        editor.commit();
-
 
     }
 
@@ -52,6 +39,11 @@ public class SharedPreferenceConfig {
 
         return address;
 
+    }
+
+    public void clearPreferences(){
+        editor.clear();
+        editor.commit();
     }
 
 }
