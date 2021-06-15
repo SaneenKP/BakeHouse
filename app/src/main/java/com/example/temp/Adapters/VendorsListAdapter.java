@@ -48,8 +48,9 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
         holder.description.setText(list.get(position).getDescription());
         holder.number.setText(list.get(position).getNumber());
 
-        CircularProgressDrawable circularProgressDrawable =
-                new CircularProgressDrawable(context);
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
         circularProgressDrawable.start();
         Glide.with(context).load(list.get(position).getProfile_pic()).placeholder(circularProgressDrawable).into(holder.coverpic);
 
