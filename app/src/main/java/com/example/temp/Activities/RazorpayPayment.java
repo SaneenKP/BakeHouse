@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.temp.Models.OrderDetails;
 import com.example.temp.R;
+import com.example.temp.SharedPreferenceConfig;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -24,6 +25,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
 
     private OrderDetails orderDetails;
     private String dishDetails;
+    private SharedPreferenceConfig sharedPreferenceConfig;
 
 
     @Override
@@ -32,6 +34,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
         setContentView(R.layout.activity_razorpay_payment);
         Checkout.preload(getApplicationContext());
 
+        sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
 
         Intent getOrderDetails = getIntent();
         orderDetails = getOrderDetails.getParcelableExtra("orderDetails");
@@ -107,7 +110,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
         setDishes(orderKey , firebaseDatabase);
 
         Intent orderStatusActivity = new Intent(RazorpayPayment.this , OrderStatus.class);
-        orderStatusActivity.putExtra("orderKey" , orderKey);
+        sharedPreferenceConfig.writeOrderId(orderKey);
         startActivity(orderStatusActivity);
     }
 

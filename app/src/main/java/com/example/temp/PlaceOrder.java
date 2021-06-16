@@ -200,7 +200,7 @@ import java.util.Locale;
 
                          setDishes(key, databaseReference);
                          Intent orderStatus = new Intent(PlaceOrder.this, OrderStatus.class);
-                         orderStatus.putExtra("orderKey", key);
+                         sharedPreferenceConfig.writeOrderId(key);
                          startActivity(orderStatus);
                          finish();
 

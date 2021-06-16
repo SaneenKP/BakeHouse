@@ -1,4 +1,4 @@
- package com.example.temp.Activities;
+  package com.example.temp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.temp.Models.OrderDetails;
 import com.example.temp.R;
+import com.example.temp.SharedPreferenceConfig;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +27,7 @@ public class OrderStatus extends AppCompatActivity {
     private TextView orderPlaced , orderCompleted , orderPicked ,orderDelivered;
     private DatabaseReference databaseReference;
     private String orderKey;
+    private SharedPreferenceConfig sharedPreferenceConfig;
 
 
     @Override
@@ -38,12 +40,9 @@ public class OrderStatus extends AppCompatActivity {
         orderDelivered = findViewById(R.id.orderDelivered);
         orderPicked = findViewById(R.id.orderPicked);
 
-        Intent razorpaydata = this.getIntent();
-        orderKey = razorpaydata.getStringExtra("orderKey");
-
+        sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+        orderKey = sharedPreferenceConfig.readOrderId();
         getOrderStatus();
-
-
 
     }
 
@@ -60,6 +59,11 @@ public class OrderStatus extends AppCompatActivity {
                 String confirmedIndex = snapshot.child("confirmedIndex").getValue(String.class);
                 String pickupIndex = snapshot.child("pickupIndex").getValue(String.class);
                 String deliveryIndex = snapshot.child("deliveryIndex").getValue(String.class);
+
+                if (confirmedIndex == "yes"){
+                    sharedPreferenceConfig.removeOrderId();
+                }
+
                 setStatus(placedIndex , confirmedIndex , pickupIndex , deliveryIndex);
 
             }

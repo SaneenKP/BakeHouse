@@ -27,6 +27,7 @@
     <string name="houseName">House Name</string>
     <string name="landmark">Landmark</string>
     <string name="street">Street</string>
+    <string name="orderId">OrderId</string>
 
     <!-- Razor pay key id-->
 
@@ -47,6 +48,10 @@
     <string name="HotelNode">Hotels</string>
     <string name="ServicesNode">Services</string>
     <string name="VendorNode">Vendor</string>
+    <string name="placedIndexStatus">placedIndex</string>
+    <string name="pickupIndexStatus">pickupIndex</string>
+    <string name="deliveryIndexStatus">deliveryIndex</string>
+    <string name="confirmedIndexStatus">confirmedIndex</string>
 
     <!-- Generated -->
     <string name="food">Foods</string>

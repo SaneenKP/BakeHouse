@@ -4,7 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/root"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <include layout="@layout/order_progress_layout"
+        android:id="@+id/orderProgressLayout"
+
+        />
 
     <LinearLayout
         android:layout_width="240dp"

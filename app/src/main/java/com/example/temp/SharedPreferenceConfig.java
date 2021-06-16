@@ -28,6 +28,23 @@ public class SharedPreferenceConfig {
 
     }
 
+    public void writeOrderId(String orderId){
+
+        editor.putString(context.getResources().getString(R.string.orderId) , orderId);
+        editor.commit();
+
+    }
+
+    public String readOrderId(){
+        return sharedPreferences.getString(context.getResources().getString(R.string.orderId),"");
+    }
+
+    public void removeOrderId(){
+
+        editor.remove(context.getResources().getString(R.string.orderId));
+        editor.commit();
+    }
+
     public HashMap<String , String> readUserAddress(){
 
         HashMap<String , String> address = new HashMap<>();
