@@ -21,6 +21,8 @@
             />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +31,11 @@
         android:indeterminate="true"
         app:indicatorColor="@color/app_blue_dark">
     </com.google.android.material.progressindicator.LinearProgressIndicator>
+
+    <include layout="@layout/order_progress_layout"
+        android:id="@+id/orderProgressLayout"
+
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

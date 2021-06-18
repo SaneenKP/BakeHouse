@@ -6,13 +6,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.temp.Adapters.HotelViewAdapter;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
+import com.example.temp.SharedPreferenceConfig;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +39,10 @@ public class Hotels extends AppCompatActivity {
     private List<String> hotelKeys;
     private LinearProgressIndicator linearProgressIndicator;
     private HotelViewAdapter hotelViewAdapter;
+    private SharedPreferenceConfig sharedPreferenceConfig;
+    private TextView orderStatus;
+    private RelativeLayout layout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,69 @@ public class Hotels extends AppCompatActivity {
         linearProgressIndicator=findViewById(R.id.hotelLoadProgress);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+
+        layout = findViewById(R.id.orderProgressLayout);
+        orderStatus = findViewById(R.id.orderStatus);
+        layout.setVisibility(View.GONE);
+
+        if (!sharedPreferenceConfig.readOrderId().equals("")){
+            showOrderProgress();
+        }
+
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent startOrderStatus = new Intent(Hotels .this , OrderStatus.class);
+                startActivity(startOrderStatus);
+
+            }
+        });
+
+    }
+
+    private void showOrderProgress(){
+
+        DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
+
+        orderStatusReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                String placedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.placedIndexStatus)).getValue(String.class);
+                String pickedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.pickupIndexStatus)).getValue(String.class);
+                String deliveredStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.deliveryIndexStatus)).getValue(String.class);
+
+                if (placedStatus.equals("no") && pickedStatus.equals("no") && deliveredStatus.equals("no")){
+                    layout.setVisibility(View.VISIBLE);
+                    orderStatus.setText("Order Under Progress");
+                }
+                if (placedStatus.equals("yes")){
+                    orderStatus.setText("");
+                    layout.setVisibility(View.VISIBLE);
+                    orderStatus.setText("Placed");
+                }
+                if (pickedStatus.equals("yes")){
+                    orderStatus.setText("");
+                    layout.setVisibility(View.VISIBLE);
+                    orderStatus.setText("Picked");
+                }
+                if (deliveredStatus.equals("yes")){
+                    orderStatus.setText("");
+                    orderStatus.setText("Delivered");
+                    sharedPreferenceConfig.removeOrderId();
+                    layout.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     @Override

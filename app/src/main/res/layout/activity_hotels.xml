@@ -33,6 +33,11 @@
        >
     </com.google.android.material.progressindicator.LinearProgressIndicator>
 
+    <include layout="@layout/order_progress_layout"
+        android:id="@+id/orderProgressLayout"
+
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

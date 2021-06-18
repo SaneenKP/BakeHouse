@@ -13,9 +13,11 @@
         >
 
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
 
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
@@ -32,6 +34,12 @@
                     />
 
             </com.google.android.material.appbar.AppBarLayout>
+
+            <include layout="@layout/order_progress_layout"
+                android:id="@+id/orderProgressLayout"
+
+                />
+
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -246,7 +254,7 @@
 
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 

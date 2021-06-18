@@ -51,7 +51,7 @@ public class ChooseOption extends AppCompatActivity {
 
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
-        layout.setVisibility(View.INVISIBLE);
+        layout.setVisibility(View.GONE);
 
         if (!sharedPreferenceConfig.readOrderId().equals("")){
             showOrderProgress();
@@ -98,8 +98,9 @@ public class ChooseOption extends AppCompatActivity {
                 }
                 if (deliveredStatus.equals("yes")){
                     orderStatus.setText("");
-                    layout.setVisibility(View.VISIBLE);
                     orderStatus.setText("Delivered");
+                    sharedPreferenceConfig.removeOrderId();
+                    layout.setVisibility(View.GONE);
                 }
 
             }

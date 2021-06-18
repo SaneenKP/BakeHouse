@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.temp.Adapters.DishesAdapter;
@@ -16,12 +18,15 @@ import com.example.temp.Models.DishDetails;
 import com.example.temp.PlaceOrder;
 import com.example.temp.R;
 import com.example.temp.Interfaces.dishValuesInterface;
+import com.example.temp.SharedPreferenceConfig;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -40,6 +45,9 @@ public class Dishes extends AppCompatActivity {
     private String hotelKey;
     private JSONObject dishValuesJSON , finalSelectedDishes;
     private LinearProgressIndicator linearProgressIndicator;
+    private SharedPreferenceConfig sharedPreferenceConfig;
+    private TextView orderStatus;
+    private RelativeLayout layout;
 
 
     @Override
@@ -56,6 +64,27 @@ public class Dishes extends AppCompatActivity {
         hotelKey = b.getString("hotel_key");
         databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode))
                 .child(hotelKey).child(getApplicationContext().getResources().getString(R.string.DishNode));
+
+
+        sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+
+        layout = findViewById(R.id.orderProgressLayout);
+        orderStatus = findViewById(R.id.orderStatus);
+        layout.setVisibility(View.GONE);
+
+        if (!sharedPreferenceConfig.readOrderId().equals("")){
+            showOrderProgress();
+        }
+
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent startOrderStatus = new Intent(Dishes.this , OrderStatus.class);
+                startActivity(startOrderStatus);
+
+            }
+        });
 
         totalButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +115,49 @@ public class Dishes extends AppCompatActivity {
                     openPlaceOrderSection.putExtra("totalAmount" , TOTAL_AMOUNT);
                     startActivity(openPlaceOrderSection);
                 }
+
+            }
+        });
+
+    }
+
+    private void showOrderProgress(){
+
+        DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
+
+        orderStatusReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                String placedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.placedIndexStatus)).getValue(String.class);
+                String pickedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.pickupIndexStatus)).getValue(String.class);
+                String deliveredStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.deliveryIndexStatus)).getValue(String.class);
+
+                if (placedStatus.equals("no") && pickedStatus.equals("no") && deliveredStatus.equals("no")){
+                    layout.setVisibility(View.VISIBLE);
+                    orderStatus.setText("Order Under Progress");
+                }
+                if (placedStatus.equals("yes")){
+                    orderStatus.setText("");
+                    layout.setVisibility(View.VISIBLE);
+                    orderStatus.setText("Placed");
+                }
+                if (pickedStatus.equals("yes")){
+                    orderStatus.setText("");
+                    layout.setVisibility(View.VISIBLE);
+                    orderStatus.setText("Picked");
+                }
+                if (deliveredStatus.equals("yes")){
+                    orderStatus.setText("");
+                    orderStatus.setText("Delivered");
+                    sharedPreferenceConfig.removeOrderId();
+                    layout.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });

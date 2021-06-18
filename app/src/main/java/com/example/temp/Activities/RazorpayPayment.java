@@ -103,6 +103,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
     @Override
     public void onPaymentSuccess(String s) {
 
+
         orderDetails.setTransactionId(s);
         DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Orders");
         String orderKey = firebaseDatabase.push().getKey();
@@ -112,6 +113,7 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
         Intent orderStatusActivity = new Intent(RazorpayPayment.this , OrderStatus.class);
         sharedPreferenceConfig.writeOrderId(orderKey);
         startActivity(orderStatusActivity);
+        finish();
     }
 
     @Override

@@ -19,12 +19,15 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.temp.Activities.Dishes;
 import com.example.temp.Activities.OrderStatus;
 import com.example.temp.Activities.RazorpayPayment;
 import com.example.temp.Models.OrderDetails;
@@ -37,8 +40,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -64,6 +70,10 @@ import java.util.Locale;
      private OrderDetails orderDetails;
      private String dishDetails, hotelKey;
      private boolean locationAlertShown = false;
+     private TextView orderStatus;
+     private RelativeLayout layout;
+
+
 
      @Override
      protected void onCreate(Bundle savedInstanceState) {
@@ -106,22 +116,49 @@ import java.util.Locale;
 
          getLastLocation();
 
+         layout = findViewById(R.id.orderProgressLayout);
+         orderStatus = findViewById(R.id.orderStatus);
+         layout.setVisibility(View.GONE);
+
+         if (!sharedPreferenceConfig.readOrderId().equals("")){
+             showOrderProgress();
+         }
+
+         layout.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+
+                 Intent startOrderStatus = new Intent(PlaceOrder.this , OrderStatus.class);
+                 startActivity(startOrderStatus);
+                 finish();
+
+             }
+         });
+
+
          pay_and_order.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
 
-                if (checkFields()){
+                 if(!sharedPreferenceConfig.readOrderId().equals("")){
 
-                    setSharedPreference();
-                    setPod();
-                    setOrderDetails();
-                    Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
-                    startRazorPay.putExtra("orderDetails", orderDetails);
-                    startRazorPay.putExtra("dishDetails", dishDetails);
-                    startActivity(startRazorPay);
-                    finish();
+                     Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
 
-                }
+                 }else{
+
+                     if (checkFields()){
+
+                         setSharedPreference();
+                         setPod();
+                         setOrderDetails();
+                         Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
+                         startRazorPay.putExtra("orderDetails", orderDetails);
+                         startRazorPay.putExtra("dishDetails", dishDetails);
+                         startActivity(startRazorPay);
+                         finish();
+
+                     }
+                 }
 
              }
          });
@@ -130,19 +167,71 @@ import java.util.Locale;
              @Override
              public void onClick(View v) {
 
-                 if(checkFields()){
+                 if(!sharedPreferenceConfig.readOrderId().equals("")){
 
-                     setSharedPreference();
-                     setCod();
-                     setOrderDetails();
-                     dialogBox();
+                     Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
 
+                 }else{
+                     if(checkFields()){
+
+                         setSharedPreference();
+                         setCod();
+                         setOrderDetails();
+                         dialogBox();
+
+                     }
                  }
+
+
 
              }
          });
 
      }
+
+     private void showOrderProgress(){
+
+         DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
+
+         orderStatusReference.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                 String placedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.placedIndexStatus)).getValue(String.class);
+                 String pickedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.pickupIndexStatus)).getValue(String.class);
+                 String deliveredStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.deliveryIndexStatus)).getValue(String.class);
+
+                 if (placedStatus.equals("no") && pickedStatus.equals("no") && deliveredStatus.equals("no")){
+                     layout.setVisibility(View.VISIBLE);
+                     orderStatus.setText("Order Under Progress");
+                 }
+                 if (placedStatus.equals("yes")){
+                     orderStatus.setText("");
+                     layout.setVisibility(View.VISIBLE);
+                     orderStatus.setText("Placed");
+                 }
+                 if (pickedStatus.equals("yes")){
+                     orderStatus.setText("");
+                     layout.setVisibility(View.VISIBLE);
+                     orderStatus.setText("Picked");
+                 }
+                 if (deliveredStatus.equals("yes")){
+                     orderStatus.setText("");
+                     orderStatus.setText("Delivered");
+                     sharedPreferenceConfig.removeOrderId();
+                     layout.setVisibility(View.GONE);
+                 }
+
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError error) {
+
+             }
+         });
+
+     }
+
 
      private void setSharedPreference(){
 
