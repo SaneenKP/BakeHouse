@@ -62,6 +62,7 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
 
                 Intent openDishesSection = new Intent(context , Dishes.class);
                 openDishesSection.putExtra("hotel_key" , hotelKeys.get(holder.getAdapterPosition()));
+                openDishesSection.putExtra("hotelDetails" , list.get(holder.getAdapterPosition()));
                 openDishesSection.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(openDishesSection);
 

@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Temp">
         <activity android:name=".Activities.OrderStatus"></activity>
         <activity android:name=".Activities.RazorpayPayment" />
-        <activity android:name=".PlaceOrder" />
+        <activity android:name=".Activities.PlaceOrder" />
         <activity android:name=".Activities.Dishes" />
         <activity android:name=".Activities.Hotels" />
         <activity android:name=".Activities.Vendors" />

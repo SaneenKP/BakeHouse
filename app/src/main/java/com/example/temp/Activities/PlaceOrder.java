@@ -1,4 +1,4 @@
- package com.example.temp;
+ package com.example.temp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -27,10 +27,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.temp.Activities.Dishes;
-import com.example.temp.Activities.OrderStatus;
-import com.example.temp.Activities.RazorpayPayment;
+import com.example.temp.Models.HotelDetails;
 import com.example.temp.Models.OrderDetails;
+import com.example.temp.R;
+import com.example.temp.SharedPreferenceConfig;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -60,6 +60,7 @@ import java.util.Locale;
 
      private TextView payableAmount;
      private TextView LocationAddress;
+     private TextView orderDishDetails , orderHotelDetails;
      private Double latitude, longitude;
      private EditText Add_name, Add_houseNo, Add_housename, Add_landmark, Add_street;
      private FusedLocationProviderClient fusedLocationProviderClient;
@@ -68,10 +69,12 @@ import java.util.Locale;
      private HashMap<String, String> address;
      private SharedPreferenceConfig sharedPreferenceConfig;
      private OrderDetails orderDetails;
-     private String dishDetails, hotelKey;
+     private String dishDetails, hotelKey , dishNameAndQuantity ;
      private boolean locationAlertShown = false;
      private TextView orderStatus;
      private RelativeLayout layout;
+     private HotelDetails hotelDetails;
+
 
 
 
@@ -83,7 +86,12 @@ import java.util.Locale;
          Bundle b = getIntent().getExtras();
          totalAmount = b.getInt("totalAmount");
          dishDetails = b.getString("dishDetails");
+         dishNameAndQuantity = b.getString("dishNameAndQuantity");
+         hotelDetails = b.getParcelable("hotelDetails");
          hotelKey = b.getString("hotelKey");
+
+         orderDishDetails = findViewById(R.id.orderDishDetails);
+         orderHotelDetails = findViewById(R.id.orderHotelDetails);
 
          LocationAddress = findViewById(R.id.address);
 
@@ -187,8 +195,30 @@ import java.util.Locale;
              }
          });
 
+         setHotelAndDishDetails();
+
      }
 
+     private void setHotelAndDishDetails()
+     {
+
+         Log.d("dish name " , dishNameAndQuantity);
+         orderHotelDetails.setText(hotelDetails.getHotel_name() + "\n" + hotelDetails.getAddress() + " \n " + hotelDetails.getLocation());
+
+         try {
+             JSONObject dishNameAndQuantity = new JSONObject(this.dishNameAndQuantity);
+             String finalText ="";
+             for (int i = 0; i < dishNameAndQuantity.names().length(); i++) {
+                 String Quantity = dishNameAndQuantity.getString(dishNameAndQuantity.names().getString(i));
+                 String dishName = dishNameAndQuantity.names().getString(i);
+
+                 finalText = finalText + dishName + " : " + Quantity + "\n";
+             }
+             orderDishDetails.setText(finalText);
+         }catch (Exception e){}
+
+
+     }
      private void showOrderProgress(){
 
          DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".PlaceOrder">
+    tools:context=".Activities.PlaceOrder">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -39,6 +39,27 @@
                 android:id="@+id/orderProgressLayout"
 
                 />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/orderHotelDetails"
+                android:padding="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/orderDishDetails"
+                android:padding="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                />
+
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"

@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.temp.Interfaces.dishValuesInterface;
 import com.example.temp.Models.DishDetails;
+import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -29,9 +32,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     private final int[] priceArray;
     private final String[] keyList;
     private final JSONObject dishValues;
+    private final JSONObject dishNameAndQuantity;
 
 
-    public DishesAdapter(Context context, List<DishDetails> list, List<String> dishKeyList, dishValuesInterface dishValuesInterface) {
+    public DishesAdapter(Context context, List<DishDetails> list,  List<String> dishKeyList, dishValuesInterface dishValuesInterface) {
         this.context = context;
         this.list = list;
         this.priceArray = new int[list.size()];
@@ -39,6 +43,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
         this.dishKeyList = dishKeyList;
         this.dishValuesInterface = dishValuesInterface;
         dishValues = new JSONObject();
+        dishNameAndQuantity = new JSONObject();
     }
 
 
@@ -55,7 +60,6 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     @Override
     public void onBindViewHolder(@NonNull DishesAdapter.dishesHolder holder, int position) {
 
-        Log.d("ADAPTER SET", "ADPTER SETTTTt");
         Glide.with(context)
                 .load(list.get(position).getPic())
                 .centerCrop()
@@ -80,10 +84,11 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
                 try {
                     dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
+                    dishNameAndQuantity.put(list.get(holder.getAdapterPosition()).getName(), holder.counter.getText());
                 }catch (Exception e)
                 {}
 
-                dishValuesInterface.getCounterValue(priceArray , keyList,dishValues);
+                dishValuesInterface.getCounterValue(priceArray , keyList,dishValues , dishNameAndQuantity);
 
 
             }
@@ -101,17 +106,15 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
                 TOTAL_COUNT = count*list.get(holder.getAdapterPosition()).getPrice();
                 priceArray[holder.getAdapterPosition()] = TOTAL_COUNT;
 
-                Log.d("Total count", Integer.toString(TOTAL_COUNT));
-                Log.d("price array" , Integer.toString(priceArray[holder.getAdapterPosition()]));
 
                 try {
                     dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
+                    dishNameAndQuantity.put(list.get(holder.getAdapterPosition()).getName(), holder.counter.getText());
+                    Log.d("dish values" , dishValues.toString());
                 }catch (Exception e)
                 {}
 
-
-
-                dishValuesInterface.getCounterValue(priceArray , keyList, dishValues);
+                dishValuesInterface.getCounterValue(priceArray , keyList, dishValues , dishNameAndQuantity);
 
             }
         });

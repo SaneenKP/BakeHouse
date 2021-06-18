@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.example.temp.Adapters.DishesAdapter;
 import com.example.temp.Models.DishDetails;
-import com.example.temp.PlaceOrder;
+import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
 import com.example.temp.Interfaces.dishValuesInterface;
 import com.example.temp.SharedPreferenceConfig;
@@ -43,11 +43,12 @@ public class Dishes extends AppCompatActivity {
     private List<String> dishKeyList;
     private int TOTAL_AMOUNT = 0;
     private String hotelKey;
-    private JSONObject dishValuesJSON , finalSelectedDishes;
+    private JSONObject dishValuesJSON , finalSelectedDishes , finalDishNameAndQuantity;
     private LinearProgressIndicator linearProgressIndicator;
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
+    private HotelDetails hotelDetails;
 
 
     @Override
@@ -59,9 +60,13 @@ public class Dishes extends AppCompatActivity {
         totalButton = findViewById(R.id.total_button);
         layoutManager = new LinearLayoutManager(this);
         dishList = new ArrayList<>();
+
         dishKeyList = new ArrayList<>();
+
         Bundle b = getIntent().getExtras();
         hotelKey = b.getString("hotel_key");
+        hotelDetails = b.getParcelable("hotelDetails");
+
         databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode))
                 .child(hotelKey).child(getApplicationContext().getResources().getString(R.string.DishNode));
 
@@ -111,8 +116,10 @@ public class Dishes extends AppCompatActivity {
 
                     Intent openPlaceOrderSection = new Intent(Dishes.this, PlaceOrder.class);
                     openPlaceOrderSection.putExtra("dishDetails" , finalSelectedDishes.toString());
+                    openPlaceOrderSection.putExtra("dishNameAndQuantity" , finalDishNameAndQuantity.toString());
                     openPlaceOrderSection.putExtra("hotelKey" , hotelKey);
                     openPlaceOrderSection.putExtra("totalAmount" , TOTAL_AMOUNT);
+                    openPlaceOrderSection.putExtra("hotelDetails" , hotelDetails);
                     startActivity(openPlaceOrderSection);
                 }
 
@@ -191,10 +198,11 @@ public class Dishes extends AppCompatActivity {
                                     dishKeyList.add(task.getResult().getKey());
                                     dishList.add(dishDetails);
 
-                                    DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new dishValuesInterface() {
+                                    DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList , dishKeyList, new dishValuesInterface() {
                                         @Override
-                                        public void getCounterValue(int[] value, String[] keys , JSONObject dishValues) {
+                                        public void getCounterValue(int[] value, String[] keys , JSONObject dishValues , JSONObject dishNameAndQuantity) {
 
+                                            finalDishNameAndQuantity = dishNameAndQuantity;
                                             dishValuesJSON = dishValues;
                                             TOTAL_AMOUNT = 0;
 
