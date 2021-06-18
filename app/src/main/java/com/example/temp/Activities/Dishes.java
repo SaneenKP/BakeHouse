@@ -221,4 +221,14 @@ public class Dishes extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!sharedPreferenceConfig.readOrderId().equals("")){
+            showOrderProgress();
+        }
+
+    }
 }

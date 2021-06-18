@@ -157,4 +157,14 @@ public class Vendors extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!sharedPreferenceConfig.readOrderId().equals("")){
+            showOrderProgress();
+        }
+
+    }
 }

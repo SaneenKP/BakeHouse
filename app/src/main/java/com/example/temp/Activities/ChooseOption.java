@@ -114,6 +114,15 @@ public class ChooseOption extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!sharedPreferenceConfig.readOrderId().equals("")){
+            showOrderProgress();
+        }
+
+    }
 
 
     @Override
