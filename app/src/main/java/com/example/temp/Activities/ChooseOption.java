@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
+import com.example.temp.CheckInternet;
 import com.example.temp.Models.OrderDetails;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
@@ -40,7 +41,7 @@ public class ChooseOption extends AppCompatActivity {
     private TextView orderStatus;
     private RelativeLayout layout;
     private Snackbar snackbar;
-    private String internetNotSwitchedOn , noNetworkConnection;
+    private CheckInternet checkInternet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,9 @@ public class ChooseOption extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        internetNotSwitchedOn = getApplicationContext().getResources().getString(R.string.networkNotSwitchedOn);
-        noNetworkConnection = getApplicationContext().getResources().getString(R.string.noInternet);
+
+        checkInternet = new CheckInternet(getApplicationContext());
+
         food = findViewById(R.id.btn_food);
         services = findViewById(R.id.btn_services);
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
@@ -123,58 +125,51 @@ public class ChooseOption extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
-
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        if (isNetworkConnected()){
-            if (internetIsConnected()){
+        if (checkInternet.isNetworkConnected()){
+            if (checkInternet.internetIsConnected()){
                 if (!sharedPreferenceConfig.readOrderId().equals(""))
                     showOrderProgress();
             }else
-                snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
         }else {
-            snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+            snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
         }
 
 
 
         food.setOnClickListener(v -> {
 
-            if (isNetworkConnected()){
+            if (checkInternet.isNetworkConnected()){
 
-                if (internetIsConnected()){
+                if (checkInternet.internetIsConnected()){
                     Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
                     startActivity(openHotelSection);
                 }else{
-                    snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                    snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
                 }
 
             }else{
-                snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+                snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
             }
 
         });
         services.setOnClickListener(v -> {
 
-            if (isNetworkConnected()){
+            if (checkInternet.isNetworkConnected()){
 
-                if (internetIsConnected()){
+                if (checkInternet.internetIsConnected()){
                     Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
                     startActivity(openServicesSection);
                 }else{
-                    snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                    snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
                 }
             }else{
-                snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+                snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
             }
 
         });
@@ -194,8 +189,8 @@ public class ChooseOption extends AppCompatActivity {
             {
                 case R.id.logout_menu:
 
-                    if (isNetworkConnected()){
-                        if (internetIsConnected()){
+                    if (checkInternet.isNetworkConnected()){
+                        if (checkInternet.internetIsConnected()){
 
                             SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
                             sharedPreferenceConfig.clearPreferences();
@@ -205,10 +200,10 @@ public class ChooseOption extends AppCompatActivity {
                             finish();
 
                         }else{
-                            snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                            snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
                         }
                     }else{
-                        snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+                        snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
                     }
                     break;
 
@@ -222,18 +217,6 @@ public class ChooseOption extends AppCompatActivity {
             return super.onOptionsItemSelected(item);
         }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
 
-    public boolean internetIsConnected() {
-        try {
-            String command = "ping -c 1 google.com";
-            return (Runtime.getRuntime().exec(command).waitFor() == 0);
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
 }

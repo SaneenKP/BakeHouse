@@ -6,7 +6,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -21,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -127,6 +130,10 @@ public class Hotels extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+
+
+
         linearProgressIndicator.setVisibility(View.VISIBLE);
 
         databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -155,16 +162,10 @@ public class Hotels extends AppCompatActivity {
             }
         });
 
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
 
-    }
+
+
 }
