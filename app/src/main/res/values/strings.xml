@@ -10,6 +10,10 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
+    <!-- network Connectivity Strings -->
+    <string name="networkNotSwitchedOn">Internet is Not Connected</string>
+    <string name="noInternet">No Network Connection</string>
+
     <!-- Menu strings-->
 
     <string name="logout">Logout</string>

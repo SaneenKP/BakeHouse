@@ -15,6 +15,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
@@ -555,4 +556,7 @@ import java.util.Locale;
          alertDialog.show();
 
      }
+
+
+
  }

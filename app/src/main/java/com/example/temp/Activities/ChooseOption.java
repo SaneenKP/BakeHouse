@@ -1,11 +1,14 @@
 package com.example.temp.Activities;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import com.example.temp.Models.OrderDetails;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ChooseOption extends AppCompatActivity {
 
@@ -35,6 +39,8 @@ public class ChooseOption extends AppCompatActivity {
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
+    private Snackbar snackbar;
+    private String internetNotSwitchedOn , noNetworkConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,9 @@ public class ChooseOption extends AppCompatActivity {
         setContentView(R.layout.activity_choose_option);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        internetNotSwitchedOn = getApplicationContext().getResources().getString(R.string.networkNotSwitchedOn);
+        noNetworkConnection = getApplicationContext().getResources().getString(R.string.noInternet);
         food = findViewById(R.id.btn_food);
         services = findViewById(R.id.btn_services);
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
@@ -118,9 +127,6 @@ public class ChooseOption extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
 
     }
 
@@ -128,13 +134,49 @@ public class ChooseOption extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (isNetworkConnected()){
+            if (internetIsConnected()){
+                if (!sharedPreferenceConfig.readOrderId().equals(""))
+                    showOrderProgress();
+            }else
+                snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+        }else {
+            snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+        }
+
+
+
         food.setOnClickListener(v -> {
-            Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
-            startActivity(openHotelSection);
+
+            if (isNetworkConnected()){
+
+                if (internetIsConnected()){
+                    Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
+                    startActivity(openHotelSection);
+                }else{
+                    snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                }
+
+            }else{
+                snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+            }
+
         });
         services.setOnClickListener(v -> {
-            Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
-            startActivity(openServicesSection);
+
+            if (isNetworkConnected()){
+
+                if (internetIsConnected()){
+                    Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
+                    startActivity(openServicesSection);
+                }else{
+                    snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                }
+            }else{
+                snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+            }
+
         });
     }
 
@@ -152,13 +194,22 @@ public class ChooseOption extends AppCompatActivity {
             {
                 case R.id.logout_menu:
 
-                    SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
-                    sharedPreferenceConfig.clearPreferences();
+                    if (isNetworkConnected()){
+                        if (internetIsConnected()){
 
-                    FirebaseAuth.getInstance().signOut();
-                    Intent backToLogin = new Intent(ChooseOption.this , PhoneAuth.class);
-                    startActivity(backToLogin);
-                    finish();
+                            SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+                            sharedPreferenceConfig.clearPreferences();
+                            FirebaseAuth.getInstance().signOut();
+                            Intent backToLogin = new Intent(ChooseOption.this , PhoneAuth.class);
+                            startActivity(backToLogin);
+                            finish();
+
+                        }else{
+                            snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                        }
+                    }else{
+                        snackbar.make(layout , internetNotSwitchedOn , Snackbar.LENGTH_LONG).show();
+                    }
                     break;
 
                 case R.id.about_menu:
@@ -170,4 +221,19 @@ public class ChooseOption extends AppCompatActivity {
             }
             return super.onOptionsItemSelected(item);
         }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
+
+    public boolean internetIsConnected() {
+        try {
+            String command = "ping -c 1 google.com";
+            return (Runtime.getRuntime().exec(command).waitFor() == 0);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+}
