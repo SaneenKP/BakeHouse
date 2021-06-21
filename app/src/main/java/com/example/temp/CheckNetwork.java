@@ -28,16 +28,14 @@ public class CheckNetwork {
 
         boolean status = false;
 
-        alertDialog = customAlertDialog.showAlertDialog();
         if (isNetworkConnected()){
 
+            alertDialog = customAlertDialog.showAlertDialog();
             status = true;
             if (internetIsConnected()){
-
                 alertDialog.dismiss();
                 status = true;
             }else{
-
                 alertDialog.dismiss();
                 status = false;
                 if (group!=null){
@@ -47,8 +45,9 @@ public class CheckNetwork {
                 }
             }
 
+
         }else{
-            alertDialog.dismiss();
+
             status = false;
             if (group!=null){
                 snackbar.make(group , getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
