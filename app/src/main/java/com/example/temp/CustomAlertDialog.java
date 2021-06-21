@@ -24,7 +24,7 @@ public class CustomAlertDialog {
 
     }
 
-    public AlertDialog getAlertDialog(){
+    private AlertDialog getAlertDialog(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
