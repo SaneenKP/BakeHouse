@@ -27,12 +27,20 @@
         android:id="@+id/orderProgressLayout"
 
         />
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/hotelLoadProgress"
+        android:visibility="invisible"
+        android:indeterminate="true"
+        app:indicatorColor="@color/app_blue_dark"
+        >
+    </com.google.android.material.progressindicator.LinearProgressIndicator>
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/services"
-        android:numColumns="2"
-        android:columnWidth="96dp"
+        android:numColumns="1"
         />
 
 

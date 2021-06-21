@@ -25,6 +25,7 @@
             android:id="@+id/hotel_image"
             android:layout_centerVertical="true"
             android:background="@drawable/imageviewshape"
+            android:scaleType="centerCrop"
         />
 
     <com.google.android.material.textview.MaterialTextView

@@ -15,6 +15,7 @@ import com.example.temp.Activities.Dishes;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
 import com.google.android.material.textview.MaterialTextView;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -45,9 +46,9 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
     @Override
     public void onBindViewHolder(@NonNull HotelViewHolder holder, int position) {
 
-        Glide.with(context)
+        Picasso.get()
                 .load(list.get(position).getImage())
-                .centerCrop()
+                .placeholder(R.drawable.ic_baseline_image_24)
                 .into(holder.image);
 
         holder.name.setText(list.get(position).getHotel_name());

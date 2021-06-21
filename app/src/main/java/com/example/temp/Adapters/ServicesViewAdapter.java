@@ -1,5 +1,6 @@
 package com.example.temp.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.temp.Models.ServiceDetails;
@@ -52,13 +55,11 @@ public class ServicesViewAdapter extends BaseAdapter {
 
         convertView = inflater.inflate(R.layout.service_view , null);
         TextView serviceName = convertView.findViewById(R.id.service_name);
-        ImageView serviceImage = convertView.findViewById(R.id.service_image);
-
+       // AppCompatImageView serviceImage = convertView.findViewById(R.id.service_image);
         Log.d("Images" , services.get(position).getCover_pic());
-
-
         serviceName.setText(services.get(position).getName());
-        Glide.with(context).load(services.get(position).getCover_pic()).into(serviceImage);
+//        Glide.with(context).load(services.get(position).
+//                getCover_pic()).into(serviceImage);
         return convertView;
     }
 }

@@ -25,6 +25,7 @@
         android:layout_height="80dp"
         android:id="@+id/dish_image"
         android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
         android:background="@drawable/imageviewshape"
 
         />

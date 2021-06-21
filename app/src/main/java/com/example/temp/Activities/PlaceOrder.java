@@ -238,16 +238,16 @@ import java.util.Locale;
                  if (placedStatus.equals("yes")){
                      orderStatus.setText("");
                      layout.setVisibility(View.VISIBLE);
-                     orderStatus.setText("Placed");
+                     orderStatus.setText("Your Order Placed");
                  }
                  if (pickedStatus.equals("yes")){
                      orderStatus.setText("");
                      layout.setVisibility(View.VISIBLE);
-                     orderStatus.setText("Picked");
+                     orderStatus.setText("Your Order Picked up");
                  }
                  if (deliveredStatus.equals("yes")){
                      orderStatus.setText("");
-                     orderStatus.setText("Delivered");
+                     orderStatus.setText("Your order Delivered");
                      sharedPreferenceConfig.removeOrderId();
                      layout.setVisibility(View.GONE);
                  }
@@ -261,8 +261,6 @@ import java.util.Locale;
          });
 
      }
-
-
      private void setSharedPreference(){
 
          HashMap<String ,String> newUserAddress = new HashMap<>();

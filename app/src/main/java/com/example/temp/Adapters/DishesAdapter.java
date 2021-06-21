@@ -17,6 +17,7 @@ import com.example.temp.Models.DishDetails;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
 import com.google.android.material.textview.MaterialTextView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -60,13 +61,12 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     @Override
     public void onBindViewHolder(@NonNull DishesAdapter.dishesHolder holder, int position) {
 
-        Glide.with(context)
+        Picasso.get()
                 .load(list.get(position).getPic())
-                .centerCrop()
+                .placeholder(R.drawable.ic_baseline_image_24)
                 .into(holder.dishImage);
         holder.dishName.setText(list.get(position).getName());
         holder.price.setText(Integer.toString(list.get(position).getPrice())+" \u20B9");
-
 
         holder.dec.setOnClickListener(new View.OnClickListener() {
             @Override

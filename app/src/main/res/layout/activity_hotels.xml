@@ -22,6 +22,10 @@
             />
 
     </com.google.android.material.appbar.AppBarLayout>
+    <include layout="@layout/order_progress_layout"
+        android:id="@+id/orderProgressLayout"
+        />
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,10 +37,6 @@
        >
     </com.google.android.material.progressindicator.LinearProgressIndicator>
 
-    <include layout="@layout/order_progress_layout"
-        android:id="@+id/orderProgressLayout"
-
-        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

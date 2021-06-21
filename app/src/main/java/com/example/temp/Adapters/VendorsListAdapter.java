@@ -16,8 +16,13 @@ import com.bumptech.glide.Glide;
 import com.example.temp.Interfaces.vendorsCallListenerInterface;
 import com.example.temp.Models.VendorDetails;
 import com.example.temp.R;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textview.MaterialTextView;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.VendorHolder>{
 
@@ -48,11 +53,9 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
         holder.description.setText(list.get(position).getDescription());
         holder.number.setText(list.get(position).getNumber());
 
-        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-        circularProgressDrawable.setStrokeWidth(5f);
-        circularProgressDrawable.setCenterRadius(30f);
-        circularProgressDrawable.start();
-        Glide.with(context).load(list.get(position).getProfile_pic()).placeholder(circularProgressDrawable).into(holder.coverpic);
+        Picasso.get().load(list.get(position).getProfile_pic())
+                .placeholder(R.drawable.ic_baseline_account_circle_24)
+                .into(holder.coverpic);
 
         
 
@@ -63,6 +66,12 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
             }
         });
 
+        holder.number.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.getVendorNumber(list.get(position).getNumber());
+            }
+        });
 
     }
 
@@ -73,12 +82,12 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
 
     public static class VendorHolder extends RecyclerView.ViewHolder {
 
-         ImageView coverpic;
-         TextView name;
-         TextView address;
-         TextView number;
-         TextView description;
-         Button call;
+         private ImageView coverpic;
+         private MaterialTextView name;
+         private MaterialTextView address;
+         private MaterialButton number;
+         private MaterialTextView description;
+         private MaterialButton call;
 
         public VendorHolder(@NonNull View itemView) {
             super(itemView);
