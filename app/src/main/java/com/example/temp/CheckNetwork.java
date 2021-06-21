@@ -3,11 +3,11 @@ package com.example.temp;
 import android.content.Context;
 import android.net.ConnectivityManager;
 
-public class CheckInternet {
+public class CheckNetwork {
 
     private Context context;
 
-    public CheckInternet(Context context) {
+    public CheckNetwork(Context context) {
         this.context = context;
     }
 
@@ -31,4 +31,5 @@ public class CheckInternet {
     public String getNoNetworkConnectionError(){
         return context.getResources().getString(R.string.noInternet);
     }
+
 }
