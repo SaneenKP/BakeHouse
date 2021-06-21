@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.temp.Adapters.DishesAdapter;
+import com.example.temp.CheckNetwork;
 import com.example.temp.Models.DishDetails;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
@@ -49,6 +50,7 @@ public class Dishes extends AppCompatActivity {
     private TextView orderStatus;
     private RelativeLayout layout;
     private HotelDetails hotelDetails;
+    private CheckNetwork checkNetwork;
 
 
     @Override
@@ -62,6 +64,8 @@ public class Dishes extends AppCompatActivity {
         dishList = new ArrayList<>();
 
         dishKeyList = new ArrayList<>();
+
+        checkNetwork = new CheckNetwork(Dishes.this , layout);
 
         Bundle b = getIntent().getExtras();
         hotelKey = b.getString("hotel_key");
@@ -77,9 +81,6 @@ public class Dishes extends AppCompatActivity {
         orderStatus = findViewById(R.id.orderStatus);
         layout.setVisibility(View.GONE);
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,34 +96,36 @@ public class Dishes extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (TOTAL_AMOUNT ==0)
-                {
-                    Toast.makeText(getApplicationContext() , "No Items Selected" , Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    finalSelectedDishes = new JSONObject();
-                    for (String x : dishKeyList)
+                if (checkNetwork.check()){
+                    if (TOTAL_AMOUNT ==0)
                     {
-                        try {
-                            String quantity = dishValuesJSON.getString(x);
-                            if (!quantity.equals("0"))
-                            {
-                                finalSelectedDishes.put(x , quantity);
-                            }
-                        }catch (Exception e){}
-
+                        Toast.makeText(getApplicationContext() , "No Items Selected" , Toast.LENGTH_SHORT).show();
                     }
+                    else
+                    {
+                        finalSelectedDishes = new JSONObject();
+                        for (String x : dishKeyList)
+                        {
+                            try {
+                                String quantity = dishValuesJSON.getString(x);
+                                if (!quantity.equals("0"))
+                                {
+                                    finalSelectedDishes.put(x , quantity);
+                                }
+                            }catch (Exception e){}
 
-                    Intent openPlaceOrderSection = new Intent(Dishes.this, PlaceOrder.class);
-                    openPlaceOrderSection.putExtra("dishDetails" , finalSelectedDishes.toString());
-                    openPlaceOrderSection.putExtra("dishNameAndQuantity" , finalDishNameAndQuantity.toString());
-                    openPlaceOrderSection.putExtra("hotelKey" , hotelKey);
-                    openPlaceOrderSection.putExtra("totalAmount" , TOTAL_AMOUNT);
-                    openPlaceOrderSection.putExtra("hotelDetails" , hotelDetails);
-                    startActivity(openPlaceOrderSection);
+                        }
+
+                        Intent openPlaceOrderSection = new Intent(Dishes.this, PlaceOrder.class);
+                        openPlaceOrderSection.putExtra("dishDetails" , finalSelectedDishes.toString());
+                        openPlaceOrderSection.putExtra("dishNameAndQuantity" , finalDishNameAndQuantity.toString());
+                        openPlaceOrderSection.putExtra("hotelKey" , hotelKey);
+                        openPlaceOrderSection.putExtra("totalAmount" , TOTAL_AMOUNT);
+                        openPlaceOrderSection.putExtra("hotelDetails" , hotelDetails);
+                        startActivity(openPlaceOrderSection);
+                    }
                 }
-
+                
             }
         });
 
@@ -174,69 +177,72 @@ public class Dishes extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+
         totalButton.setText(R.string.no_item_txt);
         TOTAL_AMOUNT=0;
-        linearProgressIndicator.setVisibility(View.VISIBLE);
-        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()){
-                    linearProgressIndicator.setVisibility(View.INVISIBLE);
-                    dishList.clear();
-                    dishKeyList.clear();
 
-                    for (DataSnapshot dishkeys : task.getResult().getChildren()){
-                        String key = dishkeys.getValue(String.class);
-                        getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
-                        getDishDetailsReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+        if (checkNetwork.check()){
 
-                                if (task.isSuccessful()){
+            if (!sharedPreferenceConfig.readOrderId().equals("")){
+                showOrderProgress();
+            }
 
-                                    DishDetails dishDetails = task.getResult().getValue(DishDetails.class);
-                                    dishKeyList.add(task.getResult().getKey());
-                                    dishList.add(dishDetails);
+            linearProgressIndicator.setVisibility(View.VISIBLE);
+            databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    if (task.isSuccessful()){
+                        linearProgressIndicator.setVisibility(View.INVISIBLE);
+                        dishList.clear();
+                        dishKeyList.clear();
 
-                                    DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList , dishKeyList, new dishValuesInterface() {
-                                        @Override
-                                        public void getCounterValue(int[] value, String[] keys , JSONObject dishValues , JSONObject dishNameAndQuantity) {
+                        for (DataSnapshot dishkeys : task.getResult().getChildren()){
+                            String key = dishkeys.getValue(String.class);
+                            getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
+                            getDishDetailsReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-                                            finalDishNameAndQuantity = dishNameAndQuantity;
-                                            dishValuesJSON = dishValues;
-                                            TOTAL_AMOUNT = 0;
+                                    if (task.isSuccessful()){
 
-                                            for (int x : value)
-                                                TOTAL_AMOUNT += x;
+                                        DishDetails dishDetails = task.getResult().getValue(DishDetails.class);
+                                        dishKeyList.add(task.getResult().getKey());
+                                        dishList.add(dishDetails);
+
+                                        DishesAdapter dishesAdapter = new DishesAdapter(Dishes.this, dishList , dishKeyList, new dishValuesInterface() {
+                                            @Override
+                                            public void getCounterValue(int[] value, String[] keys , JSONObject dishValues , JSONObject dishNameAndQuantity) {
+
+                                                finalDishNameAndQuantity = dishNameAndQuantity;
+                                                dishValuesJSON = dishValues;
+                                                TOTAL_AMOUNT = 0;
+
+                                                for (int x : value)
+                                                    TOTAL_AMOUNT += x;
                                                 totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
-                                        }
-                                    });
+                                            }
+                                        });
 
-                                    dishes.setLayoutManager(layoutManager);
-                                    dishes.setAdapter(dishesAdapter);
+                                        dishes.setLayoutManager(layoutManager);
+                                        dishes.setAdapter(dishesAdapter);
 
-                                } else{
-                                    Toast.makeText(getApplicationContext() , "Sorry .. Data couldn't be retrieved Check Internet Connection",Toast.LENGTH_LONG).show();
+                                    } else{
+                                        Toast.makeText(getApplicationContext() , "Sorry .. Data couldn't be retrieved Check Internet Connection",Toast.LENGTH_LONG).show();
+                                    }
+
                                 }
+                            }) ;
+                        }
 
-                            }
-                        }) ;
                     }
 
                 }
+            });
 
-            }
-        });
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
         }
 
+
     }
+
 }
