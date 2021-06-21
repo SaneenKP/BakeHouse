@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.temp.Adapters.HotelViewAdapter;
+import com.example.temp.CheckNetwork;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
@@ -45,6 +46,8 @@ public class Hotels extends AppCompatActivity {
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
+    private Snackbar snackbar;
+    private CheckNetwork checkNetwork;
 
 
     @Override
@@ -64,13 +67,11 @@ public class Hotels extends AppCompatActivity {
         setSupportActionBar(toolbar);
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
 
+        checkNetwork = new CheckNetwork(getApplicationContext());
+
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
         layout.setVisibility(View.GONE);
-
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,40 +133,51 @@ public class Hotels extends AppCompatActivity {
         super.onStart();
 
 
+        if (checkNetwork.isNetworkConnected()) {
 
+            linearProgressIndicator.setVisibility(View.VISIBLE);
 
-        linearProgressIndicator.setVisibility(View.VISIBLE);
+            if (checkNetwork.internetIsConnected()) {
 
-        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                hotelsList.clear();
-                hotelKeys.clear();
-                if (task.isSuccessful()){
-                    for (DataSnapshot ds : task.getResult().getChildren()){
-                        HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
-                        hotelsList.add(hotelDetails);
-                        hotelKeys.add(ds.getKey());
-                    }
-                    linearProgressIndicator.setVisibility(View.INVISIBLE);
-                    hotelViewAdapter.notifyItemChanged(0,hotelsList.size());
+                if (!sharedPreferenceConfig.readOrderId().equals("")) {
+                    showOrderProgress();
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
 
+                databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                        hotelsList.clear();
+                        hotelKeys.clear();
+                        if (task.isSuccessful()) {
+                            for (DataSnapshot ds : task.getResult().getChildren()) {
+                                HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
+                                hotelsList.add(hotelDetails);
+                                hotelKeys.add(ds.getKey());
+                            }
+                            linearProgressIndicator.setVisibility(View.INVISIBLE);
+                            hotelViewAdapter.notifyItemChanged(0, hotelsList.size());
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        linearProgressIndicator.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getApplicationContext(), "Failed : " + e, Toast.LENGTH_LONG).show();
+
+                    }
+                });
+            }else {
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
-                Toast.makeText(getApplicationContext() , "Failed : "+e , Toast.LENGTH_LONG).show();
-
+                snackbar.make(layout, checkNetwork.getNoNetworkConnectionError(), Snackbar.LENGTH_LONG).show();
+                }
+            } else {
+            linearProgressIndicator.setVisibility(View.INVISIBLE);
+            snackbar.make(layout, checkNetwork.getInternetNotSwitchedOnError(), Snackbar.LENGTH_LONG).show();
             }
-        });
+
+        }
+
 
     }
-
-
-
-
-
-}

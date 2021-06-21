@@ -5,15 +5,22 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.temp.Activities.Dishes;
+import com.example.temp.CheckNetwork;
+import com.example.temp.CustomAlertDialog;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
+import com.google.android.gms.vision.text.Line;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
@@ -23,12 +30,19 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
     private Context context;
     private List<HotelDetails> list;
     private List<String> hotelKeys;
+    private CheckNetwork checkNetwork;
+    private CustomAlertDialog customAlertDialog;
+    private AlertDialog alertDialog;
+    private Snackbar snackbar;
+    private LinearLayout layout;
 
 
     public HotelViewAdapter(Context context, List<HotelDetails> list, List<String> hotelKeys) {
         this.context = context;
         this.list = list;
         this.hotelKeys = hotelKeys;
+        customAlertDialog = new CustomAlertDialog(context , "Loading");
+        checkNetwork = new CheckNetwork(context);
 
     }
 
@@ -60,11 +74,28 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
             @Override
             public void onClick(View v) {
 
-                Intent openDishesSection = new Intent(context , Dishes.class);
-                openDishesSection.putExtra("hotel_key" , hotelKeys.get(holder.getAdapterPosition()));
-                openDishesSection.putExtra("hotelDetails" , list.get(holder.getAdapterPosition()));
-                openDishesSection.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(openDishesSection);
+                if (checkNetwork.isNetworkConnected()){
+
+                    alertDialog = customAlertDialog.showAlertDialog();
+                    if (checkNetwork.internetIsConnected()){
+
+                        alertDialog.dismiss();
+                        Intent openDishesSection = new Intent(context , Dishes.class);
+                        openDishesSection.putExtra("hotel_key" , hotelKeys.get(holder.getAdapterPosition()));
+                        openDishesSection.putExtra("hotelDetails" , list.get(holder.getAdapterPosition()));
+                        openDishesSection.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(openDishesSection);
+
+                    }else{
+                        alertDialog.dismiss();
+                        Toast.makeText(context, checkNetwork.getNoNetworkConnectionError(), Toast.LENGTH_SHORT).show();
+                    }
+
+                }else{
+                    alertDialog.dismiss();
+                    Toast.makeText(context, checkNetwork.getInternetNotSwitchedOnError(), Toast.LENGTH_SHORT).show();
+
+                }
 
             }
         });
