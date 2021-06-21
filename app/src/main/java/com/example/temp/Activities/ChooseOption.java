@@ -161,14 +161,22 @@ public class ChooseOption extends AppCompatActivity {
 
             if (checkNetwork.isNetworkConnected()){
 
+                dialog.show();
+
                 if (checkNetwork.internetIsConnected()){
+
+                    dialog.dismiss();
                     Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
                     startActivity(openHotelSection);
                 }else{
+
+                    dialog.dismiss();
                     snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
                 }
 
             }else{
+
+                dialog.dismiss();
                 snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
             }
 
@@ -177,13 +185,18 @@ public class ChooseOption extends AppCompatActivity {
 
             if (checkNetwork.isNetworkConnected()){
 
+                dialog.show();
                 if (checkNetwork.internetIsConnected()){
+
+                    dialog.dismiss();
                     Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
                     startActivity(openServicesSection);
                 }else{
+                    dialog.dismiss();
                     snackbar.make(layout , checkNetwork.getNoNetworkConnectionError()  , Snackbar.LENGTH_LONG).show();
                 }
             }else{
+                dialog.dismiss();
                 snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
             }
 
@@ -205,8 +218,11 @@ public class ChooseOption extends AppCompatActivity {
                 case R.id.logout_menu:
 
                     if (checkNetwork.isNetworkConnected()){
+
+                        dialog.show();
                         if (checkNetwork.isNetworkConnected()){
 
+                            dialog.dismiss();
                             SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
                             sharedPreferenceConfig.clearPreferences();
                             FirebaseAuth.getInstance().signOut();
@@ -215,9 +231,11 @@ public class ChooseOption extends AppCompatActivity {
                             finish();
 
                         }else{
+                            dialog.dismiss();
                             snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
                         }
                     }else{
+                        dialog.dismiss();
                         snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
                     }
                     break;
