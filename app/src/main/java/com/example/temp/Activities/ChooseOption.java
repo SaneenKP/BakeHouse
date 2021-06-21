@@ -1,17 +1,16 @@
-package com.example.temp.Activities;
+ package com.example.temp.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
-import com.example.temp.CheckInternet;
-import com.example.temp.Models.OrderDetails;
+import com.example.temp.CheckNetwork;
+import com.example.temp.CustomAlertDialog;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,10 +18,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +31,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class ChooseOption extends AppCompatActivity {
 
@@ -41,7 +44,9 @@ public class ChooseOption extends AppCompatActivity {
     private TextView orderStatus;
     private RelativeLayout layout;
     private Snackbar snackbar;
-    private CheckInternet checkInternet;
+    private AlertDialog dialog;
+    private CheckNetwork checkNetwork;
+    private CustomAlertDialog customAlertDialog = new CustomAlertDialog(ChooseOption.this , "Loading");;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +57,8 @@ public class ChooseOption extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        checkNetwork = new CheckNetwork(getApplicationContext());
 
-        checkInternet = new CheckInternet(getApplicationContext());
 
         food = findViewById(R.id.btn_food);
         services = findViewById(R.id.btn_services);
@@ -64,9 +69,6 @@ public class ChooseOption extends AppCompatActivity {
         orderStatus = findViewById(R.id.orderStatus);
         layout.setVisibility(View.GONE);
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
 
 
         layout.setOnClickListener(new View.OnClickListener() {
@@ -114,10 +116,15 @@ public class ChooseOption extends AppCompatActivity {
                     layout.setVisibility(View.GONE);
                 }
 
+                dialog.dismiss();
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
+                dialog.dismiss();
+                Toast.makeText(getApplicationContext() , "Failed : " + error , Toast.LENGTH_LONG).show();
 
             }
         });
@@ -130,46 +137,54 @@ public class ChooseOption extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if (checkInternet.isNetworkConnected()){
-            if (checkInternet.internetIsConnected()){
-                if (!sharedPreferenceConfig.readOrderId().equals(""))
+        dialog = customAlertDialog.showAlertDialog();
+
+        if (checkNetwork.isNetworkConnected()){
+
+            if (checkNetwork.internetIsConnected()){
+
+                if (!sharedPreferenceConfig.readOrderId().equals("")){
                     showOrderProgress();
-            }else
-                snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
+                }else{
+                    dialog.dismiss(); 
+                }
+            }else{
+                dialog.dismiss();
+                snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
+            }
         }else {
-            snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
+            dialog.dismiss();
+            snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
         }
-
-
 
         food.setOnClickListener(v -> {
 
-            if (checkInternet.isNetworkConnected()){
+            if (checkNetwork.isNetworkConnected()){
 
-                if (checkInternet.internetIsConnected()){
+                if (checkNetwork.internetIsConnected()){
                     Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
                     startActivity(openHotelSection);
                 }else{
-                    snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
+                    snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
                 }
 
             }else{
-                snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
+                snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
             }
 
         });
         services.setOnClickListener(v -> {
 
-            if (checkInternet.isNetworkConnected()){
+            if (checkNetwork.isNetworkConnected()){
 
-                if (checkInternet.internetIsConnected()){
+                if (checkNetwork.internetIsConnected()){
                     Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
                     startActivity(openServicesSection);
                 }else{
-                    snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
+                    snackbar.make(layout , checkNetwork.getNoNetworkConnectionError()  , Snackbar.LENGTH_LONG).show();
                 }
             }else{
-                snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
+                snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
             }
 
         });
@@ -189,8 +204,8 @@ public class ChooseOption extends AppCompatActivity {
             {
                 case R.id.logout_menu:
 
-                    if (checkInternet.isNetworkConnected()){
-                        if (checkInternet.internetIsConnected()){
+                    if (checkNetwork.isNetworkConnected()){
+                        if (checkNetwork.isNetworkConnected()){
 
                             SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
                             sharedPreferenceConfig.clearPreferences();
@@ -200,10 +215,10 @@ public class ChooseOption extends AppCompatActivity {
                             finish();
 
                         }else{
-                            snackbar.make(layout , checkInternet.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
+                            snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
                         }
                     }else{
-                        snackbar.make(layout , checkInternet.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
+                        snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
                     }
                     break;
 
@@ -216,7 +231,6 @@ public class ChooseOption extends AppCompatActivity {
             }
             return super.onOptionsItemSelected(item);
         }
-
 
 
 }
