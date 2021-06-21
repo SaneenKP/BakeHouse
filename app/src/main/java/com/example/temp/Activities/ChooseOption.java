@@ -1,7 +1,5 @@
  package com.example.temp.Activities;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import com.example.temp.CheckNetwork;
@@ -22,8 +20,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,10 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-public class ChooseOption extends AppCompatActivity {
+ public class ChooseOption extends AppCompatActivity {
 
     private MaterialButton food,services;
     private Boolean OrderStatus = true;
@@ -57,7 +50,7 @@ public class ChooseOption extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        checkNetwork = new CheckNetwork(getApplicationContext());
+        checkNetwork = new CheckNetwork(ChooseOption.this, layout);
 
 
         food = findViewById(R.id.btn_food);
@@ -139,67 +132,26 @@ public class ChooseOption extends AppCompatActivity {
 
         dialog = customAlertDialog.showAlertDialog();
 
-        if (checkNetwork.isNetworkConnected()){
+        if (checkNetwork.check()){
 
-            if (checkNetwork.internetIsConnected()){
+            if (!sharedPreferenceConfig.readOrderId().equals(""))
+                showOrderProgress();
 
-                if (!sharedPreferenceConfig.readOrderId().equals("")){
-                    showOrderProgress();
-                }else{
-                    dialog.dismiss(); 
-                }
-            }else{
-                dialog.dismiss();
-                snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
-            }
-        }else {
-            dialog.dismiss();
-            snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
         }
 
         food.setOnClickListener(v -> {
 
-            if (checkNetwork.isNetworkConnected()){
-
-                dialog.show();
-
-                if (checkNetwork.internetIsConnected()){
-
-                    dialog.dismiss();
-                    Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
-                    startActivity(openHotelSection);
-                }else{
-
-                    dialog.dismiss();
-                    snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
-                }
-
-            }else{
-
-                dialog.dismiss();
-                snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
-            }
+           if (checkNetwork.check()){
+               Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
+               startActivity(openHotelSection);
+           }
 
         });
         services.setOnClickListener(v -> {
-
-            if (checkNetwork.isNetworkConnected()){
-
-                dialog.show();
-                if (checkNetwork.internetIsConnected()){
-
-                    dialog.dismiss();
+                if (checkNetwork.check()){
                     Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
                     startActivity(openServicesSection);
-                }else{
-                    dialog.dismiss();
-                    snackbar.make(layout , checkNetwork.getNoNetworkConnectionError()  , Snackbar.LENGTH_LONG).show();
                 }
-            }else{
-                dialog.dismiss();
-                snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
-            }
-
         });
     }
 
@@ -217,26 +169,13 @@ public class ChooseOption extends AppCompatActivity {
             {
                 case R.id.logout_menu:
 
-                    if (checkNetwork.isNetworkConnected()){
-
-                        dialog.show();
-                        if (checkNetwork.isNetworkConnected()){
-
-                            dialog.dismiss();
-                            SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
-                            sharedPreferenceConfig.clearPreferences();
-                            FirebaseAuth.getInstance().signOut();
-                            Intent backToLogin = new Intent(ChooseOption.this , PhoneAuth.class);
-                            startActivity(backToLogin);
-                            finish();
-
-                        }else{
-                            dialog.dismiss();
-                            snackbar.make(layout , checkNetwork.getNoNetworkConnectionError() , Snackbar.LENGTH_LONG).show();
-                        }
-                    }else{
-                        dialog.dismiss();
-                        snackbar.make(layout , checkNetwork.getInternetNotSwitchedOnError() , Snackbar.LENGTH_LONG).show();
+                    if (checkNetwork.check()){
+                        SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+                        sharedPreferenceConfig.clearPreferences();
+                        FirebaseAuth.getInstance().signOut();
+                        Intent backToLogin = new Intent(ChooseOption.this , PhoneAuth.class);
+                        startActivity(backToLogin);
+                        finish();
                     }
                     break;
 

@@ -6,9 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -67,7 +65,7 @@ public class Hotels extends AppCompatActivity {
         setSupportActionBar(toolbar);
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
 
-        checkNetwork = new CheckNetwork(getApplicationContext());
+        checkNetwork = new CheckNetwork(Hotels.this, layout);
 
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
@@ -133,51 +131,43 @@ public class Hotels extends AppCompatActivity {
         super.onStart();
 
 
-        if (checkNetwork.isNetworkConnected()) {
+        if (checkNetwork.check()){
+
+            if (!sharedPreferenceConfig.readOrderId().equals(""))
+                showOrderProgress();
 
             linearProgressIndicator.setVisibility(View.VISIBLE);
+            databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-            if (checkNetwork.internetIsConnected()) {
-
-                if (!sharedPreferenceConfig.readOrderId().equals("")) {
-                    showOrderProgress();
-                }
-
-                databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                        hotelsList.clear();
-                        hotelKeys.clear();
-                        if (task.isSuccessful()) {
-                            for (DataSnapshot ds : task.getResult().getChildren()) {
-                                HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
-                                hotelsList.add(hotelDetails);
-                                hotelKeys.add(ds.getKey());
-                            }
-                            linearProgressIndicator.setVisibility(View.INVISIBLE);
-                            hotelViewAdapter.notifyItemChanged(0, hotelsList.size());
+                    hotelsList.clear();
+                    hotelKeys.clear();
+                    if (task.isSuccessful()) {
+                        for (DataSnapshot ds : task.getResult().getChildren()) {
+                            HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
+                            hotelsList.add(hotelDetails);
+                            hotelKeys.add(ds.getKey());
                         }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
                         linearProgressIndicator.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getApplicationContext(), "Failed : " + e, Toast.LENGTH_LONG).show();
-
+                        hotelViewAdapter.notifyItemChanged(0, hotelsList.size());
                     }
-                });
-            }else {
-                linearProgressIndicator.setVisibility(View.INVISIBLE);
-                snackbar.make(layout, checkNetwork.getNoNetworkConnectionError(), Snackbar.LENGTH_LONG).show();
                 }
-            } else {
-            linearProgressIndicator.setVisibility(View.INVISIBLE);
-            snackbar.make(layout, checkNetwork.getInternetNotSwitchedOnError(), Snackbar.LENGTH_LONG).show();
-            }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    linearProgressIndicator.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "Failed : " + e, Toast.LENGTH_LONG).show();
+
+                }
+            });
+
 
         }
 
 
-    }
+        }
+
+
+}

@@ -19,7 +19,6 @@ import com.example.temp.CheckNetwork;
 import com.example.temp.CustomAlertDialog;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
-import com.google.android.gms.vision.text.Line;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -42,7 +41,7 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
         this.list = list;
         this.hotelKeys = hotelKeys;
         customAlertDialog = new CustomAlertDialog(context , "Loading");
-        checkNetwork = new CheckNetwork(context);
+        checkNetwork = new CheckNetwork(context, null);
 
     }
 
@@ -74,28 +73,13 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
             @Override
             public void onClick(View v) {
 
-                if (checkNetwork.isNetworkConnected()){
-
-                    alertDialog = customAlertDialog.showAlertDialog();
-                    if (checkNetwork.internetIsConnected()){
-
-                        alertDialog.dismiss();
-                        Intent openDishesSection = new Intent(context , Dishes.class);
-                        openDishesSection.putExtra("hotel_key" , hotelKeys.get(holder.getAdapterPosition()));
-                        openDishesSection.putExtra("hotelDetails" , list.get(holder.getAdapterPosition()));
-                        openDishesSection.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(openDishesSection);
-
-                    }else{
-                        alertDialog.dismiss();
-                        Toast.makeText(context, checkNetwork.getNoNetworkConnectionError(), Toast.LENGTH_SHORT).show();
-                    }
-
-                }else{
-                    alertDialog.dismiss();
-                    Toast.makeText(context, checkNetwork.getInternetNotSwitchedOnError(), Toast.LENGTH_SHORT).show();
-
-                }
+              if (checkNetwork.check()){
+                  Intent openDishesSection = new Intent(context , Dishes.class);
+                  openDishesSection.putExtra("hotel_key" , hotelKeys.get(holder.getAdapterPosition()));
+                  openDishesSection.putExtra("hotelDetails" , list.get(holder.getAdapterPosition()));
+                  openDishesSection.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                  context.startActivity(openDishesSection);
+              }
 
             }
         });
