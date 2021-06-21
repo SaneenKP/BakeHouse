@@ -36,10 +36,7 @@ import android.widget.Toast;
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
-    private Snackbar snackbar;
-    private AlertDialog dialog;
     private CheckNetwork checkNetwork;
-    private CustomAlertDialog customAlertDialog = new CustomAlertDialog(ChooseOption.this , "Loading");;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,28 +106,23 @@ import android.widget.Toast;
                     layout.setVisibility(View.GONE);
                 }
 
-                dialog.dismiss();
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                dialog.dismiss();
                 Toast.makeText(getApplicationContext() , "Failed : " + error , Toast.LENGTH_LONG).show();
 
             }
         });
 
     }
-
-
+    
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        dialog = customAlertDialog.showAlertDialog();
 
         if (checkNetwork.check()){
 
