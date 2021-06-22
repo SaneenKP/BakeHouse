@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.temp.Adapters.HotelViewAdapter;
-import com.example.temp.CheckNetwork;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
@@ -28,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.narify.netdetect.NetDetect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,8 @@ public class Hotels extends AppCompatActivity {
     private TextView orderStatus;
     private RelativeLayout layout;
     private Snackbar snackbar;
-    private CheckNetwork checkNetwork;
+    private String noNetworkConnection;
+
 
 
     @Override
@@ -58,14 +59,17 @@ public class Hotels extends AppCompatActivity {
         hotelsList = new ArrayList<>();
         hotelKeys = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode));
-        hotelViewAdapter = new HotelViewAdapter(Hotels.this,hotelsList, hotelKeys);
+        hotelViewAdapter = new HotelViewAdapter(this,hotelsList, hotelKeys, layout);
         hotels.setAdapter(hotelViewAdapter);
         linearProgressIndicator=findViewById(R.id.hotelLoadProgress);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
 
-        checkNetwork = new CheckNetwork(Hotels.this, layout);
+
+        NetDetect.init(this);
+        noNetworkConnection = getApplicationContext().getResources().getString(R.string.noInternet);
+
 
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
@@ -75,8 +79,16 @@ public class Hotels extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent startOrderStatus = new Intent(Hotels .this , OrderStatus.class);
-                startActivity(startOrderStatus);
+                NetDetect.check(isConnected -> {
+                    if (isConnected){
+                        Intent startOrderStatus = new Intent(Hotels.this , OrderStatus.class);
+                        startActivity(startOrderStatus);
+                    }else{
+                        Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                    }
+                });
+
+
 
             }
         });
@@ -131,43 +143,52 @@ public class Hotels extends AppCompatActivity {
         super.onStart();
 
 
-        if (checkNetwork.check()){
+       NetDetect.check(isConnected -> {
 
-            if (!sharedPreferenceConfig.readOrderId().equals(""))
-                showOrderProgress();
+           if (isConnected){
+               if (!sharedPreferenceConfig.readOrderId().equals(""))
+                   showOrderProgress();
 
-            linearProgressIndicator.setVisibility(View.VISIBLE);
-            databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
+               linearProgressIndicator.setVisibility(View.VISIBLE);
+               databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                   @Override
+                   public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-                    hotelsList.clear();
-                    hotelKeys.clear();
-                    if (task.isSuccessful()) {
-                        for (DataSnapshot ds : task.getResult().getChildren()) {
-                            HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
-                            hotelsList.add(hotelDetails);
-                            hotelKeys.add(ds.getKey());
-                        }
-                        linearProgressIndicator.setVisibility(View.INVISIBLE);
-                        hotelViewAdapter.notifyItemChanged(0, hotelsList.size());
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
+                       hotelsList.clear();
+                       hotelKeys.clear();
+                       if (task.isSuccessful()) {
+                           for (DataSnapshot ds : task.getResult().getChildren()) {
+                               HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
+                               hotelsList.add(hotelDetails);
+                               hotelKeys.add(ds.getKey());
+                           }
+                           linearProgressIndicator.setVisibility(View.INVISIBLE);
+                           hotelViewAdapter.notifyItemChanged(0, hotelsList.size());
+                       }
+                   }
+               }).addOnFailureListener(new OnFailureListener() {
+                   @Override
+                   public void onFailure(@NonNull Exception e) {
 
-                    linearProgressIndicator.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getApplicationContext(), "Failed : " + e, Toast.LENGTH_LONG).show();
+                       linearProgressIndicator.setVisibility(View.INVISIBLE);
+                       Toast.makeText(getApplicationContext(), "Failed : " + e, Toast.LENGTH_LONG).show();
 
-                }
-            });
+                   }
+               });
+
+           }else{
+
+               Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+               finish();
+
+           }
+
+       });
 
 
-        }
 
 
-        }
+    }
 
 
 }

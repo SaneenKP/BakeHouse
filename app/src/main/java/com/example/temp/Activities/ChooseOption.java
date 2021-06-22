@@ -2,8 +2,6 @@
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.temp.CheckNetwork;
-import com.example.temp.CustomAlertDialog;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
 import com.google.android.material.button.MaterialButton;
@@ -14,9 +12,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.narify.netdetect.NetDetect;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -36,7 +34,7 @@ import android.widget.Toast;
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
-    private CheckNetwork checkNetwork;
+    private String noNetworkConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +45,9 @@ import android.widget.Toast;
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        checkNetwork = new CheckNetwork(ChooseOption.this, layout);
 
+        NetDetect.init(this);
+        noNetworkConnection = getApplicationContext().getResources().getString(R.string.noInternet);
 
         food = findViewById(R.id.btn_food);
         services = findViewById(R.id.btn_services);
@@ -65,8 +64,16 @@ import android.widget.Toast;
             @Override
             public void onClick(View v) {
 
-                Intent startOrderStatus = new Intent(ChooseOption.this , OrderStatus.class);
-                startActivity(startOrderStatus);
+                NetDetect.check(isConnected -> {
+                    if (isConnected){
+                        Intent startOrderStatus = new Intent(ChooseOption.this , OrderStatus.class);
+                        startActivity(startOrderStatus);
+                    }else{
+                        Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                    }
+                });
+
+
 
             }
         });
@@ -123,27 +130,51 @@ import android.widget.Toast;
     protected void onStart() {
         super.onStart();
 
+        NetDetect.check(isConnected -> {
 
-        if (checkNetwork.check()){
+            if (isConnected){
+                if (!sharedPreferenceConfig.readOrderId().equals(""))
+                    showOrderProgress();
+            }else{
 
-            if (!sharedPreferenceConfig.readOrderId().equals(""))
-                showOrderProgress();
+                Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
 
-        }
+            }
+        });
+
 
         food.setOnClickListener(v -> {
 
-           if (checkNetwork.check()){
-               Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
-               startActivity(openHotelSection);
-           }
+            NetDetect.check(isConnected -> {
+
+                if (isConnected){
+                    Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
+                    startActivity(openHotelSection);
+                }else{
+
+                    Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+
+                }
+
+            });
+
 
         });
         services.setOnClickListener(v -> {
-                if (checkNetwork.check()){
+
+            NetDetect.check(isConnected -> {
+                if (isConnected){
                     Intent openServicesSection = new Intent(ChooseOption.this , Services.class);
                     startActivity(openServicesSection);
+                }else{
+
+                    Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+
                 }
+
+
+            });
+
         });
     }
 
@@ -161,14 +192,23 @@ import android.widget.Toast;
             {
                 case R.id.logout_menu:
 
-                    if (checkNetwork.check()){
-                        SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
-                        sharedPreferenceConfig.clearPreferences();
-                        FirebaseAuth.getInstance().signOut();
-                        Intent backToLogin = new Intent(ChooseOption.this , PhoneAuth.class);
-                        startActivity(backToLogin);
-                        finish();
-                    }
+                    NetDetect.check(isConnected -> {
+
+                        if (isConnected){
+                            SharedPreferenceConfig sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+                            sharedPreferenceConfig.clearPreferences();
+                            FirebaseAuth.getInstance().signOut();
+                            Intent backToLogin = new Intent(ChooseOption.this , PhoneAuth.class);
+                            startActivity(backToLogin);
+                            finish();
+                        }else{
+
+                            Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+
+                        }
+
+                    });
+
                     break;
 
                 case R.id.about_menu:

@@ -7,15 +7,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.temp.Models.OrderDetails;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.narify.netdetect.NetDetect;
 import com.razorpay.Checkout;
 import com.razorpay.PaymentResultListener;
 
@@ -26,6 +29,9 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
     private OrderDetails orderDetails;
     private String dishDetails;
     private SharedPreferenceConfig sharedPreferenceConfig;
+    private String noNetworkConnection;
+    private RelativeLayout layout;
+
 
 
     @Override
@@ -34,13 +40,15 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
         setContentView(R.layout.activity_razorpay_payment);
         Checkout.preload(getApplicationContext());
 
+        NetDetect.init(this);
+
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+        noNetworkConnection = getApplicationContext().getResources().getString(R.string.noInternet);
+        layout = findViewById(R.id.root);
 
         Intent getOrderDetails = getIntent();
         orderDetails = getOrderDetails.getParcelableExtra("orderDetails");
         dishDetails = getOrderDetails.getStringExtra("dishDetails");
-
-        startPayment(orderDetails.getTotal() , orderDetails.getName());
 
     }
 
@@ -120,5 +128,22 @@ public class RazorpayPayment extends AppCompatActivity implements PaymentResultL
     public void onPaymentError(int i, String s) {
 
             Toast.makeText(getApplicationContext() , "Payment Failed .. " + s , Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        NetDetect.check(isConnected -> {
+
+            if (isConnected) {
+                startPayment(orderDetails.getTotal() , orderDetails.getName());
+            }else{
+                finish();
+                Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+            }
+
+        });
+
     }
 }

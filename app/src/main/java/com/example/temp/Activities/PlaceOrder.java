@@ -15,7 +15,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
@@ -39,6 +38,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,6 +46,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.narify.netdetect.NetDetect;
 
 import org.json.JSONObject;
 
@@ -75,8 +76,7 @@ import java.util.Locale;
      private TextView orderStatus;
      private RelativeLayout layout;
      private HotelDetails hotelDetails;
-
-
+     private String noNetworkConnection;
 
 
      @Override
@@ -95,6 +95,9 @@ import java.util.Locale;
          orderHotelDetails = findViewById(R.id.orderHotelDetails);
 
          LocationAddress = findViewById(R.id.address);
+
+         NetDetect.init(this);
+         noNetworkConnection = getApplicationContext().getResources().getString(R.string.noInternet);
 
          orderDetails = new OrderDetails();
 
@@ -123,52 +126,56 @@ import java.util.Locale;
          fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
          payableAmount.setText(Integer.toString(totalAmount) + " \u20B9");
 
-         getLastLocation();
 
          layout = findViewById(R.id.orderProgressLayout);
          orderStatus = findViewById(R.id.orderStatus);
          layout.setVisibility(View.GONE);
 
-         if (!sharedPreferenceConfig.readOrderId().equals("")){
-             showOrderProgress();
-         }
-
          layout.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
 
-                 Intent startOrderStatus = new Intent(PlaceOrder.this , OrderStatus.class);
-                 startActivity(startOrderStatus);
-                 finish();
+                 NetDetect.check(isConnected -> {
 
+                     if (isConnected){
+                          Intent startOrderStatus = new Intent(PlaceOrder.this , OrderStatus.class);
+                          startActivity(startOrderStatus);
+                     }else{
+                         Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                     }
+
+                 });
              }
          });
-
 
          pay_and_order.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
 
-                 if(!sharedPreferenceConfig.readOrderId().equals("")){
+                 NetDetect.check(isConnected -> {
+                     if (isConnected){
+                         if(!sharedPreferenceConfig.readOrderId().equals("")){
 
-                     Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
+                             Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
 
-                 }else{
+                         }else{
+                             if (checkFields()){
 
-                     if (checkFields()){
+                                 setSharedPreference();
+                                 setPod();
+                                 setOrderDetails();
+                                 Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
+                                 startRazorPay.putExtra("orderDetails", orderDetails);
+                                 startRazorPay.putExtra("dishDetails", dishDetails);
+                                 startActivity(startRazorPay);
+                                 finish();
 
-                         setSharedPreference();
-                         setPod();
-                         setOrderDetails();
-                         Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
-                         startRazorPay.putExtra("orderDetails", orderDetails);
-                         startRazorPay.putExtra("dishDetails", dishDetails);
-                         startActivity(startRazorPay);
-                         finish();
-
+                             }
+                         }
+                     }else{
+                         Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
                      }
-                 }
-
+                 });
              }
          });
 
@@ -176,28 +183,31 @@ import java.util.Locale;
              @Override
              public void onClick(View v) {
 
-                 if(!sharedPreferenceConfig.readOrderId().equals("")){
+                 NetDetect.check(isConnected -> {
 
-                     Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
+                     if (isConnected){
+                         if(!sharedPreferenceConfig.readOrderId().equals("")){
 
-                 }else{
-                     if(checkFields()){
+                             Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
 
-                         setSharedPreference();
-                         setCod();
-                         setOrderDetails();
-                         dialogBox();
+                         }else{
+                             if(checkFields()){
 
+                                 setSharedPreference();
+                                 setCod();
+                                 setOrderDetails();
+                                 dialogBox();
+
+                             }
+                         }
+                     }else{
+                         Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
                      }
-                 }
 
-
-
+                 });
              }
          });
-
          setHotelAndDishDetails();
-
      }
 
      private void setHotelAndDishDetails()
@@ -220,6 +230,7 @@ import java.util.Locale;
 
 
      }
+
      private void showOrderProgress(){
 
          DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
@@ -262,7 +273,6 @@ import java.util.Locale;
          });
 
      }
-
 
      private void setSharedPreference(){
 
@@ -318,11 +328,19 @@ import java.util.Locale;
                      @Override
                      public void onComplete(@NonNull Task<Void> task) {
 
-                         setDishes(key, databaseReference);
-                         Intent orderStatus = new Intent(PlaceOrder.this, OrderStatus.class);
-                         sharedPreferenceConfig.writeOrderId(key);
-                         startActivity(orderStatus);
-                         finish();
+                         NetDetect.check(isConnected -> {
+
+                             if (isConnected){
+                                 setDishes(key, databaseReference);
+                                 Intent orderStatus = new Intent(PlaceOrder.this, OrderStatus.class);
+                                 sharedPreferenceConfig.writeOrderId(key);
+                                 startActivity(orderStatus);
+                                 finish();
+                             }else{
+                                 Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                             }
+
+                         });
 
                      }
                  });
@@ -463,7 +481,6 @@ import java.util.Locale;
          } else {
              requestPermissions();
          }
-
      }
 
      private void openLocActivity() {
@@ -523,9 +540,18 @@ import java.util.Locale;
      @Override
      public void onResume() {
          super.onResume();
-         if (checkPermissions()) {
-             getLastLocation();
-         }
+
+         NetDetect.check(isConnected -> {
+             if (isConnected){
+                 if (checkPermissions()) {
+                     getLastLocation();
+                 }
+             }else{
+                 Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+             }
+         });
+
+
      }
 
      @Override
@@ -554,9 +580,22 @@ import java.util.Locale;
 
          AlertDialog alertDialog = builder.create();
          alertDialog.show();
-
      }
 
+     @Override
+     protected void onStart() {
+         super.onStart();
 
+         NetDetect.check(isConnected -> {
+             if (isConnected){
+                 if (!sharedPreferenceConfig.readOrderId().equals("")){
+                     showOrderProgress();
+                 }
+                 getLastLocation();
+             }else{
+                 Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+             }
+         });
 
+     }
  }
