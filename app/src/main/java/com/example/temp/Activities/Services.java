@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,11 +20,13 @@ import com.example.temp.SharedPreferenceConfig;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.narify.netdetect.NetDetect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,9 @@ public class Services extends AppCompatActivity {
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
+    private String noNetworkConnection;
+    private LinearLayout root;
+
 
 
     @Override
@@ -48,28 +54,35 @@ public class Services extends AppCompatActivity {
         servicesName = new ArrayList<>();
         serviceKeys = new ArrayList<>();
 
+
+        NetDetect.init(this);
+        noNetworkConnection = getApplicationContext().getResources().getString(R.string.noInternet);
+        root = findViewById(R.id.root);
+
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
         layout.setVisibility(View.GONE);
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
 
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent startOrderStatus = new Intent(Services.this , OrderStatus.class);
-                startActivity(startOrderStatus);
+                NetDetect.check(isConnected -> {
+                    if (isConnected){
+                        Intent startOrderStatus = new Intent(Services.this , OrderStatus.class);
+                        startActivity(startOrderStatus);
+                    }else{
+                        Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                    }
+                });
 
             }
         });
 
         firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.ServicesNode));
-
 
         firebaseRealtimeDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -99,9 +112,18 @@ public class Services extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent getVendor = new Intent(Services.this , Vendors.class);
-                getVendor.putExtra("service-key" , serviceKeys.get(position));
-                startActivity(getVendor);
+                NetDetect.check(isConnected -> {
+                    if (isConnected){
+                        Intent getVendor = new Intent(Services.this , Vendors.class);
+                        getVendor.putExtra("service-key" , serviceKeys.get(position));
+                        startActivity(getVendor);
+                    }else{
+                        Snackbar.make(root , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+                    }
+
+                });
+
+
             }
         });
     }
@@ -150,12 +172,21 @@ public class Services extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
+        NetDetect.check(isConnected -> {
 
+            if (isConnected){
+                if (!sharedPreferenceConfig.readOrderId().equals("")){
+                    showOrderProgress();
+                }
+            }else{
+                Snackbar.make(root , noNetworkConnection , Snackbar.LENGTH_LONG).show();
+            }
+
+
+        });
     }
+
 }
