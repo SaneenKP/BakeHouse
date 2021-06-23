@@ -48,6 +48,7 @@ public class Foods extends AppCompatActivity {
                             String profilepic = ds.child("profile pic").getValue(String.class);
                         }
                     }
+
             }
 
             @Override

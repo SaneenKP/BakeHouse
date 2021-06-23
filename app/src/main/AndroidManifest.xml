@@ -22,6 +22,8 @@
         <activity android:name=".Activities.Vendors" />
         <activity android:name=".Activities.Services" />
         <activity android:name=".Foods" />
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
         <activity android:name=".MainActivity" />
         <activity
             android:name=".Activities.ChooseOption"
