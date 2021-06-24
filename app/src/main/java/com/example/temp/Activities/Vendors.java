@@ -74,11 +74,11 @@ public class Vendors extends AppCompatActivity {
                 .child(getApplicationContext().getString(R.string.ServicesNode)).
                 child(serviceKey)
                 .child(getApplicationContext().getString(R.string.VendorNode));
-
+        findViewById(R.id.hotelLoadProgress).setVisibility(View.VISIBLE);
         firebaseRealtimeDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-
+                findViewById(R.id.hotelLoadProgress).setVisibility(View.INVISIBLE);
                 for (DataSnapshot vendors : task.getResult().getChildren())
                 {
                     VendorDetails vd = vendors.getValue(VendorDetails.class);
@@ -109,6 +109,15 @@ public class Vendors extends AppCompatActivity {
         layout.setVisibility(View.GONE);
 
         layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!sharedPreferenceConfig.readOrderId().equals("")){
+                    showOrderProgress();
+                }
+            }
+        });
+
+        findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -144,16 +153,16 @@ public class Vendors extends AppCompatActivity {
                 if (placedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Placed");
+                    orderStatus.setText("Your Order Placed");
                 }
                 if (pickedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Picked");
+                    orderStatus.setText("Your Order Picked up");
                 }
                 if (deliveredStatus.equals("yes")){
                     orderStatus.setText("");
-                    orderStatus.setText("Delivered");
+                    orderStatus.setText("Your order Delivered");
                     sharedPreferenceConfig.removeOrderId();
                     layout.setVisibility(View.GONE);
                 }

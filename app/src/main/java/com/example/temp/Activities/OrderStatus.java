@@ -90,10 +90,10 @@ import com.narify.netdetect.NetDetect;
 
     private void setStatus(String placedIndex , String confirmedIndex , String pickupIndex ,String deliveryIndex)
     {
-        orderPlaced.setCompoundDrawablesWithIntrinsicBounds(placedIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
-        orderCompleted.setCompoundDrawablesWithIntrinsicBounds(confirmedIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
-        orderPicked.setCompoundDrawablesWithIntrinsicBounds(pickupIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
-        orderDelivered.setCompoundDrawablesWithIntrinsicBounds(deliveryIndex.equals("yes") ? R.drawable.check:R.drawable.cancelled, 0, 0, 0);
+        orderPlaced.setCompoundDrawablesWithIntrinsicBounds(placedIndex.equals("yes") ? R.drawable.check:R.drawable.ic_baseline_panorama_fish_eye_24, 0, 0, 0);
+        orderCompleted.setCompoundDrawablesWithIntrinsicBounds(confirmedIndex.equals("yes") ? R.drawable.check:R.drawable.ic_baseline_panorama_fish_eye_24, 0, 0, 0);
+        orderPicked.setCompoundDrawablesWithIntrinsicBounds(pickupIndex.equals("yes") ? R.drawable.check:R.drawable.ic_baseline_panorama_fish_eye_24, 0, 0, 0);
+        orderDelivered.setCompoundDrawablesWithIntrinsicBounds(deliveryIndex.equals("yes") ? R.drawable.check:R.drawable.ic_baseline_panorama_fish_eye_24, 0, 0, 0);
 
     }
 

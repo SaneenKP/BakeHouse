@@ -1,92 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<com.google.android.material.card.MaterialCardView 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    android:theme="@style/Theme.MaterialComponents.Light"
+    app:contentPadding="8dp"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="2dp"
     >
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:id="@+id/profile_pic"
+            android:layout_gravity="center_vertical"
 
             />
 
-        <LinearLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginLeft="20dp"
+            android:layout_margin="8dp"
             >
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/vendor_name"
                 android:layout_weight="1"
-                android:textSize="20sp"
-                android:textColor="@color/black"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:textStyle="bold"
+                android:padding="8dp"
+
                 />
 
-            <LinearLayout
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_weight="1"
                 >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/vendor_ph"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:textAlignment="center"
-                    />
 
-                <androidx.appcompat.widget.AppCompatButton
+
+                <com.google.android.material.button.MaterialButton
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:background="@drawable/call"
                     android:id="@+id/call_button"
+                    android:visibility="gone"
                     />
 
 
-            </LinearLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/vendor_description"
                 android:layout_weight="1"
-                android:textSize="20sp"
-                android:textColor="#605E5E"
-
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:padding="8dp"
+                android:visibility="gone"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/vendor_address"
                 android:layout_weight="1"
-                android:textSize="20sp"
-                android:textColor="#5C5A5A"
-
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:padding="8dp"
+                android:maxLines="2"
                 />
 
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/vendor_ph"
+                android:layout_weight="1"
+                android:textAlignment="textStart"
+                android:drawableLeft="@drawable/ic_phone"
+                android:drawableTint="@color/white"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:backgroundTint="@color/app_blue"
+                />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </LinearLayout>
-
-</RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

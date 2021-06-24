@@ -59,8 +59,7 @@ import android.widget.Toast;
         layout.setVisibility(View.GONE);
 
 
-
-        layout.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -73,7 +72,8 @@ import android.widget.Toast;
                     }
                 });
 
-
+                Intent startOrderStatus = new Intent(ChooseOption .this , OrderStatus.class);
+                startActivity(startOrderStatus);
 
             }
         });
@@ -99,16 +99,16 @@ import android.widget.Toast;
                 if (placedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Placed");
+                    orderStatus.setText("Your Order Placed");
                 }
                 if (pickedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Picked");
+                    orderStatus.setText("Your Order Picked up");
                 }
                 if (deliveredStatus.equals("yes")){
                     orderStatus.setText("");
-                    orderStatus.setText("Delivered");
+                    orderStatus.setText("Your order Delivered");
                     sharedPreferenceConfig.removeOrderId();
                     layout.setVisibility(View.GONE);
                 }

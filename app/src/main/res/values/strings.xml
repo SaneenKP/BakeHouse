@@ -83,6 +83,8 @@
     <string name="address">Address</string>
     <string name="name">Name</string>
     <string name="no_item_txt">No items added</string>
+    <string name="order_in_progress">Order in Progress...</string>
+    <string name="bread">Bread</string>
 
 
 </resources>

@@ -66,7 +66,7 @@ public class Services extends AppCompatActivity {
 
 
 
-        layout.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -84,11 +84,12 @@ public class Services extends AppCompatActivity {
 
         firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.ServicesNode));
 
+        findViewById(R.id.hotelLoadProgress).setVisibility(View.VISIBLE);
         firebaseRealtimeDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
+                findViewById(R.id.hotelLoadProgress).setVisibility(View.INVISIBLE);
                 DataSnapshot snapshot = task.getResult();
-
                 for (DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
 
@@ -147,16 +148,16 @@ public class Services extends AppCompatActivity {
                 if (placedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Placed");
+                    orderStatus.setText("Your Order Placed");
                 }
                 if (pickedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Picked");
+                    orderStatus.setText("Your Order Picked up");
                 }
                 if (deliveredStatus.equals("yes")){
                     orderStatus.setText("");
-                    orderStatus.setText("Delivered");
+                    orderStatus.setText("Your order Delivered");
                     sharedPreferenceConfig.removeOrderId();
                     layout.setVisibility(View.GONE);
                 }

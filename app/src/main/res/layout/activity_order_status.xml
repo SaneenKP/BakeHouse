@@ -58,7 +58,7 @@
                 android:text="@string/placed"
                 android:gravity="center_vertical"
                 android:drawablePadding="24dp"
-                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textStyle="bold"
                 android:id="@+id/orderPlaced"
 
@@ -75,6 +75,7 @@
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:id="@+id/orderCompleted"
                 android:textStyle="bold"
+                android:visibility="gone"
                 />
 
             <com.google.android.material.textview.MaterialTextView
@@ -85,7 +86,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:drawablePadding="24dp"
-                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
                 android:id="@+id/orderPicked"
                 android:textStyle="bold"
                 />
@@ -98,7 +99,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:drawablePadding="24dp"
-                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
                 android:id="@+id/orderDelivered"
                 android:textStyle="bold"
                 />

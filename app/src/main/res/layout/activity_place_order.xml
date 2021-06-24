@@ -40,24 +40,27 @@
 
                 />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/orderHotelDetails"
-                android:padding="20dp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="22sp"
+                android:padding="16dp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:drawableLeft="@drawable/ic_baseline_food_bank_24"
+                android:drawablePadding="8dp"
+                app:drawableTint="@color/app_blue"
                 />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/orderDishDetails"
-                android:padding="20dp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="22sp"
+                android:padding="16dp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:textAllCaps="true"
+                android:drawableLeft="@drawable/ic_round_fastfood_24"
+                app:drawableTint="@color/app_blue"
+                android:drawablePadding="8dp"
                 />
 
 
@@ -153,6 +156,7 @@
                     style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:textStyle="bold"
                     android:alpha="0.6"
+
                     />
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -174,6 +178,7 @@
                     android:drawableLeft="@drawable/ic_baseline_person_pin_circle_24"
                     android:drawablePadding="16dp"
                     android:drawableTint="@color/app_blue"
+
 
                     />
                 </com.google.android.material.textfield.TextInputLayout>

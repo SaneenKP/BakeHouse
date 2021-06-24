@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
-
-        <androidx.appcompat.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/service_image"
+            android:visibility="gone"
             />
 
+
         <com.google.android.material.textview.MaterialTextView
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/service_image"
             android:id="@+id/service_name"
-            android:text="Bread"
-            android:textSize="25sp"
-            android:textColor="@color/black"
-            android:textAlignment="center"
-
+            android:text="@string/bread"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:padding="16dp"
+            android:textAllCaps="true"
+            android:drawableRight="@drawable/ic_baseline_chevron_right_24"
+            android:drawableTint="@color/app_red"
             />
 
-    </RelativeLayout>
 
-
-</RelativeLayout>
+<View
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:background="@color/app_elevated_grey"
+    />
+</androidx.appcompat.widget.LinearLayoutCompat>

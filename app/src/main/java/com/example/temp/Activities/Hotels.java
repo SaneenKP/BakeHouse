@@ -78,6 +78,16 @@ public class Hotels extends AppCompatActivity {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!sharedPreferenceConfig.readOrderId().equals("")){
+                    showOrderProgress();
+                }
+            }
+        });
+
+
+        findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
                 NetDetect.check(isConnected -> {
                     if (isConnected){
@@ -114,16 +124,16 @@ public class Hotels extends AppCompatActivity {
                 if (placedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Placed");
+                    orderStatus.setText("Your Order Placed");
                 }
                 if (pickedStatus.equals("yes")){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Picked");
+                    orderStatus.setText("Your Order Picked up");
                 }
                 if (deliveredStatus.equals("yes")){
                     orderStatus.setText("");
-                    orderStatus.setText("Delivered");
+                    orderStatus.setText("Your order Delivered");
                     sharedPreferenceConfig.removeOrderId();
                     layout.setVisibility(View.GONE);
                 }
@@ -186,9 +196,6 @@ public class Hotels extends AppCompatActivity {
        });
 
 
-
-
     }
-
 
 }

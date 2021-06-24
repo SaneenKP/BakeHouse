@@ -9,21 +9,21 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="10dp"
-        app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardMaxElevation="12dp"
-        app:cardPreventCornerOverlap="true"
+        app:cardBackgroundColor="@color/app_red"
+        app:contentPadding="4dp"
         >
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Order in Progress..."
+            android:text="@string/order_in_progress"
             android:gravity="center"
-            android:textSize="22sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:id="@+id/orderStatus"
+            android:textColor="@color/white"
+            android:drawableLeft="@drawable/ic_round_fastfood_24"
+            app:drawableTint="@color/white"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:background="?attr/selectableItemBackgroundBorderless"
             />
     </androidx.cardview.widget.CardView>
 
