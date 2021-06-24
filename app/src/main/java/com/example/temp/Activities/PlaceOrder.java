@@ -71,12 +71,13 @@ import java.util.Locale;
      private HashMap<String, String> address;
      private SharedPreferenceConfig sharedPreferenceConfig;
      private OrderDetails orderDetails;
-     private String dishDetails, hotelKey , dishNameAndQuantity ;
+     private String dishDetails, hotelKey , dishNameAndQuantity ,locationAddress ;
      private boolean locationAlertShown = false;
      private TextView orderStatus;
      private RelativeLayout layout;
      private HotelDetails hotelDetails;
      private String noNetworkConnection;
+     private boolean locationEnabled;
 
 
      @Override
@@ -152,63 +153,78 @@ import java.util.Locale;
              @Override
              public void onClick(View v) {
 
-                 NetDetect.check(isConnected -> {
-                     if (isConnected){
-                         if(!sharedPreferenceConfig.readOrderId().equals("")){
+                 if (locationAddress == null){
+                     locationAlertShown = false;
+                     getLastLocation();
+                     Toast.makeText(getApplicationContext() , "Location Could Not be loaded please check your interet connection or restart the application" , Toast.LENGTH_LONG).show();
 
-                             Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
+                 }else{
+                     NetDetect.check(isConnected -> {
+                         if (isConnected){
+                             if(!sharedPreferenceConfig.readOrderId().equals("")){
 
-                         }else{
-                             if (checkFields()){
+                                 Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
 
-                                 setSharedPreference();
-                                 setPod();
-                                 setOrderDetails();
-                                 Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
-                                 startRazorPay.putExtra("orderDetails", orderDetails);
-                                 startRazorPay.putExtra("dishDetails", dishDetails);
-                                 startActivity(startRazorPay);
-                                 finish();
+                             }else{
+                                 if (checkFields()){
 
+                                     setSharedPreference();
+                                     setPod();
+                                     setOrderDetails();
+                                     Intent startRazorPay = new Intent(PlaceOrder.this, RazorpayPayment.class);
+                                     startRazorPay.putExtra("orderDetails", orderDetails);
+                                     startRazorPay.putExtra("dishDetails", dishDetails);
+                                     startActivity(startRazorPay);
+                                     finish();
+
+                                 }
                              }
+                         }else{
+                             Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
                          }
-                     }else{
-                         Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
-                     }
-                 });
+                     });
+                 }
+
              }
          });
 
          cash_on_delivery.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
+                 if (locationAddress == null){
+                     locationAlertShown = false;
+                    getLastLocation();
+                    Toast.makeText(getApplicationContext() , "Location Could Not be loaded please check your internet connection or restart the application" , Toast.LENGTH_LONG).show();
+                 }else{
+                     NetDetect.check(isConnected -> {
 
-                 NetDetect.check(isConnected -> {
+                         if (isConnected){
+                             if(!sharedPreferenceConfig.readOrderId().equals("")){
 
-                     if (isConnected){
-                         if(!sharedPreferenceConfig.readOrderId().equals("")){
+                                 Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
 
-                             Toast.makeText(getApplicationContext(),"New Order Can Only Be Processed When Old order is Completed",Toast.LENGTH_LONG).show();
+                             }else{
+                                 if(checkFields()){
 
-                         }else{
-                             if(checkFields()){
+                                     setSharedPreference();
+                                     setCod();
+                                     setOrderDetails();
+                                     dialogBox();
 
-                                 setSharedPreference();
-                                 setCod();
-                                 setOrderDetails();
-                                 dialogBox();
-
+                                 }
                              }
+                         }else{
+                             Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
                          }
-                     }else{
-                         Snackbar.make(layout , noNetworkConnection , Snackbar.LENGTH_LONG).show();
-                     }
 
-                 });
+                     });
+                 }
+
              }
          });
          setHotelAndDishDetails();
      }
+
 
      private void setHotelAndDishDetails()
      {
@@ -360,6 +376,7 @@ import java.util.Locale;
      }
 
      private void locationDialogBox() {
+
          if (locationAlertShown == false) {
              locationAlertShown = true;
              AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -469,8 +486,8 @@ import java.util.Locale;
                          } else {
                              latitude = location.getLatitude();
                              longitude = location.getLongitude();
-                             String address = getAddress(getApplicationContext(), latitude, longitude);
-                             LocationAddress.setText(address);
+                             locationAddress = getAddress(getApplicationContext(), latitude, longitude);
+                             LocationAddress.setText(locationAddress);
                          }
                      }
                  });

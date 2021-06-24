@@ -54,7 +54,7 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
         circularProgressDrawable.start();
         Glide.with(context).load(list.get(position).getProfile_pic()).placeholder(circularProgressDrawable).into(holder.coverpic);
 
-        
+
         holder.call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
