@@ -68,7 +68,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     @Override
     public void onBindViewHolder(@NonNull DishesAdapter.dishesHolder holder, int position) {
 
-
+        Log.d("pic key" , dishKeyList.get(position));
+        Log.d("pic name" , list.get(position).getName());
+        Log.d("pic pic" , list.get(position).getPic());
         Picasso.get().
                 load(list.get(position).getPic()).
                 placeholder(R.drawable.ic_baseline_image_24)

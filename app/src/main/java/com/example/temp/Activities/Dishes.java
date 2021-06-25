@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -68,7 +69,6 @@ public class Dishes extends AppCompatActivity {
     private Uri resultUri;
     private AlertDialog dialog;
     private MaterialButton addNewDish;
-    private HashMap<String , String> hotelDishKey;
 
 
 
@@ -303,8 +303,7 @@ public class Dishes extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
 
-                                                String hotelDishKey = hotelDishReference.push().getKey();
-                                                hotelDishReference.child(hotelDishKey).setValue(dishPushKey);
+                                                hotelDishReference.child(dishPushKey).setValue(dishPushKey);
                                                 resultUri = null;
 
                                                 linearProgressIndicator.setVisibility(View.INVISIBLE);
@@ -458,6 +457,8 @@ public class Dishes extends AppCompatActivity {
     }
 
     private void deleteDish(String url , String key){
+
+        Log.d("key for deleting" , key);
         StorageReference deleteDishImage = FirebaseStorage.getInstance().getReferenceFromUrl(url);
         deleteDishImage.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -469,7 +470,8 @@ public class Dishes extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            hotelDishReference.child(hotelDishKey.get(key)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                            hotelDishReference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     dialog.dismiss();
@@ -490,10 +492,7 @@ public class Dishes extends AppCompatActivity {
             }
         });
 
-
     }
-
-
 
     private void showAlertDialog(DishDetails dishDetails , String key , boolean updateStatus){
 
