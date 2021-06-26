@@ -5,18 +5,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/service_image"
-            android:visibility="gone"
-            />
-
-
-        <com.google.android.material.textview.MaterialTextView
+    <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/service_image"
             android:id="@+id/service_name"
             android:text="@string/bread"
             android:textAlignment="textStart"
@@ -24,9 +15,7 @@
             android:padding="16dp"
             android:textAllCaps="true"
             android:drawableRight="@drawable/ic_baseline_chevron_right_24"
-            android:drawableTint="@color/app_red"
-            />
-
+            android:drawableTint="@color/app_red" />
 
 <View
     android:layout_width="match_parent"

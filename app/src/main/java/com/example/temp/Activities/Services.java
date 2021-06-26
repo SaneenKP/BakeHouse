@@ -11,14 +11,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.temp.Adapters.ServicesViewAdapter;
 import com.example.temp.Interfaces.EditServiceInterface;
 import com.example.temp.Models.ServiceDetails;
@@ -29,7 +27,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,7 +39,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -77,11 +73,9 @@ public class Services extends AppCompatActivity {
         layout.setVisibility(View.GONE);
         getServicesReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getString(R.string.ServicesNode));
         fab=findViewById(R.id.addNewService);
-
         if (!sharedPreferenceConfig.readOrderId().equals("")){
             showOrderProgress();
         }
-
         findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,47 +88,59 @@ public class Services extends AppCompatActivity {
 
         firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.ServicesNode));
         linearProgressIndicator.setVisibility(View.VISIBLE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAlertDialog(null , null , false);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayData();
+
+    }
+
+    private void displayData() {
         firebaseRealtimeDatabase.get()
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
-                DataSnapshot snapshot = task.getResult();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren())
-                {
+                if(task.isSuccessful()) {
+                    serviceKeys.clear();
+                    servicesName.clear();
 
-                    ServiceDetails sd =  dataSnapshot.getValue(ServiceDetails.class);
-                    servicesName.add(sd);
-                    serviceKeys.add(dataSnapshot.getKey());
+                    DataSnapshot snapshot = task.getResult();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        ServiceDetails sd = dataSnapshot.getValue(ServiceDetails.class);
+                        servicesName.add(sd);
+                        serviceKeys.add(dataSnapshot.getKey());
+                    }
+                    ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext(), servicesName, serviceKeys, new EditServiceInterface() {
+                        @Override
+                        public void editService(ServiceDetails serviceDetails, String key) {
+                            showAlertDialog(serviceDetails, key, true);
+                        }
+
+                        @Override
+                        public void openVendor(int position) {
+                            Intent getVendor = new Intent(Services.this, Vendors.class);
+                            getVendor.putExtra("service-key", serviceKeys.get(position));
+                            startActivity(getVendor);
+                        }
+                    });
+                    services.setAdapter(servicesViewAdapter);
+                }else{
+                    Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
                 }
-                ServicesViewAdapter servicesViewAdapter = new ServicesViewAdapter(getApplicationContext(), servicesName, serviceKeys, new EditServiceInterface() {
-                    @Override
-                    public void editService(ServiceDetails serviceDetails, String key) {
-                        showAlertDialog(serviceDetails , key , true);
-
-                    }
-
-                    @Override
-                    public void openVendor(int position) {
-                        Intent getVendor = new Intent(Services.this , Vendors.class);
-                        getVendor.putExtra("service-key" , serviceKeys.get(position));
-                        startActivity(getVendor);
-                    }
-                });
-                services.setAdapter(servicesViewAdapter);
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getApplicationContext(),"Failed : " + e , Toast.LENGTH_LONG).show();
-            }
-        });
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAlertDialog(null , null , false);
             }
         });
     }
@@ -159,7 +165,6 @@ public class Services extends AppCompatActivity {
     private void showOrderProgress(){
 
         DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
-
         orderStatusReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -198,6 +203,7 @@ public class Services extends AppCompatActivity {
         });
 
     }
+
 
     private void showAlertDialog(ServiceDetails serviceDetails , String key , boolean updateStatus){
 
@@ -268,13 +274,13 @@ public class Services extends AppCompatActivity {
 
     }
 
+
     private void addNewService(ServiceDetails serviceDetails , String key){
 
         if (resultUri == null && key == null){
             Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();
         }
         else{
-
             StorageReference serviceImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.ServicesNode)+"/"+serviceDetails.getName()+System.currentTimeMillis());
             DatabaseReference serviceReference = FirebaseDatabase.getInstance().getReference().child(getApplication().getString(R.string.ServicesNode));
             dialog.dismiss();
@@ -287,7 +293,6 @@ public class Services extends AppCompatActivity {
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
                     if (task.isSuccessful()){
-
                         serviceImage.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
@@ -351,19 +356,17 @@ public class Services extends AppCompatActivity {
 
     }
 
+
+
     private void updateService(ServiceDetails serviceDetails , String key){
 
         if (resultUri!=null){
-
             getServicesReference.child(key).child(getApplicationContext().getString(R.string.serviceName)).setValue(serviceDetails.getName());
-
             StorageReference serviceImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.ServicesNode)+"/"+serviceDetails.getName()+System.currentTimeMillis());
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             linearProgressIndicator.setVisibility(View.VISIBLE);
             linearProgressIndicator.setProgress(0);
-
-
             serviceImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -381,9 +384,7 @@ public class Services extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
-
                                                 resultUri = null;
-
                                                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                 Toast.makeText(getApplicationContext(),"Service Uploaded" , Toast.LENGTH_LONG).show();
@@ -431,17 +432,13 @@ public class Services extends AppCompatActivity {
             });
 
         }else{
-
             getServicesReference.child(key).child(getApplicationContext().getString(R.string.serviceName)).setValue(serviceDetails.getName());
             Toast.makeText(getApplicationContext() , "Service Value Updated" , Toast.LENGTH_LONG).show();
             dialog.dismiss();
         }
-
     }
 
     private void deleteService(String url , String key){
-
-
         StorageReference deleteServiceImage = FirebaseStorage.getInstance().getReferenceFromUrl(url);
         deleteServiceImage.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -462,13 +459,10 @@ public class Services extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
                 dialog.dismiss();
                 Toast.makeText(getApplicationContext() , "Failed ..." + e.toString(),Toast.LENGTH_LONG).show();
             }
         });
 
     }
-
-
 }

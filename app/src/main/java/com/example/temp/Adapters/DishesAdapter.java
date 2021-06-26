@@ -38,12 +38,13 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
     private int[] priceArray;
     private String[] keyList;
     private JSONObject dishValues;
+    private JSONObject dishNameAndQuantity;
     private EditDishInterface editDishInterface;
 
 
     public DishesAdapter(Context context, List<DishDetails> list, List<String> dishKeyList,
                          DishValueInterface dishValuesInterface,
-                         EditDishInterface editDishInterface) {
+                         EditDishInterface editDishInterface,JSONObject dishNameAndQuantity) {
         this.context = context;
         this.list = list;
         this.priceArray = new int[list.size()];
@@ -51,7 +52,8 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
         this.dishKeyList = dishKeyList;
         this.dishValuesInterface = dishValuesInterface;
         this.editDishInterface = editDishInterface;
-        dishValues = new JSONObject();
+        this.dishValues = new JSONObject();
+        this.dishNameAndQuantity=new JSONObject();
     }
 
 
@@ -94,10 +96,11 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
                 try {
                     dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
+                    dishNameAndQuantity.put(list.get(holder.getAdapterPosition()).getName(), holder.counter.getText());
                 }catch (Exception e)
                 {}
 
-                dishValuesInterface.getCounterValue(priceArray , keyList,dishValues);
+                dishValuesInterface.getCounterValue(priceArray , keyList,dishValues,dishNameAndQuantity);
 
 
             }
@@ -120,12 +123,13 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
                 try {
                     dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
+                    dishNameAndQuantity.put(list.get(holder.getAdapterPosition()).getName(), holder.counter.getText());
                 }catch (Exception e)
                 {}
 
 
 
-                dishValuesInterface.getCounterValue(priceArray , keyList, dishValues);
+                dishValuesInterface.getCounterValue(priceArray , keyList, dishValues,dishNameAndQuantity);
 
             }
         });

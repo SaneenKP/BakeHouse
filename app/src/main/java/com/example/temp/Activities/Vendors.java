@@ -205,47 +205,33 @@ public class Vendors extends AppCompatActivity {
     //Method to add a new Vendor
     private void addNewVendor(VendorDetails vendorDetails , String key){
 
-        //to check if the user has added an image or not
-        if (resultUri == null && key == null){
+        if (resultUri == null){
             Toast.makeText(getApplicationContext() , "Please Select An Image" , Toast.LENGTH_LONG).show();
         }
         else{
-
-            //Firebase storage reference
             StorageReference vendorImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.VendorNode)+"/"+vendorDetails.getName()+System.currentTimeMillis());
-
-            //Firebase realtime database reference
             DatabaseReference vendorReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getString(R.string.ServicesNode)).child(serviceKey).child(getApplicationContext().getString(R.string.VendorNode));
 
             dialog.dismiss();
 
             //makes the background untouchable when uploading data
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-
             linearProgressIndicator.setVisibility(View.VISIBLE);
             linearProgressIndicator.setProgress(0);
-
             vendorImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
                     if (task.isSuccessful()){
-
                         vendorImage.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()){
-
-                                    //sets the new url to vendor details
                                     vendorDetails.setProfile_pic(task.getResult().toString());
-
-
                                     vendorReference.push().setValue(vendorDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
-
                                                 resultUri = null;
                                                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -331,10 +317,7 @@ public class Vendors extends AppCompatActivity {
 
 
         DatabaseReference vendorUpdateReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getString(R.string.ServicesNode)).child(serviceKey).child(getApplicationContext().getString(R.string.VendorNode)).child(key);
-
-        //checks if user has updated the image
-        //else it just updates the data
-        if (resultUri!=null){
+         if (resultUri!=null){
 
             StorageReference vendorImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.VendorNode)+"/"+vendorDetails.getName()+System.currentTimeMillis());
 
@@ -492,15 +475,12 @@ public class Vendors extends AppCompatActivity {
                     vendorDescription.setError("Please set Description");
                 }else if(TextUtils.isEmpty(vendorPhoneNumber.getText())){
                     vendorPhoneNumber.setError("Please set Phone number");
-                }
-                else{
+                }else{
                     VendorDetails newVendorDetails = new VendorDetails();
                     newVendorDetails.setName(vendorName.getText().toString());
                     newVendorDetails.setAddress(vendorAddress.getText().toString());
                     newVendorDetails.setDescription(vendorDescription.getText().toString());
                     newVendorDetails.setNumber(vendorPhoneNumber.getText().toString());
-
-
                     if(updateStatus){
                         newVendorDetails.setProfile_pic(vendorDetails.getProfile_pic());
                         updateVendor(newVendorDetails , key);
@@ -523,7 +503,6 @@ public class Vendors extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         CropImage.ActivityResult result = CropImage.getActivityResult(data);
-
         if (resultCode == RESULT_OK){
             resultUri = Objects.requireNonNull(result).getUri();
         }

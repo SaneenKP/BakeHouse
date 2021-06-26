@@ -121,8 +121,7 @@ public class Dishes extends AppCompatActivity {
                     Toast.makeText(getApplicationContext() , "No Items Selected" , Toast.LENGTH_SHORT).show();
                 }
                 else
-                {
-                    finalSelectedDishes = new JSONObject();
+                { finalSelectedDishes = new JSONObject();
                     for (String x : dishKeyList)
                     {
                         try {
@@ -226,8 +225,9 @@ public class Dishes extends AppCompatActivity {
                                     dishList.add(dishDetails);
                                     DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new DishValueInterface() {
                                         @Override
-                                        public void getCounterValue(int[] value, String[] keys, JSONObject dishValues) {
+                                        public void getCounterValue(int[] value, String[] keys, JSONObject dishValues, JSONObject dishNameAndQuantity) {
 
+                                            finalDishNameAndQuantity = dishNameAndQuantity;
                                             dishValuesJSON = dishValues;
                                             TOTAL_AMOUNT = 0;
 
@@ -240,7 +240,7 @@ public class Dishes extends AppCompatActivity {
                                         public void editDish(DishDetails dishDetails, String key) {
                                             showAlertDialog(dishDetails , key , true);
                                         }
-                                    });
+                                    },finalDishNameAndQuantity);
                                     dishes.setLayoutManager(layoutManager);
                                     dishes.setAdapter(dishesAdapter);
 
