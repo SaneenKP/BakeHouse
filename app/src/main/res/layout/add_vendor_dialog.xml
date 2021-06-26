@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        android:id="@+id/newVendorName"
+        />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Address"
+        android:layout_marginTop="8dp"
+        android:padding="16dp"
+        android:id="@+id/newVendorAddress"
+        android:inputType="textMultiLine"
+
+        />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:layout_marginTop="8dp"
+        android:padding="16dp"
+        android:id="@+id/newVendorDescription"
+        android:inputType="textMultiLine"
+        />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:hint="number"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        android:id="@+id/newVendorNumber"
+        android:inputType="number"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Image"
+        android:padding="16dp"
+        android:id="@+id/addNewVendorImage"
+        android:layout_marginTop="8dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SUBMIT"
+        android:padding="16dp"
+        android:id="@+id/addNewVendor"
+        android:layout_marginTop="8dp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:padding="16dp"
+        android:id="@+id/deleteVendor"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/app_red"
+        />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

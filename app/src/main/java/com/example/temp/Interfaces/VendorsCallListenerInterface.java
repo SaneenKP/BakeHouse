@@ -2,7 +2,7 @@ package com.example.temp.Interfaces;
 
 import android.view.View;
 
-public interface vendorsCallListenerInterface {
+public interface VendorsCallListenerInterface {
 
     void getVendorNumber(String number);
 

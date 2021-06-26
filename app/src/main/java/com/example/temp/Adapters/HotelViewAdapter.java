@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.temp.Activities.Dishes;
+import com.example.temp.Interfaces.EditHotelInterface;
 import com.example.temp.Models.HotelDetails;
 import com.example.temp.R;
 import com.google.android.material.textview.MaterialTextView;
@@ -24,12 +25,13 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
     private Context context;
     private List<HotelDetails> list;
     private List<String> hotelKeys;
+    private EditHotelInterface editHotelInterface;
 
-
-    public HotelViewAdapter(Context context, List<HotelDetails> list, List<String> hotelKeys) {
+    public HotelViewAdapter(Context context, List<HotelDetails> list, List<String> hotelKeys,EditHotelInterface editHotelInterface) {
         this.context = context;
         this.list = list;
         this.hotelKeys = hotelKeys;
+        this.editHotelInterface=editHotelInterface;
 
     }
 
@@ -55,6 +57,15 @@ public class HotelViewAdapter extends RecyclerView.Adapter<HotelViewAdapter.Hote
         holder.location.setText(list.get(position).getLocation());
         holder.address.setText(list.get(position).getAddress());
 
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                editHotelInterface.editHotel(list.get(holder.getAdapterPosition()) , hotelKeys.get(holder.getAdapterPosition()));
+
+                return true;
+            }
+        });
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

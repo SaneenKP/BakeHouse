@@ -1,63 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="0dp"
-    style="@style/Platform.MaterialComponents.Light"
-    >
-
+    android:padding="16dp">
 
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Dish Name"
-        android:layout_margin="16dp"
-        android:id="@+id/newDishName"
+        android:hint="Hotel Name"
+        android:layout_marginTop="20dp"
+        android:id="@+id/newHotelName"
         android:padding="16dp"
-
         />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Price"
-        android:layout_margin="16dp"
-        android:id="@+id/newDishPrice"
-        android:inputType="number"
+        android:hint="Address"
+        android:layout_marginTop="20dp"
+        android:id="@+id/newHotelAddress"
         android:padding="16dp"
         />
 
+    <androidx.appcompat.widget.AppCompatEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="location"
+        android:layout_marginTop="20dp"
+        android:id="@+id/newHotelLocation"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:text="unnecessaryfield"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Image"
-        android:id="@+id/addNewDishImage"
-        android:layout_margin="16dp"
+        android:id="@+id/addNewHotelImage"
+        android:layout_marginTop="20dp"
         android:padding="16dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        
         />
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SUBMIT"
-        android:id="@+id/addNewDish"
-        android:layout_margin="16dp"
+        android:text="Submit"
+        android:id="@+id/addNewHotel"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
         />
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete Dish"
+        android:text="Delete"
+        android:id="@+id/deleteHotel"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/app_red"
-        android:id="@+id/deleteDish"
-        android:layout_margin="16dp"
         android:padding="16dp"
         />
 
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+</LinearLayout>

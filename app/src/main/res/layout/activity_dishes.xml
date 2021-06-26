@@ -48,8 +48,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Food"
+        android:textColor="@color/white"
         android:id="@+id/addNewDish"
-        android:src="@drawable/ic_baseline_add_24"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:drawableTop="@drawable/ic_baseline_add_24"
+        android:drawablePadding="0dp"
         app:backgroundTint="@color/app_blue"
         />
     <com.google.android.material.button.MaterialButton

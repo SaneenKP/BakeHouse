@@ -38,10 +38,20 @@
     </com.google.android.material.progressindicator.LinearProgressIndicator>
     <GridView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:id="@+id/services"
         android:numColumns="1"
+        android:layout_weight="1"
         />
-
+<com.google.android.material.button.MaterialButton
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:drawableTop="@drawable/ic_baseline_add_24"
+    android:text="Add Services"
+    android:padding="8dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginLeft="16dp"
+    android:id="@+id/addNewService"
+    />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -4,16 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.bumptech.glide.Glide;
-import com.example.temp.Interfaces.vendorsCallListenerInterface;
+import com.example.temp.Interfaces.EditVendorInterface;
+import com.example.temp.Interfaces.VendorsCallListenerInterface;
 import com.example.temp.Models.VendorDetails;
 import com.example.temp.R;
 import com.google.android.material.button.MaterialButton;
@@ -22,18 +19,20 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.VendorHolder>{
 
     private Context context;
     private List<VendorDetails> list;
-    private vendorsCallListenerInterface clickListener;
+    private VendorsCallListenerInterface clickListener;
+    private EditVendorInterface editVendorInterface;
+    private List<String> vendorKeys;
 
-    public VendorsListAdapter(Context context, List<VendorDetails> list , vendorsCallListenerInterface clickListener) {
+    public VendorsListAdapter(Context context, List<VendorDetails> list , List<String> vendorKeys, VendorsCallListenerInterface clickListener, EditVendorInterface editVendorInterface) {
         this.context = context;
         this.list = list;
         this.clickListener = clickListener;
+        this.editVendorInterface=editVendorInterface;
+        this.vendorKeys=vendorKeys;
     }
 
     @NonNull
@@ -41,7 +40,6 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
     public VendorsListAdapter.VendorHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(context).inflate(R.layout.vendordetails_view,parent,false);
-
         return new VendorHolder(v);
     }
 
@@ -58,7 +56,6 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
                 .into(holder.coverpic);
 
         
-
         holder.call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +69,18 @@ public class VendorsListAdapter extends RecyclerView.Adapter<VendorsListAdapter.
                 clickListener.getVendorNumber(list.get(position).getNumber());
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                editVendorInterface.editVendor(list.get(holder.getAdapterPosition()) , vendorKeys.get(holder.getAdapterPosition()) );
+
+                return true;
+            }
+        });
+
+
 
     }
 

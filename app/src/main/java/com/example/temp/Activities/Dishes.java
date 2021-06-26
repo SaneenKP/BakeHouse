@@ -159,7 +159,6 @@ public class Dishes extends AppCompatActivity {
     private void showOrderProgress(){
 
         DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
-
         orderStatusReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -263,11 +262,9 @@ public class Dishes extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         if (!sharedPreferenceConfig.readOrderId().equals("")){
             showOrderProgress();
         }
-
     }
 
     private void addNewDish(DishDetails dishDetails , String key){
@@ -309,6 +306,7 @@ public class Dishes extends AppCompatActivity {
                                                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                 Toast.makeText(getApplicationContext(),"Dish Uploaded" , Toast.LENGTH_LONG).show();
+                                                onStart();
 
                                             }else{
                                                 Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
@@ -476,6 +474,7 @@ public class Dishes extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     dialog.dismiss();
                                     Toast.makeText(getApplicationContext(), "Dish Successfully Deleted", Toast.LENGTH_LONG).show();
+                                    onStart();
                                 }
                             });
                         }

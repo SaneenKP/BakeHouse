@@ -16,6 +16,12 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
 
+    <!-- Hotels node child for updating -->
+
+    <string name="hotelName">hotel_name</string>
+    <string name="hotelLocation">location</string>
+    <string name="hotelAddress">address</string>
+    <string name="hotelImage">image</string>
     <!-- shared preference file name-->
 
     <string name="user_address">com.example.temp_user_address_preferences1</string>
@@ -82,5 +88,9 @@
     <string name="order_in_progress">Order in Progress...</string>
     <string name="bread">Bread</string>
 
+    <!-- service node child for updating -->
+
+    <string name="serviceName">name</string>
+    <string name="serviceImage">cover_pic</string>
 
 </resources>

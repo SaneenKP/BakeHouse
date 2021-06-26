@@ -4,28 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="0dp"
-    style="@style/Platform.MaterialComponents.Light"
-    >
+    android:padding="16dp">
 
 
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Dish Name"
-        android:layout_margin="16dp"
-        android:id="@+id/newDishName"
-        android:padding="16dp"
-
-        />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Price"
-        android:layout_margin="16dp"
-        android:id="@+id/newDishPrice"
-        android:inputType="number"
+        android:layout_height="55dp"
+        android:hint="Service Name"
+        android:layout_marginTop="16dp"
+        android:id="@+id/newServiceName"
         android:padding="16dp"
         />
 
@@ -34,8 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Image"
-        android:id="@+id/addNewDishImage"
-        android:layout_margin="16dp"
+        android:id="@+id/addNewServiceImage"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         />
@@ -44,19 +31,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="SUBMIT"
-        android:id="@+id/addNewDish"
-        android:layout_margin="16dp"
+        android:id="@+id/addNewService"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
         />
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete Dish"
-        android:backgroundTint="@color/app_red"
-        android:id="@+id/deleteDish"
-        android:layout_margin="16dp"
+        android:text="Delete"
+        android:id="@+id/deleteService"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
+        android:backgroundTint="@color/app_red"
         />
 
 
