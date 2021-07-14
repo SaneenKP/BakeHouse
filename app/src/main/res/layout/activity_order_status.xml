@@ -26,18 +26,28 @@
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:text="@string/headText"
-        android:id="@+id/head"
+        android:text="Delivery Boy"
+        android:id="@+id/DeliveryBoy"
         android:layout_below="@id/appbar"
         style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:drawableLeft="@drawable/ic_baseline_perm_phone_msg_24"
-        android:drawableTint="@color/app_blue"
+        android:drawableLeft="@drawable/ic_baseline_account_circle_24"
         android:layout_margin="16dp"
         android:layout_alignParentRight="true"
         android:textAlignment="textStart"
         android:drawablePadding="16dp"
-        android:alpha="0.6"
+        />
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/headText"
+        android:id="@+id/head"
+        android:layout_below="@id/DeliveryBoy"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:drawableLeft="@drawable/ic_baseline_perm_phone_msg_24"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
+        android:textAlignment="textStart"
+        android:drawablePadding="16dp"
         />
 
      <LinearLayout

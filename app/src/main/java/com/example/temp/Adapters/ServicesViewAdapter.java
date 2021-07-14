@@ -7,9 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.example.temp.Interfaces.EditServiceInterface;
 import com.example.temp.Models.ServiceDetails;
 import com.example.temp.R;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textview.MaterialTextView;
+
 import java.util.List;
 
 public class ServicesViewAdapter extends BaseAdapter {
@@ -20,7 +27,9 @@ public class ServicesViewAdapter extends BaseAdapter {
     private EditServiceInterface editServiceInterface;
     private List<String>serviceKeys;
 
-    public ServicesViewAdapter(Context context, List<ServiceDetails> services, List<String> serviceKeys, EditServiceInterface editServiceInterface) {
+    public ServicesViewAdapter(Context context, List<ServiceDetails> services,
+                               List<String> serviceKeys,
+                               EditServiceInterface editServiceInterface) {
 
         inflater = LayoutInflater.from(context);
         this.context = context;
@@ -51,17 +60,28 @@ public class ServicesViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         convertView = inflater.inflate(R.layout.service_view , null);
-        TextView serviceName = convertView.findViewById(R.id.service_name);
+        MaterialTextView serviceName = convertView.findViewById(R.id.service_name);
         Log.d("Images" , services.get(position).getCover_pic());
         serviceName.setText(services.get(position).getName());
-
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editServiceInterface.openVendor(position);
             }
         });
-
+        serviceName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editServiceInterface.openVendor(position);
+            }
+        });
+        serviceName.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                editServiceInterface.editService(services.get(position) , serviceKeys.get(position));
+                return true;
+            }
+        });
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

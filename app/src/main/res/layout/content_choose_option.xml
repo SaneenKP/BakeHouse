@@ -8,9 +8,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <include layout="@layout/order_progress_layout"
-        android:id="@+id/orderProgressLayout"
-
-        />
+        android:id="@+id/orderProgressLayout" />
 
     <LinearLayout
         android:layout_width="240dp"
@@ -25,32 +23,30 @@
             android:layout_height="wrap_content"
             android:text="@string/food"
             android:textStyle="bold"
-            android:padding="24dp"
+            android:padding="16dp"
             android:layout_weight="1"
-            app:elevation="8dp"
-            app:cornerRadius="8dp"
-            android:drawableLeft="@mipmap/ic_food_icon"
+            app:elevation="16dp"
+            app:cornerRadius="24dp"
             android:textAllCaps="true"
+            app:strokeWidth="2dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:textColor="@color/app_blue"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_services"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/services"
-            android:padding="24dp"
+            android:padding="16dp"
             android:layout_weight="1"
             android:textStyle="bold"
             android:layout_marginTop="32dp"
             android:textAllCaps="true"
-            android:drawableLeft="@mipmap/ic_service_icon"
-            app:elevation="8dp"
-            app:cornerRadius="8dp"
+            app:elevation="16dp"
+            app:cornerRadius="24dp"
+            app:strokeWidth="2dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:textColor="@color/app_blue"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             />
 
     </LinearLayout>

@@ -13,5 +13,6 @@
      <color name="app_red">#ef5350</color>
     <color name="app_elevated_grey">#eeeeee</color>
     <color name="app_background">#fafafa</color>
-
+    <color name="transperant">#0000ffff</color>
+    <color name="dark_theme_blue">#64b5f6</color>
 </resources>

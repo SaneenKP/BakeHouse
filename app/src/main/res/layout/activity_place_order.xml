@@ -48,7 +48,6 @@
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:drawableLeft="@drawable/ic_baseline_food_bank_24"
                 android:drawablePadding="8dp"
-                app:drawableTint="@color/app_blue"
                 />
 
             <com.google.android.material.textview.MaterialTextView
@@ -59,7 +58,6 @@
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textAllCaps="true"
                 android:drawableLeft="@drawable/ic_round_fastfood_24"
-                app:drawableTint="@color/app_blue"
                 android:drawablePadding="8dp"
                 />
 
@@ -148,7 +146,6 @@
                     android:layout_alignParentStart="true"
                     android:id="@+id/AddTv"
                     android:text="@string/address"
-                    android:textColor="@color/black"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="10dp"
@@ -177,9 +174,6 @@
                     android:id="@+id/Add_name"
                     android:drawableLeft="@drawable/ic_baseline_person_pin_circle_24"
                     android:drawablePadding="16dp"
-                    android:drawableTint="@color/app_blue"
-
-
                     />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -201,7 +195,6 @@
                     android:id="@+id/Add_houseNo"
                     android:drawableLeft="@drawable/ic_baseline_dashboard_24"
                     android:drawablePadding="16dp"
-                    android:drawableTint="@color/app_blue"
 
                     />
 
@@ -224,7 +217,6 @@
                         android:id="@+id/Add_houseName"
                         android:drawableLeft="@drawable/ic_baseline_house_24"
                         android:drawablePadding="16dp"
-                        android:drawableTint="@color/app_blue"
                         />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -247,7 +239,6 @@
                         android:id="@+id/Add_landmark"
                         android:drawableLeft="@drawable/ic_baseline_landscape_24"
                         android:drawablePadding="16dp"
-                        android:drawableTint="@color/app_blue"
 
                         />
 
@@ -270,7 +261,6 @@
                         android:id="@+id/Add_street"
                         android:drawableLeft="@drawable/ic_baseline_streetview_24"
                         android:drawablePadding="16dp"
-                        android:drawableTint="@color/app_blue"
 
                         />
 

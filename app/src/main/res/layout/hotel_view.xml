@@ -8,37 +8,35 @@
     android:layout_marginBottom="2dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:theme="@style/Theme.MaterialComponents.Light"
+    android:theme="@style/Theme.Temp"
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="8dp"
     app:cardPreventCornerOverlap="false"
     android:clipToPadding="true"
     >
-<RelativeLayout
+<androidx.appcompat.widget.LinearLayoutCompat
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="104dp"
-            android:layout_height="128dp"
+            android:layout_width="match_parent"
+            android:layout_height="156dp"
             android:id="@+id/hotel_image"
-            android:layout_centerVertical="true"
             android:background="@drawable/imageviewshape"
             android:scaleType="centerCrop"
         />
-
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:id="@+id/hotel_name"
         android:text="@string/hotelname"
-        android:textColor="@color/text_color"
         android:textAllCaps="false"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
         android:drawableLeft="@drawable/ic_baseline_food_bank_24"
         android:drawableTint="@color/app_red"
         android:drawablePadding="16dp"
@@ -47,37 +45,32 @@
 
         />
 
-          <com.google.android.material.textview.MaterialTextView
-              android:id="@+id/hotel_address"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_toEndOf="@id/hotel_image"
-              android:layout_margin="8dp"
-              style="@style/TextAppearance.MaterialComponents.Body2"
-              android:alpha="0.6"
-              android:layout_below="@id/hotel_name"
-              android:minLines="4"
-              />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/hotel_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/hotel_image"
+        android:layout_margin="8dp"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:alpha="0.6"
+        android:layout_below="@id/hotel_name"
+        android:minLines="2"
+        android:text="This is the hotel address"
+        />
 
-          <com.google.android.material.textview.MaterialTextView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="24sp"
-              android:id="@+id/hotel_location"
-              android:textColor="@color/black"
-              android:layout_marginTop="10dp"
-              android:text="kozikode"
-              android:layout_weight="1"
-              android:layout_marginStart="5dp"
-              android:layout_marginEnd="5dp"
-              android:layout_marginBottom="5dp"
-              android:textAlignment="center"
-              android:visibility="gone"
-              />
-
-</RelativeLayout>
-
-
-
-
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:id="@+id/hotel_location"
+        android:layout_marginTop="10dp"
+        android:text="Kozhikode"
+        android:layout_weight="1"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        />
+</androidx.appcompat.widget.LinearLayoutCompat>
 </com.google.android.material.card.MaterialCardView>

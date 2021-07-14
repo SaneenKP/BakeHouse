@@ -8,7 +8,7 @@
     android:layout_marginRight="16dp"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
-    android:theme="@style/Theme.MaterialComponents.Light"
+    android:theme="@style/Theme.Temp"
     app:contentPadding="8dp"
     app:cardUseCompatPadding="true"
     app:cardElevation="2dp"
@@ -92,12 +92,12 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/vendor_ph"
                 android:layout_weight="1"
-                android:textAlignment="textStart"
+                android:textAlignment="center"
                 android:drawableLeft="@drawable/ic_phone"
-                android:drawableTint="@color/white"
                 android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:backgroundTint="@color/app_blue"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:drawablePadding="16dp"
                 />
         </androidx.appcompat.widget.LinearLayoutCompat>
 

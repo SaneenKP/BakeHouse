@@ -17,8 +17,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/white"
             app:title="@string/app_name"
+            app:titleTextColor="@color/white"
             />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -32,8 +32,6 @@
         android:id="@+id/hotelLoadProgress"
         android:visibility="invisible"
         android:indeterminate="true"
-        app:indicatorColor="@color/app_blue_dark"
-
        >
     </com.google.android.material.progressindicator.LinearProgressIndicator>
 
@@ -52,13 +50,14 @@
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:padding="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="4dp"
         android:id="@+id/addHotel"
         android:text="Add Hotel"
-        android:drawableTop="@drawable/ic_baseline_add_24"
-       />
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+
+        />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

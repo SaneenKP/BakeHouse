@@ -5,29 +5,25 @@
     android:layout_height="wrap_content"
     android:id="@+id/orderProgressLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/app_red"
-        app:contentPadding="4dp"
-        >
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:cardUseCompatPadding="true">
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/order_in_progress"
             android:gravity="center"
+            android:layout_margin="2dp"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:id="@+id/orderStatus"
-            android:textColor="@color/white"
+            android:textColor="@color/app_red"
             android:drawableLeft="@drawable/ic_round_fastfood_24"
-            app:drawableTint="@color/white"
+            app:drawableTint="@color/app_red"
             android:textStyle="bold"
             android:background="?attr/selectableItemBackgroundBorderless"
             />
     </androidx.cardview.widget.CardView>
-
-
-
-
 </RelativeLayout>

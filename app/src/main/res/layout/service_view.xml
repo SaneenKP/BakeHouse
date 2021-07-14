@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/Theme.Temp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="0dp">
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/service_name"
             android:text="@string/bread"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:textAlignment="textStart"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:padding="16dp"
             android:textAllCaps="true"
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="16dp"
             android:drawableRight="@drawable/ic_baseline_chevron_right_24"
             android:drawableTint="@color/app_red" />
-
-<View
-    android:layout_width="match_parent"
-    android:layout_height="2dp"
-    android:background="@color/app_elevated_grey"
-    />
-</androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>

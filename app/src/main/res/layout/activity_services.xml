@@ -25,7 +25,6 @@
     </com.google.android.material.appbar.AppBarLayout>
     <include layout="@layout/order_progress_layout"
         android:id="@+id/orderProgressLayout"
-
         />
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:layout_width="match_parent"
@@ -46,12 +45,12 @@
 <com.google.android.material.button.MaterialButton
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:drawableTop="@drawable/ic_baseline_add_24"
     android:text="Add Services"
-    android:padding="8dp"
+    android:padding="16dp"
     android:layout_marginRight="16dp"
     android:layout_marginLeft="16dp"
     android:id="@+id/addNewService"
+    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
     />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

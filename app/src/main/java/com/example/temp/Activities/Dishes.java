@@ -203,6 +203,7 @@ public class Dishes extends AppCompatActivity {
         totalButton.setText(R.string.no_item_txt);
         TOTAL_AMOUNT=0;
         linearProgressIndicator.setVisibility(View.VISIBLE);
+
         hotelDishReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {

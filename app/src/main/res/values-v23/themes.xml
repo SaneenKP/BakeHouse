@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.Temp" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#1565c0</item>
+        <item name="colorPrimaryVariant">#003c8f</item>
+        <item name="colorOnPrimary">#ffffff</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#fafafa</item>
+        <item name="colorSecondaryVariant">#fafafa</item>
+        <item name="colorOnSecondary">#fafafa</item>
+        <item name="colorButtonNormal">@color/app_blue</item>
+        <item name="buttonTint">@color/app_blue</item>
+        <item name="android:drawableTint">@color/app_blue</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>
