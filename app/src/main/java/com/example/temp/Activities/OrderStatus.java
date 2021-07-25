@@ -28,8 +28,8 @@ public class OrderStatus extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private String orderKey;
     private SharedPreferenceConfig sharedPreferenceConfig;
-
-
+    private TextView deliveryBoyName , deliveryBoyNumber;
+    private int count = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +39,9 @@ public class OrderStatus extends AppCompatActivity {
         orderCompleted = findViewById(R.id.orderCompleted);
         orderDelivered = findViewById(R.id.orderDelivered);
         orderPicked = findViewById(R.id.orderPicked);
+
+        deliveryBoyName = findViewById(R.id.DeliveryBoyName);
+        deliveryBoyNumber = findViewById(R.id.DeliveryBoyNumber);
 
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
         orderKey = sharedPreferenceConfig.readOrderId();
@@ -55,17 +58,22 @@ public class OrderStatus extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                String placedIndex = snapshot.child("placedIndex").getValue(String.class);
-                String confirmedIndex = snapshot.child("confirmedIndex").getValue(String.class);
-                String pickupIndex = snapshot.child("pickupIndex").getValue(String.class);
-                String deliveryIndex = snapshot.child("deliveryIndex").getValue(String.class);
+                String placedIndex = snapshot.child(getApplicationContext().getResources().getString(R.string.placedIndexStatus)).getValue(String.class);
+                String confirmedIndex = snapshot.child(getApplicationContext().getResources().getString(R.string.confirmedIndexStatus)).getValue(String.class);
+                String pickupIndex = snapshot.child(getApplicationContext().getResources().getString(R.string.pickupIndexStatus)).getValue(String.class);
+                String deliveryIndex = snapshot.child(getApplicationContext().getResources().getString(R.string.deliveryIndexStatus)).getValue(String.class);
+                String assigned = snapshot.child(getApplicationContext().getResources().getString(R.string.assignedIndex)).getValue(String.class);
 
-                if (confirmedIndex == "yes"){
+
+                if (deliveryIndex.equals("yes")){
                     sharedPreferenceConfig.removeOrderId();
                 }
 
                 setStatus(placedIndex , confirmedIndex , pickupIndex , deliveryIndex);
-
+                if (assigned!=null && assigned.equals("yes") && count == 0){
+                    String deliveryBoyKey = snapshot.child(getApplicationContext().getResources().getString(R.string.DeliveryBoyNode)).getValue(String.class);
+                    setDeliveryBoyDetails(deliveryBoyKey);
+                }
             }
 
             @Override
@@ -76,6 +84,30 @@ public class OrderStatus extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void setDeliveryBoyDetails(String deliveryBoyKey){
+
+        DatabaseReference deliveryBoyReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DeliveryBoyNode)).child(deliveryBoyKey);
+        deliveryBoyReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()){
+
+                    String name = task.getResult().child("name").getValue(String.class);
+                    String number = task.getResult().child("number").getValue(String.class);
+
+                    Log.d("delivery boy added" , "DELIVERYYYYYYYY");
+                    deliveryBoyName.setText(name);
+                    deliveryBoyNumber.setText(number);
+                    count++;
+
+                }else{
+                    Toast.makeText(getApplicationContext() , "Delivery boy not assigned .. order again " ,Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void setStatus(String placedIndex , String confirmedIndex , String pickupIndex ,String deliveryIndex)

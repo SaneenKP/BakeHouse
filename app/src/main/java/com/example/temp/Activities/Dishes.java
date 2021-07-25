@@ -71,7 +71,6 @@ public class Dishes extends AppCompatActivity {
     private MaterialButton addNewDish;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,6 +140,7 @@ public class Dishes extends AppCompatActivity {
                     openPlaceOrderSection.putExtra("totalAmount" , TOTAL_AMOUNT);
                     openPlaceOrderSection.putExtra("hotelDetails" , hotelDetails);
                     startActivity(openPlaceOrderSection);
+
                 }
 
             }
@@ -482,7 +482,6 @@ public class Dishes extends AppCompatActivity {
                     }
                 });
 
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -508,12 +507,12 @@ public class Dishes extends AppCompatActivity {
         Button delete = v.findViewById(R.id.deleteDish);
         delete.setVisibility(View.INVISIBLE);
 
-
         if (updateStatus){
 
             delete.setVisibility(View.VISIBLE);
             dishName.setText(dishDetails.getName());
             dishPrice.setText(Integer.toString(dishDetails.getPrice()));
+
         }
 
         delete.setOnClickListener(new View.OnClickListener() {
@@ -574,8 +573,8 @@ public class Dishes extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
+        CropImage.ActivityResult result = CropImage.getActivityResult(data);
         if (resultCode == RESULT_OK){
             resultUri = Objects.requireNonNull(result).getUri();
         }

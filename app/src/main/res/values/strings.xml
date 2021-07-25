@@ -58,6 +58,9 @@
     <string name="pickupIndexStatus">pickupIndex</string>
     <string name="deliveryIndexStatus">deliveryIndex</string>
     <string name="confirmedIndexStatus">confirmedIndex</string>
+    <string name="DeliveryBoyNode">DeliveryBoy</string>
+    <string name="assignedIndex">assigned</string>
+
 
     <!-- Generated -->
     <string name="food">Foods</string>
