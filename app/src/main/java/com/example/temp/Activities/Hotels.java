@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -154,34 +155,50 @@ public class Hotels extends AppCompatActivity {
 
     }
 
+    public void getHotels(){
+
+        hotelsList.clear();
+        hotelKeys.clear();
+        linearProgressIndicator.setVisibility(View.VISIBLE);
+
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot,  String previousChildName) {
+                HotelDetails hotelDetails = snapshot.getValue(HotelDetails.class);
+                hotelsList.add(hotelDetails);
+                hotelKeys.add(snapshot.getKey());
+                linearProgressIndicator.setVisibility(View.INVISIBLE);
+                hotelViewAdapter.notifyItemChanged(0,hotelsList.size());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                linearProgressIndicator.setVisibility(View.INVISIBLE);
+                Toast.makeText(getApplicationContext() , "Failed : "+error , Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        linearProgressIndicator.setVisibility(View.VISIBLE);
-        databaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                hotelsList.clear();
-                hotelKeys.clear();
-                if (task.isSuccessful()){
-                    for (DataSnapshot ds : task.getResult().getChildren()){
-                        HotelDetails hotelDetails = ds.getValue(HotelDetails.class);
-                        hotelsList.add(hotelDetails);
-                        hotelKeys.add(ds.getKey());
-                    }
-                    linearProgressIndicator.setVisibility(View.INVISIBLE);
-                    hotelViewAdapter.notifyItemChanged(0,hotelsList.size());
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
 
-                linearProgressIndicator.setVisibility(View.INVISIBLE);
-                Toast.makeText(getApplicationContext() , "Failed : "+e , Toast.LENGTH_LONG).show();
-
-            }
-        });
+        getHotels();
 
 
     }
