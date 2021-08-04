@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,6 +69,7 @@ public class Dishes extends AppCompatActivity {
     private HotelDetails hotelDetails;
     private Uri resultUri;
     private AlertDialog dialog;
+    private DishesAdapter dishesAdapter;
     private MaterialButton addNewDish;
 
 
@@ -97,9 +99,29 @@ public class Dishes extends AppCompatActivity {
         orderStatus = findViewById(R.id.orderStatus);
         layout.setVisibility(View.GONE);
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
+
+        dishes.setLayoutManager(layoutManager);
+
+        dishesAdapter = new DishesAdapter(Dishes.this, dishList, dishKeyList, new DishValueInterface() {
+            @Override
+            public void getCounterValue(int[] value, String[] keys, JSONObject dishValues, JSONObject dishNameAndQuantity) {
+
+                finalDishNameAndQuantity = dishNameAndQuantity;
+                dishValuesJSON = dishValues;
+                TOTAL_AMOUNT = 0;
+
+                for (int x : value)
+                    TOTAL_AMOUNT += x;
+                totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+            }
+        }, new EditDishInterface() {
+            @Override
+            public void editDish(DishDetails dishDetails, String key) {
+                showAlertDialog(dishDetails , key , true);
+            }
+        },finalDishNameAndQuantity);
+        dishes.setAdapter(dishesAdapter);
+
 
         findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +177,8 @@ public class Dishes extends AppCompatActivity {
       });
     }
 
+
+
     private void showOrderProgress(){
 
         DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
@@ -197,66 +221,57 @@ public class Dishes extends AppCompatActivity {
 
     }
 
+    private void getDishes(){
+
+        linearProgressIndicator.setVisibility(View.VISIBLE);
+
+        hotelDishReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                dishList.clear();
+                dishKeyList.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()){
+
+                    String key = snapshot1.getValue(String.class);
+                    getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
+                    getDishDetailsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            DishDetails dishDetails = snapshot.getValue(DishDetails.class);
+                            dishKeyList.add(0,snapshot.getKey());
+                            dishList.add(0,dishDetails);
+                            linearProgressIndicator.setVisibility(View.INVISIBLE);
+                            dishesAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(getApplicationContext() , "Data couldn't be retrieved Check Internet Connection   " +  error,Toast.LENGTH_LONG).show();
+
+                        }
+                    });
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getApplicationContext() , "Data couldn't be retrieved Check Internet Connection   " +  error,Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         totalButton.setText(R.string.no_item_txt);
         TOTAL_AMOUNT=0;
-        linearProgressIndicator.setVisibility(View.VISIBLE);
+        getDishes();
 
-        hotelDishReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()){
-                    linearProgressIndicator.setVisibility(View.INVISIBLE);
-                    dishList.clear();
-                    dishKeyList.clear();
-
-                    for (DataSnapshot dishkeys : task.getResult().getChildren()){
-                        String key = dishkeys.getValue(String.class);
-                        getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
-                        getDishDetailsReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                                if (task.isSuccessful()){
-
-                                    DishDetails dishDetails = task.getResult().getValue(DishDetails.class);
-                                    dishKeyList.add(task.getResult().getKey());
-                                    dishList.add(dishDetails);
-                                    DishesAdapter dishesAdapter = new DishesAdapter(getApplicationContext(), dishList, dishKeyList, new DishValueInterface() {
-                                        @Override
-                                        public void getCounterValue(int[] value, String[] keys, JSONObject dishValues, JSONObject dishNameAndQuantity) {
-
-                                            finalDishNameAndQuantity = dishNameAndQuantity;
-                                            dishValuesJSON = dishValues;
-                                            TOTAL_AMOUNT = 0;
-
-                                            for (int x : value)
-                                                TOTAL_AMOUNT += x;
-                                            totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
-                                        }
-                                    }, new EditDishInterface() {
-                                        @Override
-                                        public void editDish(DishDetails dishDetails, String key) {
-                                            showAlertDialog(dishDetails , key , true);
-                                        }
-                                    },finalDishNameAndQuantity);
-                                    dishes.setLayoutManager(layoutManager);
-                                    dishes.setAdapter(dishesAdapter);
-
-                                } else{
-                                    Toast.makeText(getApplicationContext() , "Sorry .. Data couldn't be retrieved Check Internet Connection",Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-                        }) ;
-                    }
-
-                }
-
-            }
-        });
 
     }
 
