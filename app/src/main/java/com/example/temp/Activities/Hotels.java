@@ -165,8 +165,8 @@ public class Hotels extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot,  String previousChildName) {
                 HotelDetails hotelDetails = snapshot.getValue(HotelDetails.class);
-                hotelsList.add(hotelDetails);
-                hotelKeys.add(snapshot.getKey());
+                hotelsList.add(0,hotelDetails);
+                hotelKeys.add(0,snapshot.getKey());
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                 hotelViewAdapter.notifyItemChanged(0,hotelsList.size());
             }
