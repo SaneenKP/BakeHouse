@@ -71,6 +71,8 @@ public class Dishes extends AppCompatActivity {
     private AlertDialog dialog;
     private DishesAdapter dishesAdapter;
     private MaterialButton addNewDish;
+    private int dishFlag = 0;
+    private DishDetails newDishDetails = new DishDetails();
 
 
     @Override
@@ -225,24 +227,80 @@ public class Dishes extends AppCompatActivity {
 
         linearProgressIndicator.setVisibility(View.VISIBLE);
 
-        hotelDishReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+       hotelDishReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                dishList.clear();
-                dishKeyList.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()){
 
+                    dishList.clear();
+                    dishKeyList.clear();
                     String key = snapshot1.getValue(String.class);
                     getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
-                    getDishDetailsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    getDishDetailsReference.addChildEventListener(new ChildEventListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            DishDetails dishDetails = snapshot.getValue(DishDetails.class);
-                            dishKeyList.add(0,snapshot.getKey());
-                            dishList.add(0,dishDetails);
-                            linearProgressIndicator.setVisibility(View.INVISIBLE);
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
+
+
+                            if (snapshot.getKey().equals("name")){
+                                newDishDetails.setName(snapshot.getValue(String.class));
+                                dishFlag++;
+                            }
+                            if (snapshot.getKey().equals("pic")){
+                                newDishDetails.setPic(snapshot.getValue(String.class));
+                                dishFlag++;
+                            }
+                            if (snapshot.getKey().equals("price")) {
+                                newDishDetails.setPrice(snapshot.getValue(Integer.class));
+                                dishFlag++;
+                            }
+
+                            if (dishFlag == 3){
+                                dishFlag = 0;
+                                dishKeyList.add(0,key);
+                                dishList.add(0,newDishDetails);
+                                dishesAdapter.notifyDataSetChanged();
+                                linearProgressIndicator.setVisibility(View.INVISIBLE);
+                                newDishDetails = new DishDetails();
+                            }
+
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+                            int positionOfChangedDish = dishKeyList.indexOf(key);
+
+                            newDishDetails = dishList.get(positionOfChangedDish);
+                            if (snapshot.getKey().equals("name")){
+                                newDishDetails.setName(snapshot.getValue(String.class));
+                                dishFlag++;
+                            }
+                            if (snapshot.getKey().equals("pic")){
+                                newDishDetails.setPic(snapshot.getValue(String.class));
+                                dishFlag++;
+                            }
+                            if (snapshot.getKey().equals("price")) {
+                                newDishDetails.setPrice(snapshot.getValue(Integer.class));
+                                dishFlag++;
+                            }
+
+                            dishList.set(positionOfChangedDish , newDishDetails);
                             dishesAdapter.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
                         }
 
                         @Override
@@ -251,6 +309,7 @@ public class Dishes extends AppCompatActivity {
 
                         }
                     });
+
 
                 }
 
@@ -264,6 +323,7 @@ public class Dishes extends AppCompatActivity {
         });
 
     }
+
 
     @Override
     protected void onStart() {
@@ -581,10 +641,6 @@ public class Dishes extends AppCompatActivity {
 
     }
 
-    private void loadingProgressDialog(){
-
-
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

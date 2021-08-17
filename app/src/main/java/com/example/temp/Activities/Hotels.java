@@ -165,6 +165,7 @@ public class Hotels extends AppCompatActivity {
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot,  String previousChildName) {
+                Log.d("hotels" , snapshot.toString());
                 HotelDetails hotelDetails = snapshot.getValue(HotelDetails.class);
                 hotelsList.add(0,hotelDetails);
                 hotelKeys.add(0,snapshot.getKey());
@@ -181,7 +182,7 @@ public class Hotels extends AppCompatActivity {
                 HotelDetails newHotelDetails = snapshot.getValue(HotelDetails.class);
                 hotelsList.set(updatedPosition , newHotelDetails);
                 hotelViewAdapter.notifyDataSetChanged();
-                
+
             }
 
             @Override
