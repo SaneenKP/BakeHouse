@@ -72,6 +72,7 @@ public class ChooseOption extends AppCompatActivity {
 
     private void showOrderProgress(){
 
+
         DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
 
         orderStatusReference.addValueEventListener(new ValueEventListener() {
@@ -118,6 +119,7 @@ public class ChooseOption extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+
         if (!sharedPreferenceConfig.readOrderId().equals("")){
             showOrderProgress();
         }
@@ -128,6 +130,7 @@ public class ChooseOption extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         food.setOnClickListener(v -> {
             Intent openHotelSection = new Intent(ChooseOption.this , Hotels.class);
             startActivity(openHotelSection);

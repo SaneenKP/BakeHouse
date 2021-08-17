@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -168,26 +169,44 @@ public class Hotels extends AppCompatActivity {
                 hotelsList.add(0,hotelDetails);
                 hotelKeys.add(0,snapshot.getKey());
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
-                hotelViewAdapter.notifyItemChanged(0,hotelsList.size());
+                hotelViewAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
 
+                String updatedKey = snapshot.getKey();
+                int updatedPosition = hotelKeys.indexOf(updatedKey);
+
+                HotelDetails newHotelDetails = snapshot.getValue(HotelDetails.class);
+                hotelsList.set(updatedPosition , newHotelDetails);
+                hotelViewAdapter.notifyDataSetChanged();
+                
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                String removedKey = snapshot.getKey();
+                int pos = hotelKeys.indexOf(removedKey);
+
+                hotelsList.remove(pos);
+                hotelKeys.remove(pos);
+
+                hotelViewAdapter.notifyItemRemoved(pos);
 
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot,  String previousChildName) {
 
+
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext() , "Failed : "+error , Toast.LENGTH_LONG).show();
             }
