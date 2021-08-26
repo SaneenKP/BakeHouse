@@ -276,24 +276,34 @@ public class Dishes extends AppCompatActivity {
                             newDishDetails = dishList.get(positionOfChangedDish);
                             if (snapshot.getKey().equals("name")){
                                 newDishDetails.setName(snapshot.getValue(String.class));
-                                dishFlag++;
                             }
                             if (snapshot.getKey().equals("pic")){
                                 newDishDetails.setPic(snapshot.getValue(String.class));
-                                dishFlag++;
                             }
                             if (snapshot.getKey().equals("price")) {
                                 newDishDetails.setPrice(snapshot.getValue(Integer.class));
-                                dishFlag++;
                             }
 
                             dishList.set(positionOfChangedDish , newDishDetails);
                             dishesAdapter.notifyDataSetChanged();
+                            linearProgressIndicator.setVisibility(View.INVISIBLE);
+
 
                         }
 
                         @Override
                         public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                            dishFlag++;
+                            int positionOfChildRemoved = dishKeyList.indexOf(key);
+                            if (dishFlag==3){
+                                dishFlag = 0;
+                                dishKeyList.remove(positionOfChildRemoved);
+                                dishList.remove(positionOfChildRemoved);
+                                dishesAdapter.notifyDataSetChanged();
+                                linearProgressIndicator.setVisibility(View.INVISIBLE);
+                            }
+
 
 
                         }
@@ -305,6 +315,7 @@ public class Dishes extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
+                            linearProgressIndicator.setVisibility(View.INVISIBLE);
                             Toast.makeText(getApplicationContext() , "Data couldn't be retrieved Check Internet Connection   " +  error,Toast.LENGTH_LONG).show();
 
                         }
@@ -551,6 +562,7 @@ public class Dishes extends AppCompatActivity {
                                     dialog.dismiss();
                                     Toast.makeText(getApplicationContext(), "Dish Successfully Deleted", Toast.LENGTH_LONG).show();
                                     onStart();
+                                    linearProgressIndicator.setVisibility(View.INVISIBLE);
                                 }
                             });
                         }
