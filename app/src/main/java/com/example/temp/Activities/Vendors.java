@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,7 +54,7 @@ public class Vendors extends AppCompatActivity {
     private VendorsListAdapter vendorsListAdapter;
     private List<VendorDetails> vendorDetailsList;
     private String serviceKey;
-    private DatabaseReference firebaseRealtimeDatabase;
+    private DatabaseReference vendorReference;
     private RecyclerView.LayoutManager layoutManager;
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
@@ -78,46 +79,12 @@ public class Vendors extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         vendorDetailsList = new ArrayList<>();
         serviceKey = b.getString("service-key");
-        firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference()
+        vendorReference = FirebaseDatabase.getInstance().getReference()
                 .child(getApplicationContext().getString(R.string.ServicesNode)).
                 child(serviceKey)
                 .child(getApplicationContext().getString(R.string.VendorNode));
-        findViewById(R.id.hotelLoadProgress).setVisibility(View.VISIBLE);
-        
-        firebaseRealtimeDatabase.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                findViewById(R.id.hotelLoadProgress).setVisibility(View.INVISIBLE);
-                for (DataSnapshot vendors : task.getResult().getChildren())
-                {
-                    VendorDetails vd = vendors.getValue(VendorDetails.class);
-                    vendorDetailsList.add(vd);
-                    vendorKeys.add(vendors.getKey());
-                }
-                vendorsListAdapter = new VendorsListAdapter(getApplicationContext(), vendorDetailsList,vendorKeys, new VendorsCallListenerInterface() {
-                    @Override
-                    public void getVendorNumber(String number) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL);
-                        intent.setData(Uri.parse("tel:" + number));
-                        if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(intent);
-                        }
-                    }
-                },new EditVendorInterface() {
-                    @Override
-                    public void editVendor(VendorDetails vendorDetails, String key) {
-                        showAlertDialog(vendorDetails , key , true);
-                    }
-                });
-                vendors.setAdapter(vendorsListAdapter);
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext() , "Failed : "+e , Toast.LENGTH_LONG).show();
-            }
-        });
+
 
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
@@ -145,7 +112,69 @@ public class Vendors extends AppCompatActivity {
 
             }
         });
+        vendorsListAdapter = new VendorsListAdapter(getApplicationContext(), vendorDetailsList,vendorKeys, new VendorsCallListenerInterface() {
+            @Override
+            public void getVendorNumber(String number) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + number));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        },new EditVendorInterface() {
+            @Override
+            public void editVendor(VendorDetails vendorDetails, String key) {
+                showAlertDialog(vendorDetails , key , true);
+            }
+        });
+        vendors.setAdapter(vendorsListAdapter);
 
+        getVendors();
+    }
+
+    private void getVendors(){
+
+        findViewById(R.id.hotelLoadProgress).setVisibility(View.VISIBLE);
+        vendorReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
+
+                VendorDetails vendorDetails = snapshot.getValue(VendorDetails.class);
+                vendorDetailsList.add(vendorDetails);
+                vendorKeys.add(snapshot.getKey());
+                vendorsListAdapter.notifyDataSetChanged();
+                linearProgressIndicator.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {
+
+                int updatedPosition = vendorKeys.indexOf(snapshot.getKey());
+                VendorDetails vendorDetails = snapshot.getValue(VendorDetails.class);
+                vendorDetailsList.set(updatedPosition , vendorDetails);
+                vendorsListAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                int removedPosition = vendorKeys.indexOf(snapshot.getKey());
+                vendorDetailsList.remove(removedPosition);
+                vendorKeys.remove(removedPosition);
+                vendorsListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
