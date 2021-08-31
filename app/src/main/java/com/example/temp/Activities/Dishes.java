@@ -290,8 +290,10 @@ public class Dishes extends AppCompatActivity {
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
-
-
+               int removedPosition = dishKeyList.indexOf(snapshot.getKey());
+               dishKeyList.remove(removedPosition);
+               dishList.remove(removedPosition);
+               dishesAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -307,9 +309,6 @@ public class Dishes extends AppCompatActivity {
 
     }
 
-    private void dishKeyCompleted(){
-        dishesAdapter.notifyDataSetChanged();
-    }
 
 
     @Override
@@ -598,9 +597,6 @@ public class Dishes extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "Dish Successfully Deleted", Toast.LENGTH_LONG).show();
                                         linearProgressIndicator.setVisibility(View.INVISIBLE);
                                         dishFlag++;
-                                        dishList.clear();
-                                        dishKeyList.clear();
-
                                     }
                                     else{
                                         dialog.dismiss();
