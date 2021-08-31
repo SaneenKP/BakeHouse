@@ -73,6 +73,7 @@ public class Dishes extends AppCompatActivity {
     private MaterialButton addNewDish;
     private int dishFlag = 0;
     private DishDetails newDishDetails = new DishDetails();
+    private boolean stopThread = false;
 
 
     @Override
@@ -177,6 +178,10 @@ public class Dishes extends AppCompatActivity {
               showAlertDialog(null , null , false);
           }
       });
+
+        dishList.clear();
+        dishKeyList.clear();
+        getDishes();
     }
 
 
@@ -226,113 +231,84 @@ public class Dishes extends AppCompatActivity {
     private void getDishes(){
 
         linearProgressIndicator.setVisibility(View.VISIBLE);
-
-
-       hotelDishReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        hotelDishReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onChildAdded(@NonNull DataSnapshot snapshot,  String previousChildName) {
 
-                for (DataSnapshot snapshot1 : snapshot.getChildren()){
+                String key = snapshot.getValue(String.class);
+                getDishDetailsReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)).child(key);
 
-                    dishList.clear();
-                    dishKeyList.clear();
-                    String key = snapshot1.getValue(String.class);
-                    getDishDetailsReference =  FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DishNode)).child(key);
+                getDishDetailsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    getDishDetailsReference.addChildEventListener(new ChildEventListener() {
+                        Log.d("newSnap" , snapshot.toString());
+                        DishDetails dishDetails = snapshot.getValue(DishDetails.class);
+                        dishList.add(0 , dishDetails);
+                        dishKeyList.add(0 , snapshot.getKey());
+                        dishesAdapter.notifyDataSetChanged();
+                        linearProgressIndicator.setVisibility(View.INVISIBLE);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+                String value = snapshot.getValue(String.class);
+                int updatedPosition = dishKeyList.indexOf(snapshot.getKey());
+
+                if (!value.equals("")){
+
+                    getDishDetailsReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)).child(value);
+                    getDishDetailsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-
-                            if (snapshot.getKey().equals("name")){
-                                newDishDetails.setName(snapshot.getValue(String.class));
-                                dishFlag++;
-                            }
-                            if (snapshot.getKey().equals("pic")){
-                                newDishDetails.setPic(snapshot.getValue(String.class));
-                                dishFlag++;
-                            }
-                            if (snapshot.getKey().equals("price")) {
-                                newDishDetails.setPrice(snapshot.getValue(Integer.class));
-                                dishFlag++;
-                            }
-
-                            if (dishFlag == 3){
-                                dishFlag = 0;
-                                dishKeyList.add(0,key);
-                                dishList.add(0,newDishDetails);
-                                dishesAdapter.notifyDataSetChanged();
-                                linearProgressIndicator.setVisibility(View.INVISIBLE);
-                                newDishDetails = new DishDetails();
-                            }
-
-                        }
-
-                        @Override
-                        public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
-
-                            int positionOfChangedDish = dishKeyList.indexOf(key);
-
-                            newDishDetails = dishList.get(positionOfChangedDish);
-                            if (snapshot.getKey().equals("name")){
-                                newDishDetails.setName(snapshot.getValue(String.class));
-                            }
-                            if (snapshot.getKey().equals("pic")){
-                                newDishDetails.setPic(snapshot.getValue(String.class));
-                            }
-                            if (snapshot.getKey().equals("price")) {
-                                newDishDetails.setPrice(snapshot.getValue(Integer.class));
-                            }
-
-                            dishList.set(positionOfChangedDish , newDishDetails);
+                            DishDetails dishDetails = snapshot.getValue(DishDetails.class);
+                            dishList.set(updatedPosition , dishDetails);
                             dishesAdapter.notifyDataSetChanged();
-                            linearProgressIndicator.setVisibility(View.INVISIBLE);
-
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                            dishFlag++;
-                            int positionOfChildRemoved = dishKeyList.indexOf(key);
-                            if (dishFlag==3){
-                                dishFlag = 0;
-                                dishKeyList.remove(positionOfChildRemoved);
-                                dishList.remove(positionOfChildRemoved);
-                                dishesAdapter.notifyDataSetChanged();
-                                linearProgressIndicator.setVisibility(View.INVISIBLE);
-                            }
-
-
-
-                        }
-
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot snapshot,  String previousChildName) {
-
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            linearProgressIndicator.setVisibility(View.INVISIBLE);
-                            Toast.makeText(getApplicationContext() , "Data couldn't be retrieved Check Internet Connection   " +  error,Toast.LENGTH_LONG).show();
 
                         }
                     });
-
 
                 }
 
             }
 
             @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+            }
+
+            @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext() , "Data couldn't be retrieved Check Internet Connection   " +  error,Toast.LENGTH_LONG).show();
 
             }
         });
 
+    }
+
+    private void dishKeyCompleted(){
+        dishesAdapter.notifyDataSetChanged();
     }
 
 
@@ -341,8 +317,17 @@ public class Dishes extends AppCompatActivity {
         super.onStart();
         totalButton.setText(R.string.no_item_txt);
         TOTAL_AMOUNT=0;
-        getDishes();
+        dishFlag = 0;
 
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("onDestroyCalled", "fd");
+        dishFlag = 0;
 
     }
 
@@ -393,7 +378,8 @@ public class Dishes extends AppCompatActivity {
                                                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                 Toast.makeText(getApplicationContext(),"Dish Uploaded" , Toast.LENGTH_LONG).show();
-                                                onStart();
+                                                dishFlag++;
+
 
                                             }else{
                                                 Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
@@ -466,14 +452,27 @@ public class Dishes extends AppCompatActivity {
                                 if (task.isSuccessful()){
 
                                     dishDetails.setPic(task.getResult().toString());
-
                                     dishReference.setValue(dishDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
 
-                                                resultUri = null;
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        hotelDishReference.child(key).setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()){
+                                                                    hotelDishReference.child(key).setValue(key);
+                                                                }
+                                                            }
+                                                        });
 
+                                                    }
+                                                }).start();
+
+                                                resultUri = null;
                                                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                 Toast.makeText(getApplicationContext(),"Hotel Uploaded" , Toast.LENGTH_LONG).show();
@@ -484,6 +483,8 @@ public class Dishes extends AppCompatActivity {
                                             }
                                         }
                                     });
+
+
 
                                 }else
                                 {
@@ -526,14 +527,43 @@ public class Dishes extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()){
-                        Toast.makeText(getApplicationContext() , "Hotel Value Updated" , Toast.LENGTH_LONG).show();
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext() , "Updation failed "+task.getException() , Toast.LENGTH_LONG).show();
+                        dishReference.setValue(dishDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
 
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            hotelDishReference.child(key).setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()){
+                                                       hotelDishReference.child(key).setValue(key);
+                                                    }
+                                                }
+                                            });
+
+                                        }
+                                    }).start();
+                                    Toast.makeText(getApplicationContext() , "Hotel Value Updated" , Toast.LENGTH_LONG).show();
+                                }
+                                else{
+                                    Toast.makeText(getApplicationContext() , "Updation failed "+task.getException() , Toast.LENGTH_LONG).show();
+
+                                }
+                            }
+                        });
+
+                    }else{
+                        Toast.makeText(getApplicationContext() , "Network Error" + Objects.requireNonNull(task.getException().getMessage()) , Toast.LENGTH_LONG).show();
+                        linearProgressIndicator.setVisibility(View.INVISIBLE);
                     }
                 }
             });
+
+
+
 
 
             dialog.dismiss();
@@ -548,26 +578,48 @@ public class Dishes extends AppCompatActivity {
         deleteDishImage.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+
                 DatabaseReference dishReference = FirebaseDatabase.getInstance().getReference()
-                        .child(getApplication().getString(R.string.DishNode));
-                dishReference.child(key).removeValue()
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        .child(getApplication().getString(R.string.DishNode)).child(key);
+
+                hotelDishReference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
 
-                            hotelDishReference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        if (task.isSuccessful()){
+
+                            dishReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    dialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "Dish Successfully Deleted", Toast.LENGTH_LONG).show();
-                                    onStart();
-                                    linearProgressIndicator.setVisibility(View.INVISIBLE);
+
+                                    if (task.isSuccessful()){
+
+                                        dialog.dismiss();
+                                        Toast.makeText(getApplicationContext(), "Dish Successfully Deleted", Toast.LENGTH_LONG).show();
+                                        linearProgressIndicator.setVisibility(View.INVISIBLE);
+                                        dishFlag++;
+                                        dishList.clear();
+                                        dishKeyList.clear();
+
+                                    }
+                                    else{
+                                        dialog.dismiss();
+                                        Toast.makeText(getApplicationContext(), "Failed to delete" + task.getException(), Toast.LENGTH_LONG).show();
+                                        linearProgressIndicator.setVisibility(View.INVISIBLE);
+                                    }
+
                                 }
                             });
+
+                        }else{
+                            dialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Failed to delete" + task.getException(), Toast.LENGTH_LONG).show();
+                            linearProgressIndicator.setVisibility(View.INVISIBLE);
                         }
+
                     }
                 });
+
 
             }
         }).addOnFailureListener(new OnFailureListener() {

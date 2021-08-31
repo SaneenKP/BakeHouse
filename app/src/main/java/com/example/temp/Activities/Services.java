@@ -1,4 +1,4 @@
-     package com.example.temp.Activities;
+       package com.example.temp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -57,6 +59,7 @@ public class Services extends AppCompatActivity {
     private MaterialButton fab;
     private AlertDialog dialog;
     private LinearProgressIndicator linearProgressIndicator;
+    private ServicesViewAdapter servicesViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,7 @@ public class Services extends AppCompatActivity {
                 showAlertDialog(null , null , false);
             }
         });
+
     }
 
     @Override
@@ -103,7 +107,62 @@ public class Services extends AppCompatActivity {
 
     }
 
-    private void displayData() {
+    private void displayData(){
+
+        serviceKeys.clear();
+        servicesName.clear();
+        firebaseRealtimeDatabase.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+                linearProgressIndicator.setVisibility(View.INVISIBLE);
+                ServiceDetails serviceDetails  = snapshot.getValue(ServiceDetails.class);
+
+                Log.d("snappppp" , snapshot.toString());
+
+                servicesName.add(0,serviceDetails);
+                serviceKeys.add(0,snapshot.getKey());
+                servicesViewAdapter = new ServicesViewAdapter(getApplicationContext(), servicesName, serviceKeys, new EditServiceInterface() {
+                    @Override
+                    public void editService(ServiceDetails serviceDetails, String key) {
+                        showAlertDialog(serviceDetails, key, true);
+                    }
+
+                    @Override
+                    public void openVendor(int position) {
+                        Intent getVendor = new Intent(Services.this, Vendors.class);
+                        getVendor.putExtra("service-key", serviceKeys.get(position));
+                        startActivity(getVendor);
+                    }
+                });
+                services.setAdapter(servicesViewAdapter);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot,  String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    /*private void displayData() {
         firebaseRealtimeDatabase.get()
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -143,7 +202,7 @@ public class Services extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Failed : " + e , Toast.LENGTH_LONG).show();
             }
         });
-    }
+    }*/
 
     @Override
     protected void onResume() {

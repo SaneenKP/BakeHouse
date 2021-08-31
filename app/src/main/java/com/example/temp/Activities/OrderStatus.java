@@ -83,31 +83,30 @@ public class OrderStatus extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     private void setDeliveryBoyDetails(String deliveryBoyKey){
 
         DatabaseReference deliveryBoyReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.DeliveryBoyNode)).child(deliveryBoyKey);
-        deliveryBoyReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        deliveryBoyReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()){
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    String name = task.getResult().child("name").getValue(String.class);
-                    String number = task.getResult().child("number").getValue(String.class);
+                    String name = snapshot.child("name").getValue(String.class);
+                    String number = snapshot.child("number").getValue(String.class);
 
-                    Log.d("delivery boy added" , "DELIVERYYYYYYYY");
                     deliveryBoyName.setText(name);
                     deliveryBoyNumber.setText(number);
                     count++;
 
-                }else{
-                    Toast.makeText(getApplicationContext() , "Delivery boy not assigned .. order again " ,Toast.LENGTH_LONG).show();
-                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
     }
 
     private void setStatus(String placedIndex , String confirmedIndex , String pickupIndex ,String deliveryIndex)

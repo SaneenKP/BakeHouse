@@ -76,8 +76,6 @@ import java.util.Locale;
      private HotelDetails hotelDetails;
 
 
-
-
      @Override
      protected void onCreate(Bundle savedInstanceState) {
          super.onCreate(savedInstanceState);

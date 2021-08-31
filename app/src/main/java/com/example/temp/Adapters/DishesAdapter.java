@@ -85,7 +85,6 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
                 if (count != 0)
                     count--;
 
-                holder.counter.setText(count+"");
 
                 TOTAL_COUNT = count*list.get(holder.getAdapterPosition()).getPrice();
                 priceArray[holder.getAdapterPosition()] = TOTAL_COUNT;
@@ -97,7 +96,13 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
                 }catch (Exception e)
                 {}
 
-                dishValuesInterface.getCounterValue(priceArray , keyList,dishValues,dishNameAndQuantity);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dishValuesInterface.getCounterValue(priceArray , keyList,dishValues,dishNameAndQuantity);
+                    }
+                }).start();
+                holder.counter.setText(count+"");
 
 
             }
@@ -110,13 +115,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
 
                 int count = Integer.parseInt(holder.counter.getText().toString());
                 count++;
-                holder.counter.setText(Integer.toString(count));
 
                 TOTAL_COUNT = count*list.get(holder.getAdapterPosition()).getPrice();
                 priceArray[holder.getAdapterPosition()] = TOTAL_COUNT;
 
-                Log.d("Total count", Integer.toString(TOTAL_COUNT));
-                Log.d("price array" , Integer.toString(priceArray[holder.getAdapterPosition()]));
 
                 try {
                     dishValues.put(dishKeyList.get(holder.getAdapterPosition()), holder.counter.getText());
@@ -124,9 +126,14 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.dishesHold
                 }catch (Exception e)
                 {}
 
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dishValuesInterface.getCounterValue(priceArray , keyList, dishValues,dishNameAndQuantity);
+                    }
+                }).start();
+                holder.counter.setText(Integer.toString(count));
 
-
-                dishValuesInterface.getCounterValue(priceArray , keyList, dishValues,dishNameAndQuantity);
 
             }
         });
