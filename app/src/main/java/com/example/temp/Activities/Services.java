@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.temp.Adapters.ServicesViewAdapter;
 import com.example.temp.Interfaces.EditServiceInterface;
+import com.example.temp.Models.HotelDetails;
 import com.example.temp.Models.ServiceDetails;
 import com.example.temp.R;
 import com.example.temp.SharedPreferenceConfig;
@@ -49,7 +50,7 @@ public class Services extends AppCompatActivity {
 
     private GridView services;
     private List<ServiceDetails> servicesName;
-    private DatabaseReference firebaseRealtimeDatabase;
+    private DatabaseReference servicesDatabseReference;
     private DatabaseReference getServicesReference;
     private List<String> serviceKeys;
     private SharedPreferenceConfig sharedPreferenceConfig;
@@ -89,7 +90,7 @@ public class Services extends AppCompatActivity {
             }
         });
 
-        firebaseRealtimeDatabase = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.ServicesNode));
+        servicesDatabseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.ServicesNode));
         linearProgressIndicator.setVisibility(View.VISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,31 +98,29 @@ public class Services extends AppCompatActivity {
                 showAlertDialog(null , null , false);
             }
         });
+        displayData();
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        displayData();
 
     }
 
     private void displayData(){
 
-        serviceKeys.clear();
-        servicesName.clear();
-        firebaseRealtimeDatabase.addChildEventListener(new ChildEventListener() {
+
+        servicesDatabseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot,  String previousChildName) {
 
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                 ServiceDetails serviceDetails  = snapshot.getValue(ServiceDetails.class);
 
-                Log.d("snappppp" , snapshot.toString());
-
                 servicesName.add(0,serviceDetails);
                 serviceKeys.add(0,snapshot.getKey());
+
                 servicesViewAdapter = new ServicesViewAdapter(getApplicationContext(), servicesName, serviceKeys, new EditServiceInterface() {
                     @Override
                     public void editService(ServiceDetails serviceDetails, String key) {
@@ -142,10 +141,24 @@ public class Services extends AppCompatActivity {
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
 
+                String updatedKey = snapshot.getKey();
+                int updatedPosition = serviceKeys.indexOf(updatedKey);
+
+                ServiceDetails serviceDetails = snapshot.getValue(ServiceDetails.class);
+                servicesName.set(updatedPosition , serviceDetails);
+                servicesViewAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                String removedKey = snapshot.getKey();
+                int removedPosition = serviceKeys.indexOf(removedKey);
+
+                servicesName.remove(removedPosition);
+                serviceKeys.remove(removedPosition);
+
+                servicesViewAdapter.notifyDataSetChanged();
 
             }
 
