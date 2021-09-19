@@ -116,10 +116,6 @@ public class Dishes extends AppCompatActivity {
             @Override
             public void getCounterValue(int[] value, String[] keys, JSONObject dishValues, JSONObject dishNameAndQuantity) {
 
-                Log.d("dishNameAndQuantiy" , dishNameAndQuantity.toString());
-                Log.d("dishValues" , dishNameAndQuantity.toString());
-
-
                 finalDishNameAndQuantity = dishNameAndQuantity;
                 dishValuesJSON = dishValues;
 
