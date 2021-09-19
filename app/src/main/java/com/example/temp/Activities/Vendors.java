@@ -59,7 +59,7 @@ public class Vendors extends AppCompatActivity {
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
-    private List<String> vendorKeys=new ArrayList<>();
+    private List<String> vendorKeys;
     private Uri resultUri;
     private MaterialButton fab;
     private AlertDialog dialog;
@@ -70,30 +70,37 @@ public class Vendors extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vendors);
+
+        //Initializations.
         fab = findViewById(R.id.addNewVendor);
         vendors = findViewById(R.id.vendors);
+        linearProgressIndicator = findViewById(R.id.hotelLoadProgress);
+        layout = findViewById(R.id.orderProgressLayout);
+        orderStatus = findViewById(R.id.orderStatus);
+
+        //RecyclerView
         layoutManager = new LinearLayoutManager(this);
         vendors.setLayoutManager(layoutManager);
-        sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
-        linearProgressIndicator=findViewById(R.id.hotelLoadProgress);
-        Bundle b = getIntent().getExtras();
         vendorDetailsList = new ArrayList<>();
+        vendorKeys=new ArrayList<>();
+
+        //sharedPreference
+        sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
+
+        //Service Key Retrieved from Bundle through Services Activity.
+        Bundle b = getIntent().getExtras();
         serviceKey = b.getString("service-key");
+
+
+
         vendorReference = FirebaseDatabase.getInstance().getReference()
                 .child(getApplicationContext().getString(R.string.ServicesNode)).
                 child(serviceKey)
                 .child(getApplicationContext().getString(R.string.VendorNode));
 
 
-
-        layout = findViewById(R.id.orderProgressLayout);
-        orderStatus = findViewById(R.id.orderStatus);
+        //Order Progress bar set Invisible in the beginning.
         layout.setVisibility(View.GONE);
-
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
-
         findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +111,7 @@ public class Vendors extends AppCompatActivity {
             }
         });
 
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +120,7 @@ public class Vendors extends AppCompatActivity {
 
             }
         });
+
         vendorsListAdapter = new VendorsListAdapter(getApplicationContext(), vendorDetailsList,vendorKeys, new VendorsCallListenerInterface() {
             @Override
             public void getVendorNumber(String number) {
@@ -127,6 +136,7 @@ public class Vendors extends AppCompatActivity {
                 showAlertDialog(vendorDetails , key , true);
             }
         });
+
         vendors.setAdapter(vendorsListAdapter);
 
         getVendors();
@@ -140,8 +150,8 @@ public class Vendors extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
 
                 VendorDetails vendorDetails = snapshot.getValue(VendorDetails.class);
-                vendorDetailsList.add(vendorDetails);
-                vendorKeys.add(snapshot.getKey());
+                vendorDetailsList.add(0,vendorDetails);
+                vendorKeys.add(0,snapshot.getKey());
                 vendorsListAdapter.notifyDataSetChanged();
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
             }
@@ -247,11 +257,12 @@ public class Vendors extends AppCompatActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             linearProgressIndicator.setVisibility(View.VISIBLE);
             linearProgressIndicator.setProgress(0);
+
             vendorImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
-                    if (task.isSuccessful()){
+                     if (task.isSuccessful()){
                         vendorImage.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {

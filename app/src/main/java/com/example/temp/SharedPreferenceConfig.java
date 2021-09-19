@@ -35,6 +35,11 @@ public class SharedPreferenceConfig {
 
     }
 
+    public void writeTotalAmount(int totalAmount){
+        editor.putInt(context.getResources().getString(R.string.totalAmount) , totalAmount);
+        editor.commit();
+    }
+
     public String readOrderId(){
         return sharedPreferences.getString(context.getResources().getString(R.string.orderId),"");
     }
@@ -56,6 +61,15 @@ public class SharedPreferenceConfig {
 
         return address;
 
+    }
+
+    public int readTotalAmount(){
+        return sharedPreferences.getInt(context.getResources().getString(R.string.totalAmount),0);
+    }
+
+    public void clearTotalAmount(){
+        editor.remove(context.getResources().getString(R.string.totalAmount));
+        editor.commit();
     }
 
     public void clearPreferences(){

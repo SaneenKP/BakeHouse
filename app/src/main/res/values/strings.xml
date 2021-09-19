@@ -34,6 +34,7 @@
     <string name="landmark">Landmark</string>
     <string name="street">Street</string>
     <string name="orderId">OrderId</string>
+    <string name="totalAmount">Total-amount</string>
 
     <!-- Razor pay key id-->
 
@@ -95,5 +96,17 @@
 
     <string name="serviceName">name</string>
     <string name="serviceImage">cover_pic</string>
+
+    <!-- status Strings -->
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+
+    <!-- order progress bar Strings -->
+
+    <string name="orderPlacedProgress">Your Order Placed</string>
+    <string name="orderPickedProgress">Your Order Picked up</string>
+    <string name="orderProgress">Order Under Progress</string>
+    <string name="orderDeliveredProgress">Your order Delivered</string>
+
 
 </resources>

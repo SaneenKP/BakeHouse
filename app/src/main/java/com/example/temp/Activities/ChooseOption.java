@@ -1,5 +1,7 @@
 package com.example.temp.Activities;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import com.example.temp.Models.OrderDetails;
@@ -27,11 +29,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class ChooseOption extends AppCompatActivity {
+public class  ChooseOption extends AppCompatActivity {
 
     private MaterialButton food,services;
-    private Boolean OrderStatus = true;
-    private RelativeLayout root;
     private SharedPreferenceConfig sharedPreferenceConfig;
     private TextView orderStatus;
     private RelativeLayout layout;
@@ -41,37 +41,36 @@ public class ChooseOption extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
+        //Initializations.
         setContentView(R.layout.activity_choose_option);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         food = findViewById(R.id.btn_food);
         services = findViewById(R.id.btn_services);
         sharedPreferenceConfig = new SharedPreferenceConfig(getApplicationContext());
-        root = findViewById(R.id.root);
-
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
+
+        //Order Progress bar set Invisible in the beginning.
         layout.setVisibility(View.GONE);
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
 
-
+        //Opens activity Order Status when clicked on the Order Progress bar.
         findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent startOrderStatus = new Intent(ChooseOption .this , OrderStatus.class);
-                startActivity(startOrderStatus);
+                startActivity(new Intent(ChooseOption .this , OrderStatus.class));
 
             }
         });
 
     }
 
+    //Method to control Order progress Bar.
     private void showOrderProgress(){
 
+        //Database Reference to Orders Node and the specific Order ID retrieved from the SharedPreference.
 
         DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
 
@@ -83,23 +82,27 @@ public class ChooseOption extends AppCompatActivity {
                 String pickedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.pickupIndexStatus)).getValue(String.class);
                 String deliveredStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.deliveryIndexStatus)).getValue(String.class);
 
-                if (placedStatus.equals("no") && pickedStatus.equals("no") && deliveredStatus.equals("no")){
+                // Sets the Progress Bar According to the order Status (yes/no) Retrieved.
+
+                if (placedStatus.equals(getApplicationContext().getResources().getString(R.string.no)) && pickedStatus.equals(getApplicationContext().getResources().getString(R.string.no)) && deliveredStatus.equals(getApplicationContext().getResources().getString(R.string.no))){
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Order Under Progress");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderProgress));
                 }
-                if (placedStatus.equals("yes")){
+                if (placedStatus.equals(getApplicationContext().getResources().getString(R.string.yes))){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Your Order Placed");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderPlacedProgress));
                 }
-                if (pickedStatus.equals("yes")){
+                if (pickedStatus.equals(getApplicationContext().getResources().getString(R.string.yes))){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Your Order Picked up");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderPickedProgress));
                 }
-                if (deliveredStatus.equals("yes")){
+
+                //Removes the progress bar if the Order Status is "Delivered = yes".
+                if (deliveredStatus.equals(getApplicationContext().getResources().getString(R.string.yes))){
                     orderStatus.setText("");
-                    orderStatus.setText("Your order Delivered");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderDeliveredProgress));
                     sharedPreferenceConfig.removeOrderId();
                     layout.setVisibility(View.GONE);
                 }
@@ -119,7 +122,7 @@ public class ChooseOption extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
+        //Order Progressbar displayed whenever the activity resumes.
         if (!sharedPreferenceConfig.readOrderId().equals("")){
             showOrderProgress();
         }

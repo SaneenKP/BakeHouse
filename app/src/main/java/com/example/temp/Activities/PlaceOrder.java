@@ -261,6 +261,7 @@ import java.util.Locale;
      }
      private void setSharedPreference(){
 
+         sharedPreferenceConfig.clearTotalAmount();
          HashMap<String ,String> newUserAddress = new HashMap<>();
          newUserAddress.put(getApplicationContext().getResources().getString(R.string.Add_name) , Add_name.getText().toString());
          newUserAddress.put(getApplicationContext().getResources().getString(R.string.houseNo) , Add_houseNo.getText().toString());

@@ -54,8 +54,8 @@ public class Hotels extends AppCompatActivity {
     private RecyclerView hotels;
     private RecyclerView.LayoutManager layoutManager;
     private List<HotelDetails> hotelsList;
-    private DatabaseReference databaseReference;
-    private List<String> hotelKeys;
+    private DatabaseReference hotelDatabaseReference;
+    private List<String> hotelKeysList;
     private LinearProgressIndicator linearProgressIndicator;
     private HotelViewAdapter hotelViewAdapter;
     private SharedPreferenceConfig sharedPreferenceConfig;
@@ -64,24 +64,19 @@ public class Hotels extends AppCompatActivity {
     private MaterialButton add;
     private AlertDialog dialog;
     private  Uri resultUri;
+    private EditHotelInterface editHotelInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotels);
+
+        //Initializations.
         hotels = findViewById(R.id.hotels);
         layoutManager = new LinearLayoutManager(this);
         hotels.setLayoutManager(layoutManager);
         hotelsList = new ArrayList<>();
-        hotelKeys = new ArrayList<>();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode));
-        hotelViewAdapter = new HotelViewAdapter(Hotels.this, hotelsList, hotelKeys, new EditHotelInterface() {
-            @Override
-            public void editHotel(HotelDetails hotelDetails, String key) {
-                showAlertDialog(hotelDetails , key , true);
-            }
-        });
-        hotels.setAdapter(hotelViewAdapter);
+        hotelKeysList = new ArrayList<>();
         linearProgressIndicator=findViewById(R.id.hotelLoadProgress);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,18 +84,28 @@ public class Hotels extends AppCompatActivity {
         add=findViewById(R.id.addHotel);
         layout = findViewById(R.id.orderProgressLayout);
         orderStatus = findViewById(R.id.orderStatus);
-        layout.setVisibility(View.GONE);
 
-        if (!sharedPreferenceConfig.readOrderId().equals("")){
-            showOrderProgress();
-        }
+        hotelDatabaseReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.HotelNode));
+
+        //Interface definition to edit Hotel Details from Recycler View.
+        editHotelInterface = new EditHotelInterface() {
+            @Override
+            public void editHotel(HotelDetails hotelDetails, String key) {
+                showAlertDialog(hotelDetails , key , true);
+            }
+        };
+
+        hotelViewAdapter = new HotelViewAdapter(Hotels.this, hotelsList, hotelKeysList, editHotelInterface);
+        hotels.setAdapter(hotelViewAdapter);
+
+        //Order Progress bar set Invisible in the beginning.
+        layout.setVisibility(View.GONE);
 
         findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent startOrderStatus = new Intent(Hotels .this , OrderStatus.class);
-                startActivity(startOrderStatus);
+                startActivity(new Intent(Hotels .this , OrderStatus.class));
 
             }
         });
@@ -113,7 +118,10 @@ public class Hotels extends AppCompatActivity {
         });
     }
 
+    //Method to control Order progress Bar.
     private void showOrderProgress(){
+
+        //Database Reference to Orders Node and the specific Order ID retrieved from the SharedPreference.
 
         DatabaseReference orderStatusReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getResources().getString(R.string.OrderNode)).child(sharedPreferenceConfig.readOrderId());
 
@@ -125,23 +133,27 @@ public class Hotels extends AppCompatActivity {
                 String pickedStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.pickupIndexStatus)).getValue(String.class);
                 String deliveredStatus =  snapshot.child(getApplicationContext().getResources().getString(R.string.deliveryIndexStatus)).getValue(String.class);
 
-                if (placedStatus.equals("no") && pickedStatus.equals("no") && deliveredStatus.equals("no")){
+                // Sets the Progress Bar According to the order Status (yes/no) Retrieved.
+
+                if (placedStatus.equals(getApplicationContext().getResources().getString(R.string.no)) && pickedStatus.equals(getApplicationContext().getResources().getString(R.string.no)) && deliveredStatus.equals(getApplicationContext().getResources().getString(R.string.no))){
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Order Under Progress");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderProgress));
                 }
-                if (placedStatus.equals("yes")){
+                if (placedStatus.equals(getApplicationContext().getResources().getString(R.string.yes))){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Your Order Placed");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderPlacedProgress));
                 }
-                if (pickedStatus.equals("yes")){
+                if (pickedStatus.equals(getApplicationContext().getResources().getString(R.string.yes))){
                     orderStatus.setText("");
                     layout.setVisibility(View.VISIBLE);
-                    orderStatus.setText("Your Order Picked up");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderPickedProgress));
                 }
-                if (deliveredStatus.equals("yes")){
+
+                //Removes the progress bar if the Order Status is "Delivered = yes".
+                if (deliveredStatus.equals(getApplicationContext().getResources().getString(R.string.yes))){
                     orderStatus.setText("");
-                    orderStatus.setText("Your order Delivered");
+                    orderStatus.setText(getApplicationContext().getResources().getString(R.string.orderDeliveredProgress));
                     sharedPreferenceConfig.removeOrderId();
                     layout.setVisibility(View.GONE);
                 }
@@ -159,16 +171,16 @@ public class Hotels extends AppCompatActivity {
     public void getHotels(){
 
         hotelsList.clear();
-        hotelKeys.clear();
+        hotelKeysList.clear();
         linearProgressIndicator.setVisibility(View.VISIBLE);
 
-        databaseReference.addChildEventListener(new ChildEventListener() {
+        hotelDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot,  String previousChildName) {
                 Log.d("hotels" , snapshot.toString());
                 HotelDetails hotelDetails = snapshot.getValue(HotelDetails.class);
                 hotelsList.add(0,hotelDetails);
-                hotelKeys.add(0,snapshot.getKey());
+                hotelKeysList.add(0,snapshot.getKey());
                 linearProgressIndicator.setVisibility(View.INVISIBLE);
                 hotelViewAdapter.notifyDataSetChanged();
             }
@@ -177,7 +189,7 @@ public class Hotels extends AppCompatActivity {
             public void onChildChanged(@NonNull DataSnapshot snapshot,  String previousChildName) {
 
                 String updatedKey = snapshot.getKey();
-                int updatedPosition = hotelKeys.indexOf(updatedKey);
+                int updatedPosition = hotelKeysList.indexOf(updatedKey);
 
                 HotelDetails newHotelDetails = snapshot.getValue(HotelDetails.class);
                 hotelsList.set(updatedPosition , newHotelDetails);
@@ -189,10 +201,10 @@ public class Hotels extends AppCompatActivity {
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
                 String removedKey = snapshot.getKey();
-                int pos = hotelKeys.indexOf(removedKey);
+                int pos = hotelKeysList.indexOf(removedKey);
 
                 hotelsList.remove(pos);
-                hotelKeys.remove(pos);
+                hotelKeysList.remove(pos);
 
                 hotelViewAdapter.notifyItemRemoved(pos);
 
@@ -309,9 +321,9 @@ public class Hotels extends AppCompatActivity {
     private void updateHotel(HotelDetails hotelDetails , String key){
 
         if (resultUri!=null){
-            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelName)).setValue(hotelDetails.getHotel_name());
-            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
-            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
+            hotelDatabaseReference.child(key).child(getApplicationContext().getString(R.string.hotelName)).setValue(hotelDetails.getHotel_name());
+            hotelDatabaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
+            hotelDatabaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
             StorageReference hotelImage = FirebaseStorage.getInstance().getReference().child(getApplicationContext().getString(R.string.HotelNode)+"/"+hotelDetails.getHotel_name()+System.currentTimeMillis());
             dialog.dismiss();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -332,7 +344,7 @@ public class Hotels extends AppCompatActivity {
 
                                     hotelDetails.setImage(task.getResult().toString());
 
-                                    databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelImage)).setValue(hotelDetails.getImage()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    hotelDatabaseReference.child(key).child(getApplicationContext().getString(R.string.hotelImage)).setValue(hotelDetails.getImage()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
@@ -387,9 +399,9 @@ public class Hotels extends AppCompatActivity {
 
         }else{
 
-            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelName)).setValue(hotelDetails.getHotel_name());
-            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
-            databaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
+            hotelDatabaseReference.child(key).child(getApplicationContext().getString(R.string.hotelName)).setValue(hotelDetails.getHotel_name());
+            hotelDatabaseReference.child(key).child(getApplicationContext().getString(R.string.hotelLocation)).setValue(hotelDetails.getLocation());
+            hotelDatabaseReference.child(key).child(getApplicationContext().getString(R.string.hotelAddress)).setValue(hotelDetails.getAddress());
             Toast.makeText(getApplicationContext() , "Hotel Value Updated" , Toast.LENGTH_LONG).show();
             dialog.dismiss();
 
@@ -424,7 +436,7 @@ public class Hotels extends AppCompatActivity {
 
                                     hotelDetails.setImage(task.getResult().toString());
 
-                                    databaseReference.push().setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    hotelDatabaseReference.push().setValue(hotelDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()){
@@ -489,7 +501,7 @@ public class Hotels extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
 
-                databaseReference.child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                hotelDatabaseReference.child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         dialog.dismiss();

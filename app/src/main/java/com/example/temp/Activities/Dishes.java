@@ -47,9 +47,12 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
+import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
 
 public class Dishes extends AppCompatActivity {
 
@@ -74,6 +77,8 @@ public class Dishes extends AppCompatActivity {
     private int dishFlag = 0;
     private DishDetails newDishDetails = new DishDetails();
     private boolean stopThread = false;
+    private DishValueInterface dishValueInterface;
+    private EditDishInterface editDishInterface;
 
 
     @Override
@@ -103,27 +108,51 @@ public class Dishes extends AppCompatActivity {
         layout.setVisibility(View.GONE);
 
 
-        dishes.setLayoutManager(layoutManager);
 
-        dishesAdapter = new DishesAdapter(Dishes.this, dishList, dishKeyList, new DishValueInterface() {
+        dishes.setLayoutManager(layoutManager);
+        dishes.setSaveEnabled(true);
+
+        dishValueInterface = new DishValueInterface() {
             @Override
             public void getCounterValue(int[] value, String[] keys, JSONObject dishValues, JSONObject dishNameAndQuantity) {
 
+                Log.d("dishNameAndQuantiy" , dishNameAndQuantity.toString());
+                Log.d("dishValues" , dishNameAndQuantity.toString());
+
+
                 finalDishNameAndQuantity = dishNameAndQuantity;
                 dishValuesJSON = dishValues;
-                TOTAL_AMOUNT = 0;
 
-                for (int x : value)
-                    TOTAL_AMOUNT += x;
-                totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
             }
-        }, new EditDishInterface() {
+
+            @Override
+            public void dishIncrementCounter(int price) {
+
+
+                TOTAL_AMOUNT+=price;
+                totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+
+            }
+
+            @Override
+            public void dishDecrementCounter(int price) {
+
+                TOTAL_AMOUNT-=price;
+                totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+
+            }
+        };
+
+        editDishInterface = new EditDishInterface() {
             @Override
             public void editDish(DishDetails dishDetails, String key) {
                 showAlertDialog(dishDetails , key , true);
+
             }
-        },finalDishNameAndQuantity);
+        };
+        dishesAdapter = new DishesAdapter(Dishes.this, dishList, dishKeyList, dishValueInterface , editDishInterface, finalDishNameAndQuantity);
         dishes.setAdapter(dishesAdapter);
+
 
 
         findViewById(R.id.orderStatus).setOnClickListener(new View.OnClickListener() {
@@ -145,7 +174,8 @@ public class Dishes extends AppCompatActivity {
                     Toast.makeText(getApplicationContext() , "No Items Selected" , Toast.LENGTH_SHORT).show();
                 }
                 else
-                { finalSelectedDishes = new JSONObject();
+                {
+                    finalSelectedDishes = new JSONObject();
                     for (String x : dishKeyList)
                     {
                         try {
@@ -157,7 +187,7 @@ public class Dishes extends AppCompatActivity {
                         }catch (Exception e){}
 
                     }
-
+                    sharedPreferenceConfig.writeTotalAmount(TOTAL_AMOUNT);
                     Intent openPlaceOrderSection = new Intent(Dishes.this, PlaceOrder.class);
                     openPlaceOrderSection.putExtra("dishDetails" , finalSelectedDishes.toString());
                     openPlaceOrderSection.putExtra("dishNameAndQuantity" , finalDishNameAndQuantity.toString());
@@ -238,17 +268,17 @@ public class Dishes extends AppCompatActivity {
                 String key = snapshot.getValue(String.class);
                 getDishDetailsReference = FirebaseDatabase.getInstance().getReference().child(getApplicationContext().getString(R.string.DishNode)).child(key);
 
+
                 getDishDetailsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        Log.d("newSnap" , snapshot.toString());
                         DishDetails dishDetails = snapshot.getValue(DishDetails.class);
+
                         dishList.add(0 , dishDetails);
                         dishKeyList.add(0 , snapshot.getKey());
                         dishesAdapter.notifyDataSetChanged();
                         linearProgressIndicator.setVisibility(View.INVISIBLE);
-
                     }
 
                     @Override
@@ -325,18 +355,25 @@ public class Dishes extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("onDestroyCalled", "fd");
         dishFlag = 0;
+        sharedPreferenceConfig.clearTotalAmount();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+       if (sharedPreferenceConfig.readTotalAmount() != 0){
+           TOTAL_AMOUNT = sharedPreferenceConfig.readTotalAmount();
+           totalButton.setText("Place Order " + Integer.toString(TOTAL_AMOUNT) + " \u20B9");
+       }
         if (!sharedPreferenceConfig.readOrderId().equals("")){
             showOrderProgress();
         }
     }
+
+
 
     private void addNewDish(DishDetails dishDetails , String key){
 
@@ -699,6 +736,13 @@ public class Dishes extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
