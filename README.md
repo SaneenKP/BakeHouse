@@ -30,7 +30,7 @@
 - [About The Project](#about-the-project)
 - [Built With](#built-with)
 - [screenshots](#screenshots)
-- [Build Instructions](#Build instructions)
+- [Build Instructions](#Build-instructions)
 - [Contributing](#contributing)
   - [Creating A Pull Request](#creating-a-pull-request)
 - [Authors](#authors)
