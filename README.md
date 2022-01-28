@@ -1,6 +1,6 @@
 <p align="center">
     <img align="center" style="width:100%;" src="./assets/Kepler-banner.png" /><br>
-    <b><h1 align="center">Kepler Foods</h1></b>
+    <b><h1 align="center">BakeHouse Foods</h1></b>
 </p>
 
 <p align="center">
@@ -22,5 +22,5 @@
     <a href="https://github.com/saneenKP/food-app/actions" alt="CI">
         <img alt="CI" src="https://github.com/Sharkaboi/MediaHub/actions/workflows/android.yaml/badge.svg">
     </a><br>
-    Hotel and Customer client Application for Kepler Foods.
+    BakeHouse Foods Hotel and Customer client Application.
 </p>
