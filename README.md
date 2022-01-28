@@ -24,3 +24,19 @@
     </a><br>
     BakeHouse Hotel and Customer client Application.
 </p>
+
+## Table Of Contents
+
+- [About The Project](#about-the-project)
+- [Built With](#built-with)
+- [screenshots](#screenshots)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+  - [Creating A Pull Request](#creating-a-pull-request)
+- [License](#license)
+- [Authors](#authors)
+- [Acknowledgements](#acknowledgements)
