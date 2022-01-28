@@ -30,30 +30,21 @@
 - [About The Project](#about-the-project)
 - [Built With](#built-with)
 - [screenshots](#screenshots)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#usage)
-- [Roadmap](#roadmap)
+- [Build Instructions](#Build-instructions)
 - [Contributing](#contributing)
   - [Creating A Pull Request](#creating-a-pull-request)
-- [License](#license)
 - [Authors](#authors)
-- [Acknowledgements](#acknowledgements)
+- [License](#license)
+
+
 
 ## About The Project
 
-There are many great ReadME templates available on GitHub, however, I struggled to find any ReadME generators. Throughout my open source project contributions, I've had to spend numerous hours editing README files which I could've spent developing instead. This paired with me often forgetting to change links, titles and sections made me look for a README generator.
+BakeHouse is a Food Delivery system where the users can easily access the chain of hotels and restaurents in their surroundings and order food according to their intrests. The users just need to authenticate using their phone number and continue ordering food / drinks etc from their favorites restaurants.
 
-Whilst alternative options existed, I struggled to find one that could suit my needs whilst being fast and easy to use, the ones I found were command-line based, only taking a limited input with the inability to go back on, as such I've built this, a README Generator!
+Hotels and Restaurants can also create an account to publish about their offerings with specific details like iamge , description , price.
 
-With this open-source project, I hope to allow you to save as much time as it saved me, the benefits of this project are huge and here's why:
-
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. Whilst this template has served my needs, it may not serve yours so I'll be continuing to work on this to make a more "Universal" and "Flexible" ReadME Generator in the future. Feel free to suggest changes by opening a new issue, or if you want to implement your own, feel free to fork this repo and create a pull request.
+The data in the backend is stored and retrieved using firebase realtime database, Firebase Storage is used to store the images and other assets.
 
 ## Screenshots
 
@@ -74,4 +65,61 @@ Of course, no one template will serve all projects since your needs may be diffe
 * [NetDetect](https://github.com/amrsalah3/NetDetect)
 * [CircleImageView](https://github.com/hdodenhof/CircleImageView)
 * [Constraint Layout](https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout)
+* [SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences)
+* [Gson](https://github.com/google/gson)
+
+## Build instructions
+
+* Install Android studio , Gradle and latest version of Java.
+* Clone project.
+* Open in Android studio or Intellij and build and sync project.
+* make sure all the dependencies are installed correctly.
+* Run on any device and perform phone number login to give access to your account.
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+* If you have suggestions for adding or removing projects , or any bugs , features , feel free to [open an issue](https://github.com/saneenKP/food-app/issues/new) to discuss it, or directly create a pull request.
+* Please make sure you check your spelling and grammar.
+* Create individual PR for each suggestion.
+* Please also read through the [Code Of Conduct](https://github.com/saneenKP/food-app/blob/master/CODE_OF_CONDUCT.md) before posting your first idea as well.
+
+### Creating A Pull Request
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature-name/BakeHouse-feature`)
+3. Commit your Changes (`git commit -m 'Added some BakeHouse-feature feature-name'`)
+4. Push to the Branch (`git push origin feature-name/BakeHouse`)
+5. Open a Pull Request
+
+## Authors
+
+* **Saneen KP** - *B-tech Information Technology , CUSAT* - [Saneen K P](https://github.com/saneenKP/) - *All Work*
+
+## Licence
+
+```
+MIT License
+
+Copyright (c) 2021 Sarath S
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
 
