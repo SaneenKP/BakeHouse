@@ -2,7 +2,9 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
 }
-
+task wrapper(type: Wrapper){
+    gradleVersion = '7.2'
+}
 repositories {
     mavenCentral()
     flatDir{

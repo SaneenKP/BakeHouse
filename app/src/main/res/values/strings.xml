@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KEPLER</string>
+    <string name="app_name">BakeHouse</string>
     <string name="title_activity_choose_option">ChooseOption</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

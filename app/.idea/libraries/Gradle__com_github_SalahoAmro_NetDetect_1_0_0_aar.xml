@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.SalahoAmro:NetDetect:1.0.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a333a6369e63830006f5666f208ab327/jetified-NetDetect-1.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a333a6369e63830006f5666f208ab327/jetified-NetDetect-1.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a333a6369e63830006f5666f208ab327/jetified-NetDetect-1.0.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.SalahoAmro/NetDetect/1.0.0/d71d3a4ff16e3e62ce5c4f1b6d00973f7ea7a226/NetDetect-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
