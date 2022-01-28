@@ -1,5 +1,5 @@
 <p align="center">
-    <img align="center" style="width:100%;" src="./assets/Kepler-banner.png" /><br>
+    <img align="center" style="width:100%;" src="./assets/BakeHouse Logo.png" /><br>
     <b><h1 align="center">BakeHouse</h1></b>
 </p>
 
