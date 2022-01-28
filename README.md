@@ -74,4 +74,6 @@ Of course, no one template will serve all projects since your needs may be diffe
 * [NetDetect](https://github.com/amrsalah3/NetDetect)
 * [CircleImageView](https://github.com/hdodenhof/CircleImageView)
 * [Constraint Layout](https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout)
+* [SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences)
+* [Gson](https://github.com/google/gson)
 
