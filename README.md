@@ -48,6 +48,22 @@ The data in the backend is stored and retrieved using firebase realtime database
 
 ## Screenshots
 
+
+### Light Mode
+ <img src="assets/screenshots/Light mode/ss1.jpg" width="180">  <img src="assets/screenshots/Light mode/ss2.jpg" width="180">  <img src="assets/screenshots/Light mode/ss3.jpg" width="180">  <img src="assets/screenshots/Light mode/ss4.jpg" width="180">  <img src="assets/screenshots/Light mode/ss5.jpg" width="180">
+ 
+ <img src="assets/screenshots/Light mode/ss6.jpg" width="180"> <img src="assets/screenshots/Light mode/ss7.jpg" width="180"> <img src="assets/screenshots/Light mode/ss8.jpg" width="180"> <img src="assets/screenshots/Light mode/ss9.jpg" width="180"> <img src="assets/screenshots/Light mode/ss10.jpg" width="180"> 
+ 
+ <img src="assets/screenshots/Light mode/ss11.jpg" width="180"> <img src="assets/screenshots/Light mode/ss12.jpg" width="180"> <img src="assets/screenshots/Light mode/ss13.jpg" width="180"> <img src="assets/screenshots/Light mode/ss14.jpg" width="180">
+
+
+
+### Dark Mode
+
+ <img src="assets/screenshots/Dark Mode/ss1.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss2.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss3.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss4.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss5.jpg" width="180"> 
+ 
+ <img src="assets/screenshots/Dark Mode/ss6.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss7.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss8.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss9.jpg" width="180"> <img src="assets/screenshots/Dark Mode/ss10.jpg" width="180"> 
+ 
 ## Built With
 
 * [Java](https://www.java.com/)
